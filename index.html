@@ -1,430 +1,2086 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vũ Trụ Tình Yêu</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&family=Great+Vibes&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-color: #050510;
-            --accent-pink: #ff6b9e;
-            --accent-purple: #a855f7;
-            --accent-blue: #4db8ff;
-        }
-        * { box-sizing: border-box; }
-        body {
-            background-color: var(--bg-color);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            margin: 0;
-            min-height: 100vh;
-        }
-        .font-romantic { font-family: 'Dancing Script', cursive; }
-        .font-elegant { font-family: 'Playfair Display', serif; }
-        .font-luxury { font-family: 'Great Vibes', cursive; }
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        #star-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; pointer-events: none;
-        }
-        .galaxy-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 20% 30%, rgba(76,29,149,0.2) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(190,24,93,0.2) 0%, transparent 40%);
-            filter: blur(30px); opacity: 0; transition: opacity 1s ease;
-            pointer-events: none;
-        }
-        .galaxy-bg.active { opacity: 1; }
-        @keyframes float {
-            0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)}
-        }
-        .animate-float { animation: float 4s ease-in-out infinite; }
-        @keyframes pulse-glow {
-            0%,100%{text-shadow:0 0 10px var(--accent-pink),0 0 20px var(--accent-pink)}
-            50%{text-shadow:0 0 20px var(--accent-pink),0 0 40px var(--accent-pink),0 0 60px var(--accent-pink)}
-        }
-        .glow-text { animation: pulse-glow 3s infinite alternate; }
-        .glass-panel {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 100; padding: 1rem;
-        }
-        .modal-box {
-            background: linear-gradient(135deg, #1a103c, #2a104e);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 1.5rem; padding: 2rem; max-width: 420px; width: 100%;
-            box-shadow: 0 0 60px rgba(168,85,247,0.2);
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #ec4899, #a855f7);
-            padding: 0.75rem 1.5rem; border-radius: 999px;
-            font-weight: 600; transition: all 0.3s; border: none; color: white; cursor: pointer;
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(236,72,153,0.35); }
-        .btn-google {
-            background: white; color: #333; display: flex; align-items: center; justify-content: center;
-            gap: 0.75rem; padding: 0.75rem 1.5rem; border-radius: 999px; font-weight: 500;
-            cursor: pointer; transition: all 0.3s; border: none; width: 100%;
-        }
-        .btn-google:hover { background: #f1f5f9; transform: translateY(-1px); }
-        .input-field {
-            width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem;
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
-            color: white; outline: none; transition: border 0.3s;
-        }
-        .input-field:focus { border-color: #ec4899; box-shadow: 0 0 0 3px rgba(236,72,153,0.2); }
-        .tab-btn {
-            padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;
-            border: none; background: transparent; color: #9ca3af;
-        }
-        .tab-btn.active { background: linear-gradient(90deg, #ec4899, #a855f7); color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .hidden-view { display: none !important; }
-        .toast {
-            position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%);
-            padding: 0.75rem 1.5rem; border-radius: 999px; z-index: 200;
-            transition: opacity 0.3s;
-        }
-        .toast-success { background: #10b981; color: white; }
-        .toast-error { background: #ef4444; color: white; }
-        .toast-info { background: #3b82f6; color: white; }
-        .countdown-badge {
-            display: inline-block; background: rgba(236,72,153,0.2);
-            color: #fbcfe8; padding: 0.125rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; margin-left: 0.5rem;
-        }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
-        @keyframes aurora-bg {
-            0%{background-position:0%50%} 50%{background-position:100%50%} 100%{background-position:0%50%}
-        }
-        .bg-aurora {
-            background: linear-gradient(-45deg, #1e3a8a, #4c1d95, #0f766e, #064e3b);
-            background-size: 400% 400%; animation: aurora-bg 15s ease infinite;
-        }
-        @keyframes float-bubble {
-            0%{transform:translateY(100vh) scale(0);opacity:1} 100%{transform:translateY(-10vh) scale(1);opacity:0}
-        }
-        .bubble {
-            position: absolute; background: rgba(255,255,255,0.2);
-            border-radius: 50%; animation: float-bubble 10s infinite linear;
-        }
-        .neon-text-pink { text-shadow: 0 0 5px #ff00de, 0 0 10px #ff00de, 0 0 20px #ff00de; }
-        .neon-text-cyan { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff; }
-        .matrix-text { color: #0f0; text-shadow: 0 0 5px #0f0; font-family: 'Courier New',monospace; }
-        .envelope-wrapper { perspective: 1000px; cursor: pointer; }
-        .envelope {
-            position: relative; width: 300px; height: 200px; background: #d1d5db;
-            border-radius: 4px; margin: 0 auto; transform-style: preserve-3d; transition: transform 1s ease;
-        }
-        .envelope-flap {
-            position: absolute; top: 0; left: 0; width: 0; height: 0;
-            border-left: 150px solid transparent; border-right: 150px solid transparent;
-            border-top: 100px solid #9ca3af; transform-origin: top;
-            transition: transform 0.5s ease 0.5s; z-index: 10;
-        }
-        .envelope-body {
-            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
-            border-left: 150px solid #f3f4f6; border-right: 150px solid #f3f4f6;
-            border-bottom: 100px solid #e5e7eb; z-index: 5;
-        }
-        .envelope-letter {
-            position: absolute; bottom: 5px; left: 10px; right: 10px; height: 180px;
-            background: white; color: #1f2937; padding: 20px; border-radius: 4px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: transform 1s ease, height 1s ease;
-            z-index: 2; overflow: hidden; display: flex; flex-direction: column;
-        }
-        .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
-        .envelope-wrapper.open .envelope-letter { transform: translateY(-100px); height: 400px; z-index: 20; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow-y: auto; }
-        .gradient-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;
-        }
-        .gradient-card:hover { border-color: rgba(236,72,153,0.4); transform: translateY(-3px); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vũ Trụ Tình Yêu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --bg2: #12122a;
+    --card: rgba(30, 30, 60, 0.6);
+    --card-solid: #1e1e3c;
+    --text: #f0eef7;
+    --muted: #9a97b8;
+    --accent: #e91e8c;
+    --accent2: #9c27b0;
+    --accent3: #673ab7;
+    --accent-soft: rgba(233, 30, 140, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --glow: 0 0 30px rgba(233, 30, 140, 0.3);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Red Hat Display', sans-serif; }
+  html, body { width: 100%; min-height: 100vh; overflow-x: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    position: relative;
+  }
+  #starsCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .galaxy-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(156, 39, 176, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(233, 30, 140, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(103, 58, 183, 0.1) 0%, transparent 60%);
+    animation: galaxyShift 20s ease-in-out infinite alternate;
+  }
+  @keyframes galaxyShift {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.05); }
+  }
+  .bubble {
+    position: fixed;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), rgba(233,30,140,0.1));
+    pointer-events: none;
+    z-index: 0;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+  .app-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+  }
+  .glass {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--glow);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px rgba(233, 30, 140, 0.5);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .input-field {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  .input-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .input-field::placeholder { color: var(--muted); }
+  textarea.input-field { resize: vertical; min-height: 120px; }
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-content {
+    background: var(--card-solid);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    animation: slideUp 0.4s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .template-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .template-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+  .template-card.selected {
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+  }
+  .template-preview {
+    height: 160px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .view { display: none; animation: viewFade 0.4s ease; }
+  .view.active { display: block; }
+  @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .announcement-bar {
+    background: linear-gradient(90deg, var(--accent3), var(--accent2), var(--accent));
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease infinite;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: 500;
+    position: relative;
+    z-index: 50;
+  }
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .maintenance-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--bg);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    text-align: center;
+  }
+  .admin-tab {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  .admin-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .admin-tab:hover { color: var(--text); }
+  .admin-content { display: none; }
+  .admin-content.active { display: block; animation: fadeIn 0.3s ease; }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: rgba(255,255,255,0.03);
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+  .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+  .badge-warning { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+  .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    animation: toastIn 0.3s ease;
+    max-width: 350px;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+  .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .toast.info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .toggle-switch.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  .toggle-switch.active::after { left: 27px; }
+  .hero-title {
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, var(--accent), var(--accent2), var(--accent3));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s ease infinite;
+    text-align: center;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .glow-text {
+    text-shadow: 0 0 20px rgba(233, 30, 140, 0.5);
+  }
+  .password-field {
+    -webkit-text-security: disc;
+    text-security: disc;
+  }
+  .link-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px dashed var(--accent);
+    border-radius: 12px;
+    padding: 16px;
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 14px;
+    color: var(--accent);
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+  /* Template Styles */
+  .tpl-stars { background: linear-gradient(135deg, #0c0c2e, #1a1a4e); color: #fff; }
+  .tpl-galaxy { background: radial-gradient(ellipse at center, #2d1b4e, #0a0a1a); color: #e0d4f7; }
+  .tpl-letter { background: linear-gradient(135deg, #f5e6d3, #e8d4b8); color: #5c4033; font-family: Georgia, serif; }
+  .tpl-neon { background: #0a0a0a; color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+  .tpl-ocean { background: linear-gradient(135deg, #006994, #003366); color: #b3e5fc; }
+  .tpl-sunset { background: linear-gradient(135deg, #ff6b6b, #feca57, #ff9ff3); color: #fff; }
+  .tpl-sakura { background: linear-gradient(135deg, #ffb7c5, #ffc0cb); color: #8b0045; }
+  .tpl-aurora { background: linear-gradient(135deg, #004d40, #1b5e20, #006064); color: #b9f6ca; }
+  .tpl-moonlight { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #c9d6ff; }
+  .tpl-matrix { background: #000; color: #00ff00; font-family: 'Courier New', monospace; }
+  .tpl-clouds { background: linear-gradient(135deg, #87ceeb, #e0f7fa); color: #1565c0; }
+
+  .message-display {
+    min-height: 400px;
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .floating-heart {
+    position: absolute;
+    font-size: 20px;
+    animation: floatHeart 3s ease-in-out infinite;
+    opacity: 0.6;
+  }
+  @keyframes floatHeart {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+  }
+  .select-field {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+  }
+  .select-field option { background: var(--card-solid); color: var(--text); }
+  .checkbox-custom {
+    width: 20px; height: 20px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  @media (max-width: 640px) {
+    .modal-content { padding: 24px; }
+    .message-display { padding: 24px; }
+  }
+</style>
 </head>
-<body class="relative min-h-screen flex flex-col items-center justify-center p-4 select-none">
-    <canvas id="star-canvas"></canvas>
-    <div id="galaxy-bg" class="galaxy-bg"></div>
-    <div id="toast-container"></div>
+<body>
 
-    <div id="loading" class="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 hidden">
-        <i class="fas fa-heart fa-beat text-4xl text-pink-500 mb-4"></i>
-        <p class="text-white font-elegant tracking-widest text-lg">Đang kết nối đến các vì sao...</p>
+<canvas id="starsCanvas"></canvas>
+<div class="galaxy-bg"></div>
+<div id="bubblesContainer"></div>
+
+<div class="app-container">
+
+  <!-- Announcement Bar -->
+  <div id="announcementBar" class="announcement-bar" style="display:none;"></div>
+
+  <!-- Maintenance Screen -->
+  <div id="maintenanceScreen" class="maintenance-screen" style="display:none;">
+    <div style="font-size: 80px; margin-bottom: 20px;">
+      <i class="fas fa-rocket" style="color: var(--accent);"></i>
     </div>
+    <h1 id="maintenanceTitle" style="font-size: 32px; margin-bottom: 16px; font-weight: 700;">Đang Bảo Trì</h1>
+    <p id="maintenanceText" style="color: var(--muted); margin-bottom: 24px; max-width: 500px;">Hệ thống đang được nâng cấp, vui lòng quay lại sau.</p>
+    <div id="maintenanceCountdown" style="font-size: 24px; font-weight: 700; color: var(--accent);"></div>
+  </div>
 
-    <div id="maintenance-screen" class="fixed inset-0 z-50 hidden flex-col items-center justify-center text-center p-8">
-        <div class="glass-panel p-10 rounded-3xl max-w-lg w-full">
-            <i class="fas fa-tools text-5xl text-yellow-400 mb-6"></i>
-            <h2 id="maint-title" class="font-elegant text-3xl mb-4">Đang Bảo Trì</h2>
-            <p id="maint-text" class="text-gray-300 mb-4">Chúng tôi đang nâng cấp hệ thống, vui lòng quay lại sau...</p>
-            <p id="maint-countdown" class="text-pink-400 font-semibold"></p>
+  <!-- HOME VIEW -->
+  <div id="viewHome" class="view active">
+    <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div style="font-size: 60px; margin-bottom: 20px;">
+          <i class="fas fa-heart" style="color: var(--accent); animation: pulse 2s ease infinite;"></i>
         </div>
+        <h1 class="hero-title">Vũ Trụ Tình Yêu</h1>
+        <p id="siteSubtitle" style="color: var(--muted); font-size: 18px; margin-top: 16px; max-width: 500px;">Gửi những thông điệp ngọt ngào xuyên qua vũ trụ đến người bạn yêu thương</p>
+      </div>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+        <button class="btn-primary" onclick="showCreateView()" style="font-size: 16px; padding: 16px 36px;">
+          <i class="fas fa-pen-fancy" style="margin-right: 8px;"></i>Tạo Thông Điệp
+        </button>
+        <button class="btn-secondary" onclick="document.getElementById('userInfo').style.display === 'none' ? showLoginModal() : showUserMenu()">
+          <i class="fas fa-user" style="margin-right: 8px;"></i><span id="userBtnText">Đăng Nhập</span>
+        </button>
+      </div>
+      <div id="userInfo" style="display:none; margin-top: 20px; text-align: center;">
+        <p style="color: var(--muted);">Xin chào, <span id="userNameDisplay" style="color: var(--accent); font-weight: 600;"></span></p>
+      </div>
+      <div style="margin-top: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 800px; width: 100%;">
+        <div class="glass" style="padding: 24px; text-align: center;">
+          <i class="fas fa-magic" style="font-size: 32px; color: var(--accent); margin-bottom: 12px;"></i>
+          <h3 style="font-weight: 600; margin-bottom: 8px;">11 Mẫu Đẹp</h3>
+          <p style="color: var(--muted); font-size: 14px;">Lựa chọn phong cách yêu thích</p>
+        </div>
+        <div class="glass" style="padding: 24px; text-align: center;">
+          <i class="fas fa-lock" style="font-size: 32px; color: var(--accent2); margin-bottom: 12px;"></i>
+          <h3 style="font-weight: 600; margin-bottom: 8px;">Bảo Mật Mật Khẩu</h3>
+          <p style="color: var(--muted); font-size: 14px;">Chỉ người mới được xem</p>
+        </div>
+        <div class="glass" style="padding: 24px; text-align: center;">
+          <i class="fas fa-share-alt" style="font-size: 32px; color: var(--accent3); margin-bottom: 12px;"></i>
+          <h3 style="font-weight: 600; margin-bottom: 8px;">Chia Sẽ Dễ Dàng</h3>
+          <p style="color: var(--muted); font-size: 14px;">Gửi link đến người ấy</p>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div id="login-screen" class="modal-overlay hidden">
-        <div class="modal-box text-center">
-            <h2 class="font-romantic text-4xl text-pink-400 mb-2">Vũ Trụ Tình Yêu</h2>
-            <p class="text-gray-400 mb-8">Đăng nhập để bắt đầu tạo thông điệp</p>
-            <button id="google-login-btn" class="btn-google">
-                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                <span>Đăng nhập bằng Google</span>
-            </button>
+  <!-- CREATE VIEW -->
+  <div id="viewCreate" class="view">
+    <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
+        <button class="btn-secondary" onclick="showHomeView()">
+          <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>Quay lại
+        </button>
+        <h2 style="font-size: 28px; font-weight: 700;">Tạo Thông Điệp Tình Yêu</h2>
+        <div style="width: 100px;"></div>
+      </div>
+
+      <div class="glass" style="padding: 28px; margin-bottom: 28px;">
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
+          <i class="fas fa-palette" style="color: var(--accent); margin-right: 8px;"></i>Chọn Mẫu Giao Diện
+        </h3>
+        <div id="templateGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;"></div>
+      </div>
+
+      <div class="glass" style="padding: 28px;">
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
+          <i class="fas fa-edit" style="color: var(--accent); margin-right: 8px;"></i>Nội Dung Thông Điệp
+        </h3>
+        <div style="display: grid; gap: 20px;">
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tên người gửi</label>
+            <input type="text" id="inputFrom" class="input-field" readonly style="background: rgba(255,255,255,0.03); color: var(--muted);">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tên người nhận <span style="color: var(--accent);">*</span></label>
+            <input type="text" id="inputTo" class="input-field" placeholder="Nhập tên người nhận...">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Nội dung thông điệp <span style="color: var(--accent);">*</span></label>
+            <textarea id="inputContent" class="input-field" placeholder="Viết những điều ngọt ngào bạn muốn gửi..." rows="6"></textarea>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+            <input type="checkbox" id="enablePassword" class="checkbox-custom" onchange="togglePasswordField()">
+            <label for="enablePassword" style="cursor: pointer; font-weight: 500;">
+              <i class="fas fa-lock" style="color: var(--accent); margin-right: 6px;"></i>Tạo mật khẩu cho thông điệp
+            </label>
+          </div>
+          <div id="passwordFieldContainer" style="display: none;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Mật khẩu</label>
+            <input type="password" id="inputPassword" class="input-field password-field" placeholder="Nhập mật khẩu..." autocomplete="off">
+          </div>
+          <button class="btn-primary" onclick="createMessage()" style="width: 100%; padding: 16px; font-size: 16px;">
+            <i class="fas fa-rocket" style="margin-right: 8px;"></i>Tạo Và Chia Sẻ
+          </button>
         </div>
+      </div>
     </div>
+  </div>
 
-    <div id="setname-screen" class="modal-overlay hidden">
-        <div class="modal-box text-center">
-            <h2 class="font-romantic text-3xl text-pink-400 mb-6">Chào bạn 👋</h2>
-            <p class="text-gray-300 mb-4">Nhập tên hiển thị của bạn:</p>
-            <input type="text" id="display-name-input" class="input-field text-center mb-4" placeholder="Tên hiển thị...">
-            <p id="name-error" class="text-red-400 text-sm mb-4 hidden"></p>
-            <button id="confirm-name-btn" class="btn-primary w-full">Xác nhận</button>
-        </div>
+  <!-- MESSAGE VIEW -->
+  <div id="viewMessage" class="view">
+    <div style="max-width: 800px; margin: 0 auto; padding: 40px 20px; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <div id="messageDisplayContainer" style="width: 100%;"></div>
     </div>
+  </div>
 
-    <div id="password-screen" class="modal-overlay hidden">
-        <div class="modal-box text-center">
-            <i class="fas fa-lock text-4xl text-pink-400 mb-4"></i>
-            <h2 class="font-romantic text-2xl text-pink-300 mb-4">🔒 Mật Mã Tình Yêu</h2>
-            <p class="text-gray-300 mb-4">Thông điệp này được bảo vệ, vui lòng nhập mật khẩu:</p>
-            <input type="password" id="msg-password-input" class="input-field text-center mb-4" placeholder="Nhập mật khẩu...">
-            <p id="pass-error" class="text-red-400 text-sm mb-4 hidden">Mật khẩu không đúng!</p>
-            <button id="submit-pass-btn" class="btn-primary w-full">Xem Thông Điệp</button>
+  <!-- ADMIN VIEW -->
+  <div id="viewAdmin" class="view">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 30px 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <h2 style="font-size: 28px; font-weight: 700;">
+          <i class="fas fa-crown" style="color: var(--accent); margin-right: 10px;"></i>Trang Quản Trị
+        </h2>
+        <button class="btn-secondary" onclick="showHomeView()">
+          <i class="fas fa-home" style="margin-right: 8px;"></i>Về Trang Chủ
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; flex-wrap: wrap;">
+        <button class="admin-tab active" onclick="switchAdminTab('stats')">
+          <i class="fas fa-chart-line"></i> Thống Kê
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('messages')">
+          <i class="fas fa-envelope"></i> Thông Điệp
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('templates')">
+          <i class="fas fa-palette"></i> Mẫu Giao Diện
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('maintenance')">
+          <i class="fas fa-wrench"></i> Bảo Trì
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('announcement')">
+          <i class="fas fa-bullhorn"></i> Thông Báo
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('settings')">
+          <i class="fas fa-cog"></i> Cài Đặt
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('tools')">
+          <i class="fas fa-tools"></i> Công Cụ
+        </button>
+      </div>
+
+      <!-- Stats Tab -->
+      <div id="adminStats" class="admin-content active">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;">
+          <div class="stat-card">
+            <div class="stat-number" id="statMessages">0</div>
+            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Tổng Thông Điệp</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statTemplatesActive">0</div>
+            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Mẫu Đang Bật</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statTemplatesTotal">0</div>
+            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Tổng Mẫu</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statUsers">0</div>
+            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Người Dùng</div>
+          </div>
         </div>
+        <div class="glass" style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">
+            <i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>Hoạt Động Gần Đây
+          </h3>
+          <div id="recentActivity" style="display: grid; gap: 12px;"></div>
+        </div>
+      </div>
+
+      <!-- Messages Tab -->
+      <div id="adminMessages" class="admin-content">
+        <div class="glass" style="padding: 24px;">
+          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <input type="text" id="searchMessages" class="input-field" placeholder="Tìm kiếm theo tên..." style="max-width: 300px;" oninput="filterMessages()">
+            <select id="filterTemplate" class="select-field" style="max-width: 220px;" onchange="filterMessages()">
+              <option value="">Tất cả mẫu</option>
+            </select>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Người nhận</th>
+                  <th>Người gửi</th>
+                  <th>Mẫu</th>
+                  <th>Mật khẩu</th>
+                  <th>Thời gian</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="messagesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Templates Tab -->
+      <div id="adminTemplates" class="admin-content">
+        <div class="glass" style="padding: 24px; margin-bottom: 20px;">
+          <button class="btn-primary" onclick="showAddTemplateModal()">
+            <i class="fas fa-plus" style="margin-right: 8px;"></i>Thêm Mẫu Mới
+          </button>
+        </div>
+        <div class="glass" style="padding: 24px;">
+          <div id="adminTemplatesList" style="display: grid; gap: 16px;"></div>
+        </div>
+      </div>
+
+      <!-- Maintenance Tab -->
+      <div id="adminMaintenance" class="admin-content">
+        <div class="glass" style="padding: 28px;">
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
+            <i class="fas fa-wrench" style="color: var(--accent); margin-right: 8px;"></i>Cấu Hình Bảo Trì
+          </h3>
+          <div style="display: grid; gap: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-weight: 500;">Bật chế độ bảo trì</span>
+              <div id="maintenanceToggle" class="toggle-switch" onclick="toggleMaintenance()"></div>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tiêu đề</label>
+              <input type="text" id="maintTitle" class="input-field" placeholder="Đang Bảo Trì">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Nội dung</label>
+              <textarea id="maintText" class="input-field" placeholder="Hệ thống đang được nâng cấp..." rows="3"></textarea>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Thời gian kết thúc (tự động tắt)</label>
+              <input type="datetime-local" id="maintEndTime" class="input-field">
+            </div>
+            <button class="btn-primary" onclick="saveMaintenance()">Lưu Cấu Hình</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Announcement Tab -->
+      <div id="adminAnnouncement" class="admin-content">
+        <div class="glass" style="padding: 28px;">
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
+            <i class="fas fa-bullhorn" style="color: var(--accent); margin-right: 8px;"></i>Cấu Hình Thông Báo
+          </h3>
+          <div style="display: grid; gap: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-weight: 500;">Bật thông báo</span>
+              <div id="announcementToggle" class="toggle-switch" onclick="toggleAnnouncement()"></div>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Nội dung thông báo</label>
+              <textarea id="announcementText" class="input-field" placeholder="Nhập nội dung thông báo..." rows="3"></textarea>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Thời gian hết hạn</label>
+              <input type="datetime-local" id="announcementEndTime" class="input-field">
+            </div>
+            <button class="btn-primary" onclick="saveAnnouncement()">Lưu Cấu Hình</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="adminSettings" class="admin-content">
+        <div class="glass" style="padding: 28px;">
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
+            <i class="fas fa-cog" style="color: var(--accent); margin-right: 8px;"></i>Cài Đặt Hệ Thống
+          </h3>
+          <div style="display: grid; gap: 20px;">
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tiêu đề trang</label>
+              <input type="text" id="settingTitle" class="input-field" placeholder="Vũ Trụ Tình Yêu">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Phụ đề trang</label>
+              <textarea id="settingDesc" class="input-field" placeholder="Gửi những thông điệp ngọt ngào..." rows="2"></textarea>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Mật khẩu quản trị</label>
+              <input type="password" id="settingAdminPassword" class="input-field" placeholder="Để trống nếu không muốn đặt">
+            </div>
+            <button class="btn-primary" onclick="saveSettings()">Lưu Cài Đặt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Tab -->
+      <div id="adminTools" class="admin-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+          <div class="glass" style="padding: 24px;">
+            <h4 style="font-weight: 600; margin-bottom: 12px;"><i class="fas fa-download" style="color: var(--accent); margin-right: 8px;"></i>Xuất Backup</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Tải xuống toàn bộ dữ liệu hệ thống</p>
+            <button class="btn-secondary" onclick="exportBackup()">Xuất Dữ Liệu</button>
+          </div>
+          <div class="glass" style="padding: 24px;">
+            <h4 style="font-weight: 600; margin-bottom: 12px;"><i class="fas fa-upload" style="color: var(--accent); margin-right: 8px;"></i>Nhập Backup</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Phục hồi dữ liệu từ file backup</p>
+            <input type="file" id="backupFile" accept=".json" style="display: none;" onchange="importBackup(event)">
+            <button class="btn-secondary" onclick="document.getElementById('backupFile').click()">Chọn File</button>
+          </div>
+          <div class="glass" style="padding: 24px;">
+            <h4 style="font-weight: 600; margin-bottom: 12px;"><i class="fas fa-link" style="color: var(--accent); margin-right: 8px;"></i>Link Admin</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Sao chép link truy cập quản trị</p>
+            <button class="btn-secondary" onclick="copyAdminLink()">Sao Chép Link</button>
+          </div>
+          <div class="glass" style="padding: 24px; border-color: rgba(239,68,68,0.3);">
+            <h4 style="font-weight: 600; margin-bottom: 12px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>Đặt Lại Dữ Liệu</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Xóa toàn bộ dữ liệu (không thể khôi phục)</p>
+            <button class="btn-danger" onclick="resetAllData()">Đặt Lại Hệ Thống</button>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div id="admin-login-screen" class="modal-overlay hidden">
-        <div class="modal-box text-center">
-            <h2 class="font-elegant text-2xl text-purple-400 mb-6"><i class="fas fa-shield-alt mr-2"></i> Quản Trị Hệ Thống</h2>
-            <input type="password" id="admin-pass-input" class="input-field text-center mb-4" placeholder="Nhập mật khẩu quản trị...">
-            <button id="admin-login-btn" class="btn-primary w-full">Đăng Nhập</button>
-        </div>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" style="text-align: center;">
+    <div style="font-size: 60px; margin-bottom: 20px;">
+      <i class="fas fa-heart" style="color: var(--accent);"></i>
     </div>
+    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">Chào Mừng Đến Vũ Trụ Tình Yêu</h2>
+    <p style="color: var(--muted); margin-bottom: 28px;">Đăng nhập để bắt đầu tạo những thông điệp ngọt ngào</p>
+    <button class="btn-primary" onclick="loginWithGoogle()" style="width: 100%; padding: 14px; font-size: 16px;">
+      <i class="fab fa-google" style="margin-right: 10px;"></i>Đăng Nhập Bằng Google
+    </button>
+  </div>
+</div>
 
-    <div id="announcement-bar" class="fixed top-0 left-0 w-full z-40 hidden">
-        <div class="bg-blue-600/90 text-white py-2 px-4 text-center text-sm">
-            <span id="announcement-text"></span>
-            <span id="ann-countdown" class="countdown-badge"></span>
-        </div>
+<!-- Name Modal -->
+<div id="nameModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 12px; text-align: center;">
+      <i class="fas fa-user-edit" style="color: var(--accent); margin-right: 8px;"></i>Chọn Tên Hiển Thị
+    </h2>
+    <p style="color: var(--muted); margin-bottom: 20px; text-align: center; font-size: 14px;">Tên này sẽ xuất hiện trên thông điệp bạn gửi</p>
+    <input type="text" id="nameInput" class="input-field" placeholder="Nhập tên của bạn..." maxlength="30">
+    <p id="nameError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></p>
+    <button class="btn-primary" onclick="saveUserName()" style="width: 100%; margin-top: 20px; padding: 14px;">Tiếp Tục</button>
+  </div>
+</div>
+
+<!-- Message Password Modal -->
+<div id="msgPasswordModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" style="text-align: center;">
+    <div style="font-size: 50px; margin-bottom: 16px;">
+      <i class="fas fa-lock" style="color: var(--accent);"></i>
     </div>
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Mật Mã Tình Yêu</h2>
+    <p style="color: var(--muted); margin-bottom: 24px;">Thông điệp này được bảo vệ bởi mật khẩu</p>
+    <input type="password" id="msgPasswordInput" class="input-field password-field" placeholder="Nhập mật khẩu..." autocomplete="off">
+    <p id="msgPasswordError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></p>
+    <button class="btn-primary" onclick="verifyMessagePassword()" style="width: 100%; margin-top: 20px; padding: 14px;">Mở Khóa Thông Điệp</button>
+  </div>
+</div>
 
-    <div id="app-container" class="w-full max-w-6xl mx-auto relative z-10 transition-opacity duration-500 opacity-0">
-        <div id="view-home" class="view-section flex flex-col items-center justify-center text-center space-y-8 py-20">
-            <h1 class="font-romantic text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500 animate-float">Vũ Trụ Tình Yêu</h1>
-            <p class="font-elegant text-xl md:text-2xl text-gray-300 max-w-2xl">Gửi gắm những lời yêu thương chân thành nhất qua những vì sao và dải ngân hà.</p>
-            <button onclick="app.navigate('create')" class="mt-8 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full font-bold text-lg hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] transition-all transform hover:scale-105">
-                Tạo Thông Điệp Mới <i class="fas fa-magic ml-2"></i>
-            </button>
-        </div>
+<!-- Admin Login Modal -->
+<div id="adminLoginModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px; text-align: center;">
+      <i class="fas fa-shield-alt" style="color: var(--accent); margin-right: 8px;"></i>Đăng Nhập Quản Trị
+    </h2>
+    <input type="password" id="adminPasswordInput" class="input-field" placeholder="Nhập mật khẩu quản trị...">
+    <p id="adminPasswordError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></p>
+    <button class="btn-primary" onclick="verifyAdminPassword()" style="width: 100%; margin-top: 20px; padding: 14px;">Truy Cập</button>
+    <button class="btn-secondary" onclick="closeAdminLoginModal()" style="width: 100%; margin-top: 10px;">Hủy</button>
+  </div>
+</div>
 
-        <div id="view-create" class="view-section hidden-view flex flex-col space-y-6 w-full">
-            <div class="flex items-center justify-between mb-4">
-                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white"><i class="fas fa-arrow-left mr-2"></i> Quay lại</button>
-                <h2 class="font-elegant text-3xl text-pink-400">Thiết Kế Thông Điệp</h2>
-                <div class="w-20"></div>
-            </div>
-            <div class="glass-panel p-6 rounded-2xl">
-                <h3 class="text-xl mb-4 font-semibold">1. Chọn Mẫu Giao Diện</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-h-[400px] overflow-y-auto pr-2" id="template-selector"></div>
-            </div>
-            <div class="glass-panel p-6 rounded-2xl">
-                <h3 class="text-xl mb-4 font-semibold">2. Viết Lời Yêu Thương</h3>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Gửi đến (Tên người nhận)</label>
-                            <input type="text" id="input-to" class="input-field" placeholder="VD: Cô gái của anh...">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Từ (Tên của bạn)</label>
-                            <input type="text" id="input-from" class="input-field" readonly>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Nội dung</label>
-                        <textarea id="input-message" rows="5" class="input-field" placeholder="Viết những lời chân thật nhất từ trái tim..."></textarea>
-                    </div>
-                    <div class="flex items-center gap-3 mt-2">
-                        <input type="checkbox" id="enable-password">
-                        <label for="enable-password" class="text-gray-300">Tạo mật khẩu cho thông điệp</label>
-                    </div>
-                    <div id="password-field-wrap" class="hidden">
-                        <input type="password" id="input-password" class="input-field" placeholder="Nhập mật khẩu (không gợi ý)...">
-                    </div>
-                    <button id="btn-submit" onclick="app.submitMessage()" class="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl font-bold text-lg hover:from-pink-500 hover:to-purple-500 transition-colors mt-4">
-                        Tạo Và Nhận Link Chia Sẻ <i class="fas fa-paper-plane ml-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-success" class="view-section hidden-view flex flex-col items-center justify-center text-center space-y-6 py-20">
-            <div class="w-24 h-24 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-4"><i class="fas fa-check text-5xl"></i></div>
-            <h2 class="font-elegant text-4xl text-white">Thành Công!</h2>
-            <p class="text-gray-300 mb-4">Thông điệp của bạn đã được tạo thành công.</p>
-            <div class="glass-panel p-4 rounded-xl flex items-center space-x-4 w-full max-w-md">
-                <input type="text" id="share-link" readonly class="bg-transparent border-none flex-1 text-sm text-gray-300 focus:outline-none truncate">
-                <button onclick="app.copyLink()" class="bg-pink-600 hover:bg-pink-500 p-2 rounded-lg transition-colors"><i class="fas fa-copy"></i></button>
-            </div>
-            <div class="flex space-x-4 mt-4">
-                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white">Về trang chủ</button>
-                <button onclick="window.open(document.getElementById('share-link').value,'_blank')" class="text-pink-400 hover:text-pink-300 font-semibold">Xem thử</button>
-            </div>
-        </div>
-
-        <div id="view-display" class="view-section hidden-view w-full min-h-[80vh] flex items-center justify-center relative">
-            <div id="display-container" class="w-full max-w-2xl mx-auto z-10"></div>
-            <div class="absolute bottom-4 left-0 w-full text-center opacity-50 hover:opacity-100 transition-opacity">
-                <a href="./" class="text-xs text-white bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">Tạo thông điệp của riêng bạn <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-        </div>
-
-        <div id="view-admin" class="view-section hidden-view flex flex-col w-full">
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="font-elegant text-3xl text-purple-400"><i class="fas fa-shield-alt mr-2"></i> Trạm Kiểm Soát</h2>
-                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white">Thoát</button>
-            </div>
-            <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-700 pb-2">
-                <button class="tab-btn active" data-tab="stats">📊 Thống kê</button>
-                <button class="tab-btn" data-tab="messages">📋 Thông điệp</button>
-                <button class="tab-btn" data-tab="templates">🎨 Mẫu</button>
-                <button class="tab-btn" data-tab="maintenance">🛠️ Bảo trì</button>
-                <button class="tab-btn" data-tab="announcement">📢 Thông báo</button>
-                <button class="tab-btn" data-tab="settings">⚙️ Cài đặt</button>
-                <button class="tab-btn" data-tab="tools">🔧 Công cụ</button>
-            </div>
-
-            <div class="tab-content active" id="tab-stats">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="glass-panel p-4 rounded-xl text-center"><h3 class="text-gray-400 text-sm">Tổng thông điệp</h3><p class="text-3xl font-bold text-pink-400" id="stat-total">0</p></div>
-                    <div class="glass-panel p-4 rounded-xl text-center"><h3 class="text-gray-400 text-sm">Mẫu đang bật</h3><p class="text-3xl font-bold text-green-400" id="stat-templates">0</p></div>
-                    <div class="glass-panel p-4 rounded-xl text-center"><h3 class="text-gray-400 text-sm">Tổng mẫu</h3><p class="text-3xl font-bold text-blue-400" id="stat-total-tpl">0</p></div>
-                    <div class="glass-panel p-4 rounded-xl text-center"><h3 class="text-gray-400 text-sm">Người dùng</h3><p class="text-3xl font-bold text-purple-400" id="stat-users">0</p></div>
-                </div>
-                <div class="glass-panel p-4 rounded-xl"><h3 class="mb-4">Hoạt động gần đây</h3><div id="recent-activity"></div></div>
-            </div>
-
-            <div class="tab-content" id="tab-messages">
-                <div class="glass-panel p-4 rounded-xl mb-4">
-                    <input type="text" id="search-msg" class="input-field mb-4" placeholder="🔍 Tìm theo tên người gửi/nhận...">
-                    <select id="filter-template" class="input-field mb-4">
-                        <option value="all">Tất cả mẫu</option>
-                    </select>
-                </div>
-                <div class="glass-panel rounded-xl overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-black/20 text-gray-400">
-                                <tr>
-                                    <th class="p-3">Mã</th><th class="p-3">Gửi</th><th class="p-3">Nhận</th><th class="p-3">Mẫu</th><th class="p-3">Thời gian</th><th class="p-3">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="msg-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-templates">
-                <div class="glass-panel p-4 rounded-xl mb-4">
-                    <h3 class="font-semibold mb-3">Thêm Mẫu Mới</h3>
-                    <div class="space-y-3">
-                        <input type="text" id="new-tpl-id" class="input-field" placeholder="ID mẫu (không dấu, không khoảng cách)">
-                        <input type="text" id="new-tpl-name" class="input-field" placeholder="Tên mẫu">
-                        <input type="text" id="new-tpl-icon" class="input-field" placeholder="Icon (VD: fa-heart)">
-                        <textarea id="new-tpl-html" class="input-field" rows="6" placeholder="HTML mẫu. Sử dụng {{to}}, {{from}}, {{content}}"></textarea>
-                        <button onclick="app.addCustomTemplate()" class="btn-primary">Thêm Mẫu</button>
-                    </div>
-                </div>
-                <div class="glass-panel p-4 rounded-xl">
-                    <h3 class="font-semibold mb-3">Danh Sách Mẫu</h3>
-                    <div id="template-admin-list" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-maintenance">
-                <div class="glass-panel p-4 rounded-xl space-y-4">
-                    <label class="flex items-center gap-3"><input type="checkbox" id="maint-enabled"> <span>Bật chế độ bảo trì</span></label>
-                    <div><label class="block text-sm text-gray-400 mb-1">Tiêu đề</label><input type="text" id="maint-title-inp" class="input-field"></div>
-                    <div><label class="block text-sm text-gray-400 mb-1">Nội dung</label><textarea id="maint-content-inp" class="input-field" rows="3"></textarea></div>
-                    <div><label class="block text-sm text-gray-400 mb-1">Kết thúc lúc</label><input type="datetime-local" id="maint-end" class="input-field"></div>
-                    <button onclick="app.saveMaintenance()" class="btn-primary">Lưu Cấu Hình Bảo Trì</button>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-announcement">
-                <div class="glass-panel p-4 rounded-xl space-y-4">
-                    <label class="flex items-center gap-3"><input type="checkbox" id="ann-enabled"> <span>Hiển thị thông báo</span></label>
-                    <div><label class="block text-sm text-gray-400 mb-1">Nội dung thông báo</label><input type="text" id="ann-content-inp" class="input-field"></div>
-                    <div><label class="block text-sm text-gray-400 mb-1">Hết hạn lúc</label><input type="datetime-local" id="ann-end" class="input-field"></div>
-                    <button onclick="app.saveAnnouncement()" class="btn-primary">Lưu Thông Báo</button>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-settings">
-                <div class="glass-panel p-4 rounded-xl space-y-4">
-                    <h3 class="font-semibold">Thông Tin Trang</h3>
-                    <div><label class="block text-sm text-gray-400 mb-1">Tiêu đề trang</label><input type="text" id="site-title" class="input-field"></div>
-                    <div><label class="block text-sm text-gray-400 mb-1">Phụ đề trang</label><input type="text" id="site-desc" class="input-field"></div>
-                    <button onclick="app.saveSiteSettings()" class="btn-primary">Lưu Thông Tin</button>
-                    <hr class="border-gray-700 my-4">
-                    <h3 class="font-semibold">Bảo Mật Admin</h3>
-                    <div><label class="block text-sm text-gray-400 mb-1">Mật khẩu mới</label><input type="password" id="new-admin-pass" class="input-field" placeholder="Để trống nếu không đổi"></div>
-                    <button onclick="app.saveAdminPass()" class="btn-primary">Lưu Mật Khẩu</button>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-tools">
-                <div class="glass-panel p-4 rounded-xl space-y-4">
-                    <button onclick="app.exportData()" class="btn-primary w-full">📥 Tải Backup Cấu Hình</button>
-                    <button onclick="app.importData()" class="btn-primary w-full">📤 Nhập Backup</button>
-                    <button onclick="app.copyAdminLink()" class="btn-primary w-full">🔗 Sao Chép Link Admin</button>
-                    <button onclick="app.resetAllData()" class="bg-red-600 hover:bg-red-500 w-full py-3 rounded-xl font-semibold">⚠️ Đặt Lại Toàn Bộ Dữ Liệu</button>
-                </div>
-            </div>
-        </div>
+<!-- Add Template Modal -->
+<div id="addTemplateModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" style="max-width: 600px;">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">
+      <i class="fas fa-plus" style="color: var(--accent); margin-right: 8px;"></i>Thêm Mẫu Mới
+    </h2>
+    <div style="display: grid; gap: 16px;">
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">ID mẫu (không dấu, không khoảng trắng)</label>
+        <input type="text" id="newTemplateId" class="input-field" placeholder="vd: mytemplate">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tên mẫu</label>
+        <input type="text" id="newTemplateName" class="input-field" placeholder="vd: Mẫu Của Tôi">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">HTML tùy chỉnh (dùng {{to}}, {{from}}, {{content}})</label>
+        <textarea id="newTemplateHtml" class="input-field" placeholder='<div style="padding: 20px;"><h2>Gửi {{to}}</h2><p>{{content}}</p><p style="text-align:right;">— {{from}}</p></div>' rows="8"></textarea>
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">CSS nền xem trước (mã màu)</label>
+        <input type="text" id="newTemplateBg" class="input-field" placeholder="vd: linear-gradient(135deg, #ff6b6b, #feca57)">
+      </div>
     </div>
+    <div style="display: flex; gap: 12px; margin-top: 20px;">
+      <button class="btn-secondary" onclick="closeAddTemplateModal()" style="flex: 1;">Hủy</button>
+      <button class="btn-primary" onclick="saveNewTemplate()" style="flex: 1;">Lưu Mẫu</button>
+    </div>
+  </div>
+</div>
 
-    <input type="file" id="import-file" accept=".json" class="hidden">
+<!-- View Message Modal (admin) -->
+<div id="viewMsgModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" style="max-width: 600px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 style="font-size: 20px; font-weight: 700;">Chi Tiết Thông Điệp</h2>
+      <button onclick="closeViewMsgModal()" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="viewMsgContent"></div>
+  </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, getDocs, deleteDoc, limit, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<!-- Share Link Modal -->
+<div id="shareModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" style="text-align: center;">
+    <div style="font-size: 50px; margin-bottom: 16px;">
+      <i class="fas fa-check-circle" style="color: #4ade80;"></i>
+    </div>
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Tạo Thông Điệp Thành Công!</h2>
+    <p style="color: var(--muted); margin-bottom: 20px;">Sao chép link dưới đây và gửi đến người ấy</p>
+    <div class="link-box" id="shareLinkBox"></div>
+    <div style="display: flex; gap: 12px; margin-top: 20px;">
+      <button class="btn-primary" onclick="copyShareLink()" style="flex: 1;">
+        <i class="fas fa-copy" style="margin-right: 8px;"></i>Sao Chép Link
+      </button>
+      <button class="btn-secondary" onclick="closeShareModal()" style="flex: 1;">Đóng</button>
+    </div>
+  </div>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmQkodF3NruRl1QIGWmu4UNsvQ3yIb0RY",
-            authDomain: "loveuniverse-5f41b.firebaseapp.com",
-            projectId: "loveuniverse-5f41b",
-            storageBucket: "loveuniverse-5f41b.firebasestorage.app",
-            messagingSenderId: "365851228357",
-            appId: "1:365851228357:web:0d41ea4841c0d088a558ac",
-            measurementId: "G-CFGLSL7Q1Y"
-        };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, getDocs, deleteDoc, serverTimestamp, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const BAD_WORDS = ["địt","chịch","lồn","đụ","cặc","buồi","dâm","lỏ","ngu","đần","bỉm","chó","cứt","đái","vãi","vl","cc","lồn","dit","du","lon","ca"];
-        const DEFAULT_TEMPLATES = [
-            { id: 'stars', name: 'Bầu Trời Sao', icon: 'fa-star', desc: 'Thông điệp phát sáng giữa bầu trời đêm', active: true, html: `<div class="text-center space-y-8 animate-float p-8 glass-panel rounded-3xl max-w-xl mx-auto"><h3 class="font-romantic text-4xl text-pink-300">Gửi {{to}},</h3><p class="font-elegant text-xl leading-relaxed text-gray-100 whitespace-pre-wrap">{{content}}</p><div class="pt-6 border-t border-white/20"><p class="text-sm text-gray-400">Từ người luôn nghĩ về bạn,</p><p class="font-romantic text-3xl text-purple-300 mt-2">{{from}}</p></div></div>` },
-            { id: 'galaxy', name: 'Thiên Hà Sâu Thẳm', icon: 'fa-meteor', desc: 'Hiệu ứng vũ trụ huyền ảo', active: true, html: `<div class="text-center relative"><div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl -z-10"></div><h2 class="font-elegant text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200 mb-8 glow-text tracking-wider">{{to}}</h2><div class="max-w-lg mx-auto bg-black/40 p-8 rounded-2xl border border-purple-500/30 backdrop-blur-sm shadow-[0_0_50px_rgba(168,85,247,0.2)]"><p class="text-lg font-light text-gray-200 mb-6 leading-relaxed whitespace-pre-wrap">{{content}}</p><div class="text-right"><span class="text-xs uppercase tracking-widest text-purple-400">Người gửi</span><p class="font-bold text-white text-xl mt-1">{{from}}</p></div></div></div>` },
-            { id: 'letter', name: 'Thư Tay Bí Mật', icon: 'fa-envelope', desc: 'Bức thư có thể mở ra', active: true, html: `<div class="envelope-wrapper" onclick="this.classList.toggle('open')"><div class="envelope"><div class="envelope-flap"></div><div class="envelope-body"></div><div class="envelope-letter space-y-4"><h3 class="font-romantic text-2xl text-pink-600 font-bold border-b pb-2">Thân gửi {{to}},</h3><p class="font-elegant text-gray-700 text-sm leading-relaxed whitespace-pre-wrap flex-1">{{content}}</p><p class="font-romantic text-xl text-right text-purple-700 pt-2 border-t">Ký tên: {{from}}</p></div><div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 text-white font-bold bg-pink-500 px-3 py-1 rounded-full shadow-lg" id="tap-hint">Chạm để mở</div></div></div><style>.envelope-wrapper.open #tap-hint{opacity:0}</style>` },
-            { id: 'neon', name: 'Neon Tình Yêu', icon: 'fa-bolt', desc: 'Hiệu ứng đèn Neon rực rỡ', active: true, html: `<div class="text-center p-8 border-4 border-pink-500 rounded-3xl shadow-[0_0_30px_#ff00de] bg-black/80 max-w-xl mx-auto"><h2 class="font-sans text-5xl font-bold text-white mb-6 neon-text-pink uppercase tracking-widest">{{to}}</h2><p class="text-xl text-white mb-8 neon-text-cyan leading-relaxed whitespace-pre-wrap">{{content}}</p><div class="border-t-2 border-cyan-500 pt-4 mt-8"><span class="text-white text-sm neon-text-cyan">Người gửi: </span><p class="font-bold text-2xl text-white neon-text-pink">{{from}}</p></div></div>` },
-            { id: 'ocean', name: 'Đại Dương Xanh', icon: 'fa-water', desc: 'Chìm đắm dưới đại dương', active: true, html: `<div class="fixed inset-0 bg-gradient-to-b from-blue-400 via-blue-700 to-blue-900 -z-10 overflow-hidden">${Array.from({length:12}).map(()=>`<div class="bubble" style="left:${Math.random()*100}%;width:${Math.random()*30+10}px;height:${Math.random()*30+10}px;animation-duration:${Math.random()*5+5}s;animation-delay:${Math.random()*3}s"></div>`).join('')}</div><div class="text-center p-10 bg-white/10 backdrop-blur-md rounded-full shadow-[0_0_40px_rgba(255,255,255,0.2)] border border-white/20 max-w-lg mx-auto mt-10"><h2 class="font-elegant text-5xl text-white font-bold mb-4 drop-shadow-lg">{{to}}</h2><p class="text-lg text-blue-100 whitespace-pre-wrap leading-relaxed drop-shadow-md">{{content}}</p><p class="font-elegant text-2xl text-white mt-8 italic drop-shadow-md">~ {{from}} ~</p></div>` },
-            { id: 'sunset', name: 'Hoàng Hôn', icon: 'fa-sun', desc: 'Cảnh hoàng hôn lãng mạn', active: true, html: `<div class="fixed inset-0 bg-gradient-to-b from-orange-400 via-red-500 to-purple-900 -z-10"></div><div class="text-center p-8 max-w-xl mx-auto bg-white/5 backdrop-blur-sm rounded-2xl border-t border-white/30 shadow-2xl mt-16"><i class="fas fa-sun text-6xl text-yellow-300 mb-6 animate-pulse opacity-80"></i><h2 class="font-romantic text-6xl text-yellow-200 mb-6 drop-shadow">{{to}}</h2><p class="font-elegant text-xl text-white whitespace-pre-wrap leading-relaxed drop-shadow">{{content}}</p><p class="font-romantic text-3xl text-orange-200 mt-8 drop-shadow">{{from}}</p></div>` },
-            { id: 'sakura', name: 'Hoa Anh Đào', icon: 'fa-fan', desc: 'Sắc hồng ngọt ngào', active: true, html: `<div class="fixed inset-0 bg-pink-50 -z-10 overflow-hidden">${Array.from({length:15}).map(()=>`<div class="absolute bg-pink-300/50 rounded-full" style="left:${Math.random()*100}%;width:${Math.random()*15+5}px;height:${Math.random()*15+5}px;animation:float-bubble ${Math.random()*5+4}s infinite linear;top:-20px"></div>`).join('')}</div><div class="text-center p-10 max-w-xl mx-auto bg-white/60 backdrop-blur-md rounded-3xl shadow-xl border border-pink-200 mt-12"><h2 class="font-elegant text-5xl text-pink-600 mb-6 italic">{{to}}</h2><p class="text-lg text-gray-700 whitespace-pre-wrap leading-relaxed font-light">{{content}}</p><div class="mt-8 pt-6 border-t border-pink-200"><p class="font-elegant text-2xl text-pink-500">{{from}}</p></div></div>` },
-            { id: 'aurora', name: 'Cực Quang', icon: 'fa-wave-square', desc: 'Dải màu ma thuật phương Bắc', active: true, html: `<div class="fixed inset-0 bg-aurora -z-10"></div><div class="text-center p-12 max-w-2xl mx-auto bg-black/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-[0_0_40px_rgba(255,255,255,0.1)] mt-16"><h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-purple-300 mb-8 drop-shadow-lg">{{to}}</h2><p class="font-sans text-xl text-gray-100 whitespace-pre-wrap leading-relaxed">{{content}}</p><p class="font-elegant text-3xl text-teal-100 mt-10 border-t border-white/20 pt-6 inline-block">{{from}}</p></div>` },
-            { id: 'moonlight', name: 'Dưới Ánh Trăng', icon: 'fa-moon', desc: 'Ánh trăng sáng và lãng mạn', active: true, html: `<div class="fixed inset-0 bg-gradient-to-b from-gray-900 to-blue-900 -z-10"></div><div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-yellow-100 rounded-full shadow-[0_0_80px_#fef08a] opacity-80 -z-10"></div><div class="text-center p-8 max-w-xl mx-auto mt-24 bg-black/40 backdrop-blur-md rounded-2xl border border-blue-800/50"><h2 class="font-romantic text-5xl text-yellow-200 mb-6">{{to}}</h2><p class="font-elegant text-lg text-blue-100 whitespace-pre-wrap leading-relaxed">{{content}}</p><p class="font-romantic text-3xl text-white mt-8">{{from}}</p></div>` },
-            { id: 'matrix', name: 'Ma Trận Code', icon: 'fa-code', desc: 'Dành cho coder lãng mạn', active: true, html: `<div class="fixed inset-0 bg-black -z-10"></div><div class="text-left p-8 max-w-2xl mx-auto border border-green-500 bg-black/80 shadow-[0_0_20px_#00ff00] mt-16"><p class="matrix-text text-xl mb-6">> root@heart:~# echo "Gửi {{to}}"</p><p class="matrix-text text-lg whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-green-700">{{content}}</p><p class="matrix-text text-xl mt-8">> root@heart:~# sign --author "{{from}}"</p><p class="matrix-text text-sm mt-2 animate-pulse">_</p></div>` },
+const firebaseConfig = {
+  apiKey: "AIzaSyDmQkodF3NruRl1QIGWmu4UNsvQ3yIb0RY",
+  authDomain: "loveuniverse-5f41b.firebaseapp.com",
+  projectId: "loveuniverse-5f41b",
+  storageBucket: "loveuniverse-5f41b.firebasestorage.app",
+  messagingSenderId: "365851228357",
+  appId: "1:365851228357:web:0d41ea4841c0d088a558ac",
+  measurementId: "G-CFGLSL7Q1Y"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const GOOGLE_PROVIDER = new GoogleAuthProvider();
+
+// ============ DEFAULT TEMPLATES ============
+const DEFAULT_TEMPLATES = [
+  {
+    id: 'stars', name: 'Bầu Trời Sao',
+    previewClass: 'tpl-stars',
+    bgStyle: 'linear-gradient(135deg, #0c0c2e, #1a1a4e)',
+    html: `<div style="background: linear-gradient(135deg, #0c0c2e, #1a1a4e); color: #fff; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20% 30%, white, transparent), radial-gradient(2px 2px at 60% 70%, white, transparent), radial-gradient(1px 1px at 50% 50%, white, transparent), radial-gradient(1px 1px at 80% 10%, white, transparent), radial-gradient(2px 2px at 90% 60%, white, transparent); background-size: 200px 200px; opacity: 0.5;"></div>
+      <div style="position: relative; z-index: 1;">
+        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-star" style="color: #ffd700; font-size: 40px;"></i></div>
+        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Gửi đến {{to}}</h3>
+        <p style="font-size: 18px; line-height: 1.8; text-align: center; font-style: italic;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px; opacity: 0.8;">— {{from}}</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'galaxy', name: 'Thiên Hà Sâu Thẳm',
+    previewClass: 'tpl-galaxy',
+    bgStyle: 'radial-gradient(ellipse at center, #2d1b4e, #0a0a1a)',
+    html: `<div style="background: radial-gradient(ellipse at center, #4a2c7a, #1a0a30); color: #e0d4f7; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
+      <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(186,85,211,0.3), transparent); top: -100px; right: -100px; border-radius: 50%;"></div>
+      <div style="position: relative; z-index: 1;">
+        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-meteor" style="color: #c084fc; font-size: 40px;"></i></div>
+        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px; letter-spacing: 2px;">{{to}} thân mến,</h3>
+        <p style="font-size: 18px; line-height: 2; text-align: center;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px; font-style: italic;">— {{from}}</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'letter', name: 'Thư Tay Bí Mật',
+    previewClass: 'tpl-letter',
+    bgStyle: 'linear-gradient(135deg, #f5e6d3, #e8d4b8)',
+    html: `<div style="background: linear-gradient(135deg, #fef9ef, #f5e6d3); color: #5c4033; padding: 50px 40px; border-radius: 8px; min-height: 400px; font-family: Georgia, serif; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative;">
+      <div style="position: absolute; top: 10px; right: 20px; font-size: 30px; opacity: 0.3;">💌</div>
+      <h3 style="font-size: 20px; margin-bottom: 24px; font-style: italic;">Gửi {{to}},</h3>
+      <p style="font-size: 17px; line-height: 2; white-space: pre-wrap;">{{content}}</p>
+      <p style="text-align: right; margin-top: 40px; font-style: italic;">Trân trọng,<br><strong>{{from}}</strong></p>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'neon', name: 'Neon Tình Yêu',
+    previewClass: 'tpl-neon',
+    bgStyle: '#0a0a0a',
+    html: `<div style="background: #0a0a0a; color: #ff00ff; padding: 40px; border-radius: 20px; min-height: 400px; border: 2px solid #ff00ff; box-shadow: 0 0 30px rgba(255,0,255,0.5), inset 0 0 30px rgba(255,0,255,0.1);">
+      <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-bolt" style="color: #00ffff; font-size: 40px; text-shadow: 0 0 20px #00ffff;"></i></div>
+      <h3 style="text-align: center; color: #00ffff; text-shadow: 0 0 15px #00ffff; margin-bottom: 24px; font-size: 16px;">HEY {{to}}!</h3>
+      <p style="font-size: 18px; line-height: 1.8; text-align: center; text-shadow: 0 0 10px #ff00ff;">{{content}}</p>
+      <p style="text-align: right; margin-top: 40px; color: #00ffff; text-shadow: 0 0 10px #00ffff;">— {{from}}</p>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'ocean', name: 'Đại Dương Xanh',
+    previewClass: 'tpl-ocean',
+    bgStyle: 'linear-gradient(135deg, #006994, #003366)',
+    html: `<div style="background: linear-gradient(180deg, #0077be, #001f3f); color: #b3e5fc; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
+      <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(transparent, rgba(0,119,190,0.5));"></div>
+      <div style="position: relative; z-index: 1;">
+        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-water" style="color: #4fc3f7; font-size: 40px;"></i></div>
+        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Gửi {{to}},</h3>
+        <p style="font-size: 18px; line-height: 1.8; text-align: center;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px; font-style: italic;">— {{from}}</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'sunset', name: 'Hoàng Hôn',
+    previewClass: 'tpl-sunset',
+    bgStyle: 'linear-gradient(135deg, #ff6b6b, #feca57)',
+    html: `<div style="background: linear-gradient(135deg, #ff6b6b, #feca57, #ff9ff3); color: #fff; padding: 40px; border-radius: 20px; min-height: 400px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
+      <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-sun" style="color: #fff59d; font-size: 40px;"></i></div>
+      <h3 style="text-align: center; font-size: 14px; opacity: 0.9; margin-bottom: 20px;">{{to}} ơi,</h3>
+      <p style="font-size: 18px; line-height: 1.8; text-align: center; font-weight: 500;">{{content}}</p>
+      <p style="text-align: right; margin-top: 40px;">— {{from}}</p>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'sakura', name: 'Hoa Anh Đào',
+    previewClass: 'tpl-sakura',
+    bgStyle: 'linear-gradient(135deg, #ffb7c5, #ffc0cb)',
+    html: `<div style="background: linear-gradient(135deg, #ffe4ec, #ffb7c5); color: #8b0045; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 20px; left: 20px; font-size: 24px; opacity: 0.5;">🌸</div>
+      <div style="position: absolute; top: 40px; right: 30px; font-size: 20px; opacity: 0.4;">🌸</div>
+      <div style="position: absolute; bottom: 30px; left: 40px; font-size: 18px; opacity: 0.3;">🌸</div>
+      <div style="position: relative; z-index: 1;">
+        <h3 style="text-align: center; font-size: 16px; margin-bottom: 24px; font-style: italic;">Gửi {{to}} thân yêu,</h3>
+        <p style="font-size: 18px; line-height: 1.9; text-align: center;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px;">— {{from}} 🌸</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'aurora', name: 'Cực Quang',
+    previewClass: 'tpl-aurora',
+    bgStyle: 'linear-gradient(135deg, #004d40, #1b5e20)',
+    html: `<div style="background: linear-gradient(180deg, #001a1a, #004d40, #1b5e20); color: #b9f6ca; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(180deg, rgba(76,175,80,0.3), transparent); filter: blur(20px);"></div>
+      <div style="position: relative; z-index: 1;">
+        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-north-star" style="color: #69f0ae; font-size: 40px;"></i></div>
+        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px;">{{to}},</h3>
+        <p style="font-size: 18px; line-height: 1.8; text-align: center;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px; font-style: italic;">— {{from}}</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'moonlight', name: 'Dưới Ánh Trăng',
+    previewClass: 'tpl-moonlight',
+    bgStyle: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+    html: `<div style="background: linear-gradient(135deg, #1a1a2e, #16213e); color: #c9d6ff; padding: 40px; border-radius: 20px; min-height: 400px; position: relative;">
+      <div style="position: absolute; top: 30px; right: 30px; width: 60px; height: 60px; background: radial-gradient(circle at 30% 30%, #fffacd, #ffd700); border-radius: 50%; box-shadow: 0 0 40px rgba(255,215,0,0.4);"></div>
+      <div style="position: relative; z-index: 1; padding-top: 20px;">
+        <h3 style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">Dưới ánh trăng, gửi {{to}},</h3>
+        <p style="font-size: 18px; line-height: 2; font-style: italic;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px;">🌙 {{from}}</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'matrix', name: 'Ma Trận Code',
+    previewClass: 'tpl-matrix',
+    bgStyle: '#000',
+    html: `<div style="background: #000; color: #00ff00; padding: 40px; border-radius: 20px; min-height: 400px; font-family: 'Courier New', monospace; border: 1px solid #00ff00;">
+      <div style="font-size: 12px; opacity: 0.5; margin-bottom: 20px;">// INITIALIZING LOVE.exe...</div>
+      <div style="margin-bottom: 20px; color: #00ff00;">
+        <span style="opacity: 0.7;">to:</span> <strong>{{to}}</strong><br>
+        <span style="opacity: 0.7;">from:</span> <strong>{{from}}</strong><br>
+        <span style="opacity: 0.7;">status:</span> <span style="color: #4ade80;">● TRANSMITTING</span>
+      </div>
+      <div style="border-left: 2px solid #00ff00; padding-left: 16px; margin: 20px 0;">
+        <p style="font-size: 16px; line-height: 1.8; white-space: pre-wrap;">{{content}}</p>
+      </div>
+      <div style="font-size: 12px; opacity: 0.5; margin-top: 20px;">// END_OF_MESSAGE // LOVE: true</div>
+    </div>`,
+    enabled: true, custom: false
+  },
+  {
+    id: 'clouds', name: 'Trên Chín Tầng Mây',
+    previewClass: 'tpl-clouds',
+    bgStyle: 'linear-gradient(135deg, #87ceeb, #e0f7fa)',
+    html: `<div style="background: linear-gradient(180deg, #87ceeb, #e0f7fa, #fff); color: #1565c0; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 20px; left: 10%; width: 80px; height: 30px; background: white; border-radius: 50%; opacity: 0.8;"></div>
+      <div style="position: absolute; top: 50px; right: 15%; width: 100px; height: 35px; background: white; border-radius: 50%; opacity: 0.7;"></div>
+      <div style="position: relative; z-index: 1; padding-top: 30px;">
+        <div style="text-align: center; margin-bottom: 24px;"><i class="fas fa-cloud" style="color: #fff; font-size: 40px; text-shadow: 0 2px 10px rgba(0,0,0,0.1);"></i></div>
+        <h3 style="text-align: center; font-size: 16px; margin-bottom: 20px;">Gửi {{to}} từ trên mây,</h3>
+        <p style="font-size: 18px; line-height: 1.8; text-align: center; font-weight: 500;">{{content}}</p>
+        <p style="text-align: right; margin-top: 40px;">☁️ {{from}}</p>
+      </div>
+    </div>`,
+    enabled: true, custom: false
+  }
+];
+
+// ============ BAD WORDS FILTER ============
+const BAD_WORDS = ['địt', 'đụ', 'cặc', 'bú', 'lồn', 'chịch', 'má mày', 'đồ điên', 'vãi lồn', 'đm', 'clm', 'vkl', 'duma', 'con mẹ', 'con đĩ', 'đĩ', 'khốn', 'ngu xuẩn', 'thằng ngu', 'súc vật', 'chó đẻ', 'đồ chó', 'mặt phẳng', 'xấu xí', 'đồ tồi', 'tồi tệ', 'chết tiệt', 'đồ chết', 'phế', 'vô dụng', 'đồ đb', 'đồ ngu', 'đồ khốn', 'bần đảo', 'bần tiện', 'đê tiện', 'phụ nữ bẩn', 'con gà', 'gà con', 'thằng điên', 'con điên', 'bố mày', 'mẹ mày', 'đụ mẹ', 'địt mẹ', 'lồn mẹ', 'cặc mẹ', 'chịch mẹ', 'đụ má', 'địt má', 'lồn má', 'cặc má', 'chịch má', 'fuck', 'shit', 'bitch', 'asshole', 'dick', 'pussy', 'cunt', 'whore', 'slut', 'nigger', 'nigga', 'retard', 'faggot', 'trash', 'idiot', 'stupid', 'moron', 'dumbass'];
+
+function containsBadWord(text) {
+  if (!text) return false;
+  const lower = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  for (const word of BAD_WORDS) {
+    const normalizedWord = word.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (lower.includes(normalizedWord)) return true;
+  }
+  return false;
+}
+
+// ============ STATE ============
+let currentUser = null;
+let selectedTemplateId = 'stars';
+let allTemplates = [...DEFAULT_TEMPLATES];
+let allMessages = [];
+let systemConfig = null;
+let currentMessageId = null;
+let pendingMessageData = null;
+let adminAuthenticated = false;
+
+// ============ STARS CANVAS ============
+const canvas = document.getElementById('starsCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 4000);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 0.5,
+      speed: Math.random() * 0.3 + 0.05,
+      opacity: Math.random() * 0.8 + 0.2,
+      twinkle: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(star => {
+    star.twinkle += 0.02;
+    const twinkleOpacity = star.opacity * (0.5 + 0.5 * Math.sin(star.twinkle));
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${twinkleOpacity})`;
+    ctx.fill();
+    star.y += star.speed;
+    if (star.y > canvas.height) {
+      star.y = 0;
+      star.x = Math.random() * canvas.width;
+    }
+  });
+  requestAnimationFrame(drawStars);
+}
+
+resizeCanvas();
+initStars();
+drawStars();
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  initStars();
+});
+
+// ============ BUBBLES ============
+function createBubble() {
+  const container = document.getElementById('bubblesContainer');
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  const size = Math.random() * 40 + 10;
+  bubble.style.width = size + 'px';
+  bubble.style.height = size + 'px';
+  bubble.style.left = Math.random() * 100 + '%';
+  bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
+  container.appendChild(bubble);
+  setTimeout(() => bubble.remove(), 20000);
+}
+setInterval(createBubble, 2000);
+
+// ============ TOAST ============
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// ============ VIEW NAVIGATION ============
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showHomeView() {
+  showView('viewHome');
+  history.pushState(null, '', window.location.pathname);
+}
+
+function showCreateView() {
+  if (!currentUser) {
+    showLoginModal();
+    return;
+  }
+  renderTemplateGrid();
+  document.getElementById('inputFrom').value = currentUser.name || '';
+  showView('viewCreate');
+}
+
+function showMessageView() {
+  showView('viewMessage');
+}
+
+function showAdminView() {
+  showView('viewAdmin');
+  loadAdminData();
+}
+
+// ============ MODALS ============
+function showLoginModal() {
+  document.getElementById('loginModal').style.display = 'flex';
+}
+function closeLoginModal() {
+  document.getElementById('loginModal').style.display = 'none';
+}
+
+function showNameModal() {
+  document.getElementById('nameModal').style.display = 'flex';
+  document.getElementById('nameInput').focus();
+}
+function closeNameModal() {
+  document.getElementById('nameModal').style.display = 'none';
+}
+
+function showMsgPasswordModal() {
+  document.getElementById('msgPasswordModal').style.display = 'flex';
+  document.getElementById('msgPasswordInput').value = '';
+  document.getElementById('msgPasswordInput').focus();
+  document.getElementById('msgPasswordError').style.display = 'none';
+}
+function closeMsgPasswordModal() {
+  document.getElementById('msgPasswordModal').style.display = 'none';
+}
+
+function showAdminLoginModal() {
+  document.getElementById('adminLoginModal').style.display = 'flex';
+  document.getElementById('adminPasswordInput').value = '';
+  document.getElementById('adminPasswordInput').focus();
+  document.getElementById('adminPasswordError').style.display = 'none';
+}
+function closeAdminLoginModal() {
+  document.getElementById('adminLoginModal').style.display = 'none';
+}
+
+function showAddTemplateModal() {
+  document.getElementById('addTemplateModal').style.display = 'flex';
+  document.getElementById('newTemplateId').value = '';
+  document.getElementById('newTemplateName').value = '';
+  document.getElementById('newTemplateHtml').value = '';
+  document.getElementById('newTemplateBg').value = '';
+}
+function closeAddTemplateModal() {
+  document.getElementById('addTemplateModal').style.display = 'none';
+}
+
+function closeViewMsgModal() {
+  document.getElementById('viewMsgModal').style.display = 'none';
+}
+
+function closeShareModal() {
+  document.getElementById('shareModal').style.display = 'none';
+}
+
+// ============ AUTH ============
+async function loginWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, GOOGLE_PROVIDER);
+    closeLoginModal();
+    const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+    if (!userDoc.exists()) {
+      showNameModal();
+    } else {
+      currentUser = { uid: result.user.uid, ...userDoc.data() };
+      updateUserUI();
+      showToast('Đăng nhập thành công!');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    showToast('Đăng nhập thất bại, vui lòng thử lại', 'error');
+  }
+}
+
+async function saveUserName() {
+  const nameInput = document.getElementById('nameInput');
+  const nameError = document.getElementById('nameError');
+  const name = nameInput.value.trim();
+
+  if (!name) {
+    nameError.textContent = 'Vui lòng nhập tên';
+    nameError.style.display = 'block';
+    return;
+  }
+  if (name.length < 2) {
+    nameError.textContent = 'Tên quá ngắn (tối thiểu 2 ký tự)';
+    nameError.style.display = 'block';
+    return;
+  }
+  if (containsBadWord(name)) {
+    nameError.textContent = 'Tên không hợp lệ';
+    nameError.style.display = 'block';
+    return;
+  }
+
+  try {
+    const q = query(collection(db, 'users'), where('name', '==', name));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      nameError.textContent = 'Tên đã tồn tại, vui lòng chọn tên khác';
+      nameError.style.display = 'block';
+      return;
+    }
+
+    await setDoc(doc(db, 'users', auth.currentUser.uid), {
+      name: name,
+      email: auth.currentUser.email,
+      createdAt: serverTimestamp()
+    });
+
+    currentUser = { uid: auth.currentUser.uid, name: name, email: auth.currentUser.email };
+    closeNameModal();
+    updateUserUI();
+    showToast('Đăng ký thành công!');
+  } catch (error) {
+    console.error('Save name error:', error);
+    showToast('Có lỗi xảy ra, vui lòng thử lại', 'error');
+  }
+}
+
+function updateUserUI() {
+  if (currentUser) {
+    document.getElementById('userBtnText').textContent = currentUser.name;
+    document.getElementById('userInfo').style.display = 'block';
+    document.getElementById('userNameDisplay').textContent = currentUser.name;
+  } else {
+    document.getElementById('userBtnText').textContent = 'Đăng Nhập';
+    document.getElementById('userInfo').style.display = 'none';
+  }
+}
+
+function showUserMenu() {
+  if (confirm('Bạn có muốn đăng xuất không?')) {
+    signOut(auth).then(() => {
+      currentUser = null;
+      updateUserUI();
+      showToast('Đã đăng xuất');
+    });
+  }
+}
+
+// ============ TEMPLATES ============
+function renderTemplateGrid() {
+  const grid = document.getElementById('templateGrid');
+  grid.innerHTML = '';
+  const enabledTemplates = allTemplates.filter(t => t.enabled !== false);
+  enabledTemplates.forEach(template => {
+    const card = document.createElement('div');
+    card.className = `template-card ${template.id === selectedTemplateId ? 'selected' : ''}`;
+    card.onclick = () => selectTemplate(template.id);
+    card.innerHTML = `
+      <div class="template-preview" style="background: ${template.bgStyle};">
+        <div style="opacity: 0.8;">${template.name}</div>
+      </div>
+      <div style="text-align: center; font-weight: 500; font-size: 14px;">${template.name}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function selectTemplate(id) {
+  selectedTemplateId = id;
+  renderTemplateGrid();
+}
+
+// ============ CREATE MESSAGE ============
+function togglePasswordField() {
+  const enabled = document.getElementById('enablePassword').checked;
+  document.getElementById('passwordFieldContainer').style.display = enabled ? 'block' : 'none';
+}
+
+function generateId(length = 12) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+async function createMessage() {
+  if (!currentUser) {
+    showLoginModal();
+    return;
+  }
+
+  const to = document.getElementById('inputTo').value.trim();
+  const content = document.getElementById('inputContent').value.trim();
+  const enablePassword = document.getElementById('enablePassword').checked;
+  const password = enablePassword ? document.getElementById('inputPassword').value : '';
+
+  if (!to) {
+    showToast('Vui lòng nhập tên người nhận', 'error');
+    return;
+  }
+  if (!content) {
+    showToast('Vui lòng nhập nội dung thông điệp', 'error');
+    return;
+  }
+  if (containsBadWord(to) || containsBadWord(content)) {
+    showToast('Nội dung chứa từ ngữ không phù hợp', 'error');
+    return;
+  }
+  if (enablePassword && !password) {
+    showToast('Vui lòng nhập mật khẩu', 'error');
+    return;
+  }
+
+  try {
+    const msgId = generateId();
+    const msgData = {
+      id: msgId,
+      to: to,
+      from: currentUser.name,
+      content: content,
+      templateId: selectedTemplateId,
+      password: enablePassword ? password : null,
+      createdAt: serverTimestamp(),
+      userId: currentUser.uid
+    };
+
+    await setDoc(doc(db, 'messages', msgId), msgData);
+
+    const shareUrl = window.location.origin + window.location.pathname + '?msg=' + msgId;
+    document.getElementById('shareLinkBox').textContent = shareUrl;
+    document.getElementById('shareModal').style.display = 'flex';
+
+    document.getElementById('inputTo').value = '';
+    document.getElementById('inputContent').value = '';
+    document.getElementById('enablePassword').checked = false;
+    document.getElementById('passwordFieldContainer').style.display = 'none';
+    document.getElementById('inputPassword').value = '';
+  } catch (error) {
+    console.error('Create message error:', error);
+    showToast('Tạo thông điệp thất bại, vui lòng thử lại', 'error');
+  }
+}
+
+function copyShareLink() {
+  const link = document.getElementById('shareLinkBox').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('Đã sao chép link!');
+  });
+}
+
+// ============ VIEW MESSAGE ============
+async function loadMessage(msgId) {
+  currentMessageId = msgId;
+  try {
+    const docSnap = await getDoc(doc(db, 'messages', msgId));
+    if (!docSnap.exists()) {
+      document.getElementById('messageDisplayContainer').innerHTML = `
+        <div class="glass" style="padding: 60px; text-align: center;">
+          <div style="font-size: 60px; margin-bottom: 20px;"><i class="fas fa-question-circle" style="color: var(--muted);"></i></div>
+          <h2 style="font-size: 24px; margin-bottom: 12px;">Không Tìm Thấy Thông Điệp</h2>
+          <p style="color: var(--muted); margin-bottom: 24px;">Thông điệp này không tồn tại hoặc đã bị xóa.</p>
+          <button class="btn-primary" onclick="showHomeView()">Về Trang Chủ</button>
+        </div>
+      `;
+      showMessageView();
+      return;
+    }
+
+    const msgData = docSnap.data();
+    pendingMessageData = msgData;
+
+    if (msgData.password) {
+      showMsgPasswordModal();
+    } else {
+      displayMessage(msgData);
+    }
+  } catch (error) {
+    console.error('Load message error:', error);
+    showToast('Có lỗi xảy ra', 'error');
+  }
+}
+
+function verifyMessagePassword() {
+  const input = document.getElementById('msgPasswordInput').value;
+  const errorEl = document.getElementById('msgPasswordError');
+
+  if (!pendingMessageData) return;
+
+  if (input === pendingMessageData.password) {
+    closeMsgPasswordModal();
+    displayMessage(pendingMessageData);
+  } else {
+    errorEl.textContent = 'Mật khẩu không đúng, vui lòng thử lại';
+    errorEl.style.display = 'block';
+  }
+}
+
+function displayMessage(msgData) {
+  const template = allTemplates.find(t => t.id === msgData.templateId) || allTemplates[0];
+  let html = template.html
+    .replace(/\{\{to\}\}/g, escapeHtml(msgData.to))
+    .replace(/\{\{from\}\}/g, escapeHtml(msgData.from))
+    .replace(/\{\{content\}\}/g, escapeHtml(msgData.content).replace(/\n/g, '<br>'));
+
+  document.getElementById('messageDisplayContainer').innerHTML = `
+    ${html}
+    <div style="text-align: center; margin-top: 24px;">
+      <button class="btn-secondary" onclick="showHomeView()">
+        <i class="fas fa-home" style="margin-right: 8px;"></i>Về Trang Chủ
+      </button>
+    </div>
+  `;
+  showMessageView();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ============ SYSTEM CONFIG ============
+async function loadSystemConfig() {
+  try {
+    const docSnap = await getDoc(doc(db, 'settings', 'config'));
+    if (docSnap.exists()) {
+      systemConfig = docSnap.data();
+    } else {
+      systemConfig = {
+        maintenance: { enabled: false, title: 'Đang Bảo Trì', text: 'Hệ thống đang được nâng cấp', endTime: null },
+        announcement: { enabled: false, text: '', endTime: null },
+        site: { title: 'Vũ Trụ Tình Yêu', description: 'Gửi những thông điệp ngọt ngào xuyên qua vũ trụ đến người bạn yêu thương' },
+        adminPassword: '',
+        customTemplates: []
+      };
+      await setDoc(doc(db, 'settings', 'config'), systemConfig);
+    }
+
+    if (systemConfig.customTemplates && systemConfig.customTemplates.length > 0) {
+      allTemplates = [...DEFAULT_TEMPLATES, ...systemConfig.customTemplates];
+    } else {
+      allTemplates = [...DEFAULT_TEMPLATES];
+    }
+
+    applySiteSettings();
+    checkMaintenanceAndAnnouncement();
+  } catch (error) {
+    console.error('Load config error:', error);
+  }
+}
+
+function applySiteSettings() {
+  if (systemConfig?.site) {
+    document.title = systemConfig.site.title || 'Vũ Trụ Tình Yêu';
+    if (systemConfig.site.description) {
+      document.getElementById('siteSubtitle').textContent = systemConfig.site.description;
+    }
+  }
+}
+
+function checkMaintenanceAndAnnouncement() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasMsgParam = urlParams.has('msg');
+  const hasAdminKey = urlParams.get('key') === 'admin';
+
+  if (!hasMsgParam && systemConfig?.maintenance?.enabled && !hasAdminKey) {
+    const endTime = systemConfig.maintenance.endTime?.toDate?.() || systemConfig.maintenance.endTime;
+    if (endTime && new Date(endTime) <= new Date()) {
+      systemConfig.maintenance.enabled = false;
+      saveSystemConfig();
+      return;
+    }
+    showMaintenanceScreen();
+  } else {
+    document.getElementById('maintenanceScreen').style.display = 'none';
+  }
+
+  if (!hasMsgParam && systemConfig?.announcement?.enabled) {
+    const endTime = systemConfig.announcement.endTime?.toDate?.() || systemConfig.announcement.endTime;
+    if (endTime && new Date(endTime) <= new Date()) {
+      systemConfig.announcement.enabled = false;
+      saveSystemConfig();
+      return;
+    }
+    showAnnouncementBar();
+  } else {
+    document.getElementById('announcementBar').style.display = 'none';
+  }
+}
+
+function showMaintenanceScreen() {
+  const screen = document.getElementById('maintenanceScreen');
+  document.getElementById('maintenanceTitle').textContent = systemConfig.maintenance.title || 'Đang Bảo Trì';
+  document.getElementById('maintenanceText').textContent = systemConfig.maintenance.text || '';
+  screen.style.display = 'flex';
+
+  const endTime = systemConfig.maintenance.endTime?.toDate?.() || systemConfig.maintenance.endTime;
+  if (endTime) {
+    updateCountdown('maintenanceCountdown', new Date(endTime));
+  }
+}
+
+function showAnnouncementBar() {
+  const bar = document.getElementById('announcementBar');
+  const endTime = systemConfig.announcement.endTime?.toDate?.() || systemConfig.announcement.endTime;
+  let html = `<i class="fas fa-bullhorn" style="margin-right: 8px;"></i>${escapeHtml(systemConfig.announcement.text || '')}`;
+  if (endTime) {
+    const now = new Date();
+    const diff = new Date(endTime) - now;
+    if (diff > 0) {
+      const hours = Math.floor(diff / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      html += ` <span style="margin-left: 16px; opacity: 0.9; font-size: 13px;">(còn ${hours}h ${mins}m)</span>`;
+    }
+  }
+  bar.innerHTML = html;
+  bar.style.display = 'block';
+}
+
+function updateCountdown(elementId, targetDate) {
+  const el = document.getElementById(elementId);
+  function tick() {
+    const diff = targetDate - new Date();
+    if (diff <= 0) {
+      el.textContent = 'Đã kết thúc';
+      return;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    el.textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
+    setTimeout(tick, 1000);
+  }
+  tick();
+}
+
+async function saveSystemConfig() {
+  try {
+    await setDoc(doc(db, 'settings', 'config'), systemConfig);
+  } catch (error) {
+    console.error('Save config error:', error);
+  }
+}
+
+// ============ ADMIN ============
+async function enterAdmin() {
+  if (systemConfig?.adminPassword && !adminAuthenticated) {
+    showAdminLoginModal();
+    return false;
+  }
+  adminAuthenticated = true;
+  showAdminView();
+  return true;
+}
+
+function verifyAdminPassword() {
+  const input = document.getElementById('adminPasswordInput').value;
+  const errorEl = document.getElementById('adminPasswordError');
+
+  if (input === systemConfig.adminPassword) {
+    adminAuthenticated = true;
+    closeAdminLoginModal();
+    showAdminView();
+  } else {
+    errorEl.textContent = 'Mật khẩu không đúng';
+    errorEl.style.display = 'block';
+  }
+}
+
+function switchAdminTab(tabId) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('admin' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+}
+
+async function loadAdminData() {
+  try {
+    const [messagesSnap, usersSnap] = await Promise.all([
+      getDocs(query(collection(db, 'messages'), orderBy('createdAt', 'desc'))),
+      getDocs(collection(db, 'users'))
+    ]);
+
+    allMessages = [];
+    messagesSnap.forEach(doc => allMessages.push({ id: doc.id, ...doc.data() }));
+
+    const users = [];
+    usersSnap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+
+    const enabledTemplates = allTemplates.filter(t => t.enabled !== false);
+
+    document.getElementById('statMessages').textContent = allMessages.length;
+    document.getElementById('statTemplatesActive').textContent = enabledTemplates.length;
+    document.getElementById('statTemplatesTotal').textContent = allTemplates.length;
+    document.getElementById('statUsers').textContent = users.length;
+
+    const recent = allMessages.slice(0, 5);
+    const recentHtml = recent.map(msg => {
+      const date = msg.createdAt?.toDate?.() ? msg.createdAt.toDate() : new Date();
+      return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+        <div>
+          <strong>${escapeHtml(msg.from)}</strong>
+          <span style="color: var(--muted);"> → </span>
+          <strong>${escapeHtml(msg.to)}</strong>
+          <span class="badge badge-info" style="margin-left: 8px;">${msg.templateId}</span>
+        </div>
+        <span style="color: var(--muted); font-size: 13px;">${formatDate(date)}</span>
+      </div>`;
+    }).join('') || '<p style="color: var(--muted); text-align: center; padding: 20px;">Chưa có hoạt động nào</p>';
+    document.getElementById('recentActivity').innerHTML = recentHtml;
+
+    renderMessagesTable(allMessages);
+    renderAdminTemplatesList();
+    populateTemplateFilter();
+    loadAdminFormValues();
+  } catch (error) {
+    console.error('Load admin data error:', error);
+  }
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function renderMessagesTable(messages) {
+  const tbody = document.getElementById('messagesTableBody');
+  if (messages.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--muted);">Không có thông điệp nào</td></tr>';
+    return;
+  }
+  tbody.innerHTML = messages.map(msg => {
+    const date = msg.createdAt?.toDate?.() ? msg.createdAt.toDate() : new Date();
+    return `<tr>
+      <td><strong>${escapeHtml(msg.to)}</strong></td>
+      <td>${escapeHtml(msg.from)}</td>
+      <td><span class="badge badge-info">${msg.templateId}</span></td>
+      <td>${msg.password ? '<span class="badge badge-warning"><i class="fas fa-lock"></i> Có</span>' : '<span class="badge badge-success">Không</span>'}</td>
+      <td style="font-size: 13px; color: var(--muted);">${formatDate(date)}</td>
+      <td>
+        <button onclick="viewMessageDetail('${msg.id}')" style="background: none; border: none; color: var(--accent); cursor: pointer; margin-right: 12px;"><i class="fas fa-eye"></i></button>
+        <button onclick="deleteMessage('${msg.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer;"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterMessages() {
+  const search = document.getElementById('searchMessages').value.toLowerCase();
+  const templateFilter = document.getElementById('filterTemplate').value;
+  let filtered = allMessages;
+  if (search) {
+    filtered = filtered.filter(m =>
+      m.to.toLowerCase().includes(search) ||
+      m.from.toLowerCase().includes(search)
+    );
+  }
+  if (templateFilter) {
+    filtered = filtered.filter(m => m.templateId === templateFilter);
+  }
+  renderMessagesTable(filtered);
+}
+
+function populateTemplateFilter() {
+  const select = document.getElementById('filterTemplate');
+  const currentValue = select.value;
+  select.innerHTML = '<option value="">Tất cả mẫu</option>';
+  allTemplates.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name;
+    select.appendChild(opt);
+  });
+  select.value = currentValue;
+}
+
+function viewMessageDetail(msgId) {
+  const msg = allMessages.find(m => m.id === msgId);
+  if (!msg) return;
+  const date = msg.createdAt?.toDate?.() ? msg.createdAt.toDate() : new Date();
+  document.getElementById('viewMsgContent').innerHTML = `
+    <div style="display: grid; gap: 12px; margin-bottom: 20px;">
+      <div><strong>Người nhận:</strong> ${escapeHtml(msg.to)}</div>
+      <div><strong>Người gửi:</strong> ${escapeHtml(msg.from)}</div>
+      <div><strong>Mẫu:</strong> ${msg.templateId}</div>
+      <div><strong>Mật khẩu:</strong> ${msg.password || '(không)'}</div>
+      <div><strong>Thời gian:</strong> ${formatDate(date)}</div>
+      <div><strong>Nội dung:</strong></div>
+      <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 10px; white-space: pre-wrap;">${escapeHtml(msg.content)}</div>
+    </div>
+  `;
+  document.getElementById('viewMsgModal').style.display = 'flex';
+}
+
+async function deleteMessage(msgId) {
+  if (!confirm('Bạn có chắc muốn xóa thông điệp này không?')) return;
+  try {
+    await deleteDoc(doc(db, 'messages', msgId));
+    allMessages = allMessages.filter(m => m.id !== msgId);
+    filterMessages();
+    showToast('Đã xóa thông điệp');
+  } catch (error) {
+    showToast('Xóa thất bại', 'error');
+  }
+}
+
+function renderAdminTemplatesList() {
+  const container = document.getElementById('adminTemplatesList');
+  container.innerHTML = allTemplates.map(t => `
+    <div class="glass" style="padding: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <div style="width: 80px; height: 60px; border-radius: 8px; background: ${t.bgStyle}; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; text-align: center; padding: 4px; flex-shrink: 0;">${t.name}</div>
+      <div style="flex: 1; min-width: 150px;">
+        <div style="font-weight: 600;">${t.name}</div>
+        <div style="font-size: 13px; color: var(--muted);">ID: ${t.id} ${t.custom ? '<span class="badge badge-warning" style="margin-left: 8px;">Tùy chỉnh</span>' : ''}</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 13px; color: var(--muted);">${t.enabled !== false ? 'Bật' : 'Tắt'}</span>
+        <div class="toggle-switch ${t.enabled !== false ? 'active' : ''}" onclick="toggleTemplate('${t.id}')"></div>
+        ${t.custom ? `<button onclick="deleteTemplate('${t.id}')" class="btn-danger" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-trash"></i></button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function toggleTemplate(id) {
+  const template = allTemplates.find(t => t.id === id);
+  if (!template) return;
+  template.enabled = template.enabled === false ? true : false;
+  if (template.custom) {
+    systemConfig.customTemplates = allTemplates.filter(t => t.custom);
+    await saveSystemConfig();
+  }
+  renderAdminTemplatesList();
+  showToast('Đã cập nhật');
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Bạn có chắc muốn xóa mẫu này không?')) return;
+  allTemplates = allTemplates.filter(t => t.id !== id);
+  systemConfig.customTemplates = allTemplates.filter(t => t.custom);
+  await saveSystemConfig();
+  renderAdminTemplatesList();
+  showToast('Đã xóa mẫu');
+}
+
+async function saveNewTemplate() {
+  const id = document.getElementById('newTemplateId').value.trim();
+  const name = document.getElementById('newTemplateName').value.trim();
+  const html = document.getElementById('newTemplateHtml').value.trim();
+  const bg = document.getElementById('newTemplateBg').value.trim() || '#1e1e3c';
+
+  if (!id || !name || !html) {
+    showToast('Vui lòng điền đầy đủ thông tin', 'error');
+    return;
+  }
+  if (!/^[a-z0-9]+$/.test(id)) {
+    showToast('ID chỉ chứa chữ thường và số', 'error');
+    return;
+  }
+  if (allTemplates.find(t => t.id === id)) {
+    showToast('ID đã tồn tại', 'error');
+    return;
+  }
+
+  const newTemplate = {
+    id: id, name: name, html: html, bgStyle: bg,
+    previewClass: '', enabled: true, custom: true
+  };
+
+  allTemplates.push(newTemplate);
+  systemConfig.customTemplates = allTemplates.filter(t => t.custom);
+  await saveSystemConfig();
+  closeAddTemplateModal();
+  renderAdminTemplatesList();
+  showToast('Đã thêm mẫu mới');
+}
+
+function loadAdminFormValues() {
+  if (!systemConfig) return;
+
+  const maint = systemConfig.maintenance || {};
+  document.getElementById('maintenanceToggle').classList.toggle('active', maint.enabled);
+  document.getElementById('maintTitle').value = maint.title || '';
+  document.getElementById('maintText').value = maint.text || '';
+  if (maint.endTime) {
+    const d = maint.endTime.toDate ? maint.endTime.toDate() : new Date(maint.endTime);
+    document.getElementById('maintEndTime').value = toLocalInput(d);
+  }
+
+  const ann = systemConfig.announcement || {};
+  document.getElementById('announcementToggle').classList.toggle('active', ann.enabled);
+  document.getElementById('announcementText').value = ann.text || '';
+  if (ann.endTime) {
+    const d = ann.endTime.toDate ? ann.endTime.toDate() : new Date(ann.endTime);
+    document.getElementById('announcementEndTime').value = toLocalInput(d);
+  }
+
+  const site = systemConfig.site || {};
+  document.getElementById('settingTitle').value = site.title || '';
+  document.getElementById('settingDesc').value = site.description || '';
+}
+
+function toLocalInput(date) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function toggleMaintenance() {
+  document.getElementById('maintenanceToggle').classList.toggle('active');
+}
+
+function toggleAnnouncement() {
+  document.getElementById('announcementToggle').classList.toggle('active');
+}
+
+async function saveMaintenance() {
+  const endTimeInput = document.getElementById('maintEndTime').value;
+  systemConfig.maintenance = {
+    enabled: document.getElementById('maintenanceToggle').classList.contains('active'),
+    title: document.getElementById('maintTitle').value,
+    text: document.getElementById('maintText').value,
+    endTime: endTimeInput ? new Date(endTimeInput) : null
+  };
+  await saveSystemConfig();
+  checkMaintenanceAndAnnouncement();
+  showToast('Đã lưu cấu hình bảo trì');
+}
+
+async function saveAnnouncement() {
+  const endTimeInput = document.getElementById('announcementEndTime').value;
+  systemConfig.announcement = {
+    enabled: document.getElementById('announcementToggle').classList.contains('active'),
+    text: document.getElementById('announcementText').value,
+    endTime: endTimeInput ? new Date(endTimeInput) : null
+  };
+  await saveSystemConfig();
+  checkMaintenanceAndAnnouncement();
+  showToast('Đã lưu cấu hình thông báo');
+}
+
+async function saveSettings() {
+  systemConfig.site = {
+    title: document.getElementById('settingTitle').value,
+    description: document.getElementById('settingDesc').value
+  };
+  const newAdminPwd = document.getElementById('settingAdminPassword').value;
+  if (newAdminPwd) {
+    systemConfig.adminPassword = newAdminPwd;
+  }
+  await saveSystemConfig();
+  applySiteSettings();
+  showToast('Đã lưu cài đặt');
+}
+
+function copyAdminLink() {
+  const link = window.location.origin + window.location.pathname + '?key=admin';
+  navigator.clipboard.writeText(link).then(() => showToast('Đã sao chép link admin!'));
+}
+
+async function exportBackup() {
+  try {
+    const [messagesSnap, usersSnap] = await Promise.all([
+      getDocs(collection(db, 'messages')),
+      getDocs(collection(db, 'users'))
+    ]);
+    const messages = [];
+    messagesSnap.forEach(d => messages.push({ id: d.id, ...d.data() }));
+    const users = [];
+    usersSnap.forEach(d => users.push({ id: d.id, ...d.data() }));
+
+    const backup = {
+      exportedAt: new Date().toISOString(),
+      systemConfig: systemConfig,
+      messages: messages,
+      users: users
+    };
+
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-vutrutinhyeu-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Đã xuất backup');
+  } catch (error) {
+    showToast('Xuất backup thất bại', 'error');
+  }
+}
+
+async function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!confirm('Nhập dữ liệu sẽ ghi đè lên cấu hình hiện tại. Tiếp tục?')) return;
+
+  try {
+    const text = await file.text();
+    const backup = JSON.parse(text);
+
+    if (backup.systemConfig) {
+      systemConfig = backup.systemConfig;
+      await saveSystemConfig();
+    }
+
+    showToast('Đã nhập cấu hình hệ thống');
+    location.reload();
+  } catch (error) {
+    showToast('File không hợp lệ', 'error');
+  }
+}
+
+async function resetAllData() {
+  if (!confirm('CẢNH BÁO: Điều này sẽ xóa TOÀN BỘ dữ liệu (thông điệp, người dùng, cấu hình) và KHÔNG thể khôi phục! Tiếp tục?')) return;
+  if (!confirm('Bạn có CHẮC CHẮN không? Hành động này không thể hoàn tác!')) return;
+
+  try {
+    const messagesSnap = await getDocs(collection(db, 'messages'));
+    for (const docSnap of messagesSnap.docs) {
+      await deleteDoc(doc(db, 'messages', docSnap.id));
+    }
+    systemConfig = {
+      maintenance: { enabled: false, title: 'Đang Bảo Trì', text: 'Hệ thống đang được nâng cấp', endTime: null },
+      announcement: { enabled: false, text: '', endTime: null },
+      site: { title: 'Vũ Trụ Tình Yêu', description: 'Gửi những thông điệp ngọt ngào xuyên qua vũ trụ đến người bạn yêu thương' },
+      adminPassword: '',
+      customTemplates: []
+    };
+    await saveSystemConfig();
+    showToast('Đã đặt lại hệ thống');
+    setTimeout(() => location.reload(), 1500);
+  } catch (error) {
+    showToast('Đặt lại thất bại', 'error');
+  }
+}
+
+// ============ SECURITY ============
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12') { e.preventDefault(); return; }
+  if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) { e.preventDefault(); return; }
+  if (e.ctrlKey && e.key.toUpperCase() === 'U') { e.preventDefault(); return; }
+});
+document.addEventListener('selectstart', e => {
+  if (!e.target.closest('input') && !e.target.closest('textarea')) e.preventDefault();
+});
+setInterval(() => {
+  console.clear();
+}, 1000);
+
+// ============ INIT ============
+async function initApp() {
+  await loadSystemConfig();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const msgId = urlParams.get('msg');
+  const adminKey = urlParams.get('key');
+
+  if (msgId) {
+    await loadMessage(msgId);
+    return;
+  }
+
+  if (adminKey === 'admin') {
+    await enterAdmin();
+    return;
+  }
+
+  showHomeView();
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+      currentUser = { uid: user.uid, ...userDoc.data() };
+      updateUserUI();
+    }
+  } else {
+    currentUser = null;
+    updateUserUI();
+  }
+});
+
+initApp();
+
+// Enter key handlers
+document.getElementById('nameInput').addEventListener('keypress', e => { if (e.key === 'Enter') saveUserName(); });
+document.getElementById('msgPasswordInput').addEventListener('keypress', e => { if (e.key === 'Enter') verifyMessagePassword(); });
+document.getElementById('adminPasswordInput').addEventListener('keypress', e => { if (e.key === 'Enter') verifyAdminPassword(); });
+</script>
+
+</body>
+</html>
