@@ -4,32 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vũ Trụ Tình Yêu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a1a;
-    --bg2: #12122a;
-    --card: rgba(30, 30, 60, 0.6);
-    --card-solid: #1e1e3c;
-    --text: #f0eef7;
-    --muted: #9a97b8;
-    --accent: #e91e8c;
-    --accent2: #9c27b0;
-    --accent3: #673ab7;
-    --accent-soft: rgba(233, 30, 140, 0.15);
-    --border: rgba(255, 255, 255, 0.1);
-    --glow: 0 0 30px rgba(233, 30, 140, 0.3);
+    --primary: #ff6b9d;
+    --secondary: #c44569;
+    --accent: #f8b500;
+    --galaxy-1: #0f0c29;
+    --galaxy-2: #302b63;
+    --galaxy-3: #24243e;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.6);
+    --card: rgba(255,255,255,0.08);
+    --card-hover: rgba(255,255,255,0.15);
+    --border: rgba(255,255,255,0.15);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Red Hat Display', sans-serif; }
-  html, body { width: 100%; min-height: 100vh; overflow-x: hidden; }
-  body {
-    background: var(--bg);
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: 'Urbanist', sans-serif;
+    background: linear-gradient(135deg, var(--galaxy-1), var(--galaxy-2), var(--galaxy-3));
     color: var(--text);
-    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  body {
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
   #starsCanvas {
     position: fixed;
@@ -38,37 +48,23 @@
     z-index: 0;
     pointer-events: none;
   }
-  .galaxy-bg {
+  .galaxy-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
-    background:
-      radial-gradient(ellipse at 20% 30%, rgba(156, 39, 176, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, rgba(233, 30, 140, 0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(103, 58, 183, 0.1) 0%, transparent 60%);
-    animation: galaxyShift 20s ease-in-out infinite alternate;
+    background: 
+      radial-gradient(ellipse at 20% 80%, rgba(255,107,157,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(196,69,105,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(248,181,0,0.05) 0%, transparent 60%);
+    opacity: 0;
+    animation: fadeInGalaxy 2s ease forwards;
   }
-  @keyframes galaxyShift {
-    0% { opacity: 0.6; transform: scale(1); }
-    100% { opacity: 1; transform: scale(1.05); }
+  @keyframes fadeInGalaxy {
+    to { opacity: 1; }
   }
-  .bubble {
-    position: fixed;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), rgba(233,30,140,0.1));
-    pointer-events: none;
-    z-index: 0;
-    animation: floatUp linear infinite;
-  }
-  @keyframes floatUp {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-100px) scale(1); opacity: 0; }
-  }
-  .app-container {
+  .main-content {
     position: relative;
     z-index: 10;
     min-height: 100vh;
@@ -80,63 +76,86 @@
     border: 1px solid var(--border);
     border-radius: 20px;
   }
+  .glass-strong {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 24px;
+  }
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     border: none;
-    padding: 12px 28px;
-    border-radius: 12px;
+    padding: 14px 32px;
+    border-radius: 50px;
     font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: var(--glow);
+    box-shadow: 0 4px 20px rgba(255,107,157,0.4);
+    position: relative;
+    overflow: hidden;
   }
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 40px rgba(233, 30, 140, 0.5);
+    box-shadow: 0 8px 30px rgba(255,107,157,0.5);
   }
   .btn-primary:active { transform: translateY(0); }
   .btn-secondary {
-    background: transparent;
-    color: var(--text);
+    background: var(--card);
+    color: white;
     border: 1px solid var(--border);
     padding: 12px 28px;
-    border-radius: 12px;
+    border-radius: 50px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
   }
   .btn-secondary:hover {
-    border-color: var(--accent);
-    background: var(--accent-soft);
+    background: var(--card-hover);
+    border-color: rgba(255,255,255,0.3);
   }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover { color: white; background: var(--card); }
   .btn-danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: linear-gradient(135deg, #ff4757, #c0392b);
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 10px;
+    border-radius: 50px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
   }
+  .btn-danger:hover { transform: translateY(-1px); }
   .input-field {
     width: 100%;
     padding: 14px 18px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.06);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
+    border-radius: 14px;
+    color: white;
     font-size: 15px;
-    outline: none;
+    font-family: inherit;
     transition: all 0.3s ease;
-  }
-  .input-field:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    outline: none;
   }
   .input-field::placeholder { color: var(--muted); }
-  textarea.input-field { resize: vertical; min-height: 120px; }
+  .input-field:focus {
+    border-color: var(--primary);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 0 3px rgba(255,107,157,0.15);
+  }
+  textarea.input-field { resize: vertical; min-height: 120px; line-height: 1.6; }
   .modal-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -148,28 +167,33 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    animation: fadeIn 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
   }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
   .modal-content {
-    background: var(--card-solid);
+    background: linear-gradient(145deg, rgba(48,43,99,0.95), rgba(36,36,62,0.95));
     border: 1px solid var(--border);
     border-radius: 24px;
-    padding: 32px;
+    padding: 36px;
     max-width: 480px;
     width: 100%;
-    animation: slideUp 0.4s ease;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s ease;
     max-height: 90vh;
     overflow-y: auto;
   }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+  .modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
   }
   .template-card {
     background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 16px;
+    border: 2px solid transparent;
+    border-radius: 18px;
     padding: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -177,56 +201,124 @@
     overflow: hidden;
   }
   .template-card:hover {
-    border-color: var(--accent);
+    background: var(--card-hover);
     transform: translateY(-4px);
   }
   .template-card.selected {
-    border-color: var(--accent);
-    box-shadow: var(--glow);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255,107,157,0.2), 0 8px 30px rgba(255,107,157,0.3);
   }
   .template-preview {
-    height: 160px;
-    border-radius: 10px;
+    height: 140px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
-    padding: 12px;
+    color: white;
     text-align: center;
+    padding: 12px;
     margin-bottom: 12px;
     overflow: hidden;
+    position: relative;
   }
-  .view { display: none; animation: viewFade 0.4s ease; }
+  .template-name {
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+  }
+  .view { display: none; animation: fadeInUp 0.5s ease; }
   .view.active { display: block; }
-  @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 16px 24px;
+    border-radius: 14px;
+    z-index: 200;
+    transform: translateX(120%);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    max-width: 360px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast.error { background: linear-gradient(135deg, #ff4757, #c0392b); }
+  .toast.success { background: linear-gradient(135deg, #2ed573, #1e90ff); }
   .announcement-bar {
-    background: linear-gradient(90deg, var(--accent3), var(--accent2), var(--accent));
-    background-size: 200% 100%;
-    animation: gradientMove 3s ease infinite;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
     color: white;
     padding: 10px 20px;
     text-align: center;
-    font-weight: 500;
-    position: relative;
     z-index: 50;
+    font-size: 14px;
+    font-weight: 500;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
   }
-  @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+  .announcement-bar.show { transform: translateY(0); }
   .maintenance-screen {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: var(--bg);
-    z-index: 200;
+    background: linear-gradient(135deg, var(--galaxy-1), var(--galaxy-2), var(--galaxy-3));
+    z-index: 90;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 20px;
+    padding: 40px;
     text-align: center;
+  }
+  .countdown {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .countdown-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    min-width: 80px;
+  }
+  .countdown-num {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .countdown-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,107,157,0.3));
+    animation: floatBubble linear infinite;
+    pointer-events: none;
+  }
+  @keyframes floatBubble {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+  .message-display {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
   }
   .admin-tab {
     padding: 12px 24px;
@@ -237,52 +329,173 @@
     font-weight: 500;
     border-bottom: 2px solid transparent;
     transition: all 0.3s ease;
+    white-space: nowrap;
   }
+  .admin-tab:hover { color: white; }
   .admin-tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
+    color: var(--primary);
+    border-bottom-color: var(--primary);
   }
-  .admin-tab:hover { color: var(--text); }
-  .admin-content { display: none; }
-  .admin-content.active { display: block; animation: fadeIn 0.3s ease; }
+  .admin-section { display: none; }
+  .admin-section.active { display: block; animation: fadeInUp 0.4s ease; }
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: 18px;
+    padding: 24px;
     text-align: center;
+    transition: all 0.3s ease;
   }
-  .stat-number {
+  .stat-card:hover { background: var(--card-hover); transform: translateY(-2px); }
+  .stat-num {
     font-size: 36px;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255,255,255,0.2);
+    transition: .3s;
+    border-radius: 28px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px; width: 22px;
+    left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+  }
+  input:checked + .slider { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+  input:checked + .slider:before { transform: translateX(24px); }
   .table-container {
     overflow-x: auto;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid var(--border);
   }
   table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 600px;
   }
   th, td {
-    padding: 14px 16px;
+    padding: 14px 18px;
     text-align: left;
     border-bottom: 1px solid var(--border);
   }
   th {
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.05);
     font-weight: 600;
-    color: var(--muted);
     font-size: 13px;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  .checkbox-custom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+  .checkbox-custom:hover { background: rgba(255,255,255,0.05); }
+  .checkbox-custom input[type="checkbox"] {
+    width: 20px; height: 20px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px;
+    background: white;
+    color: #444;
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+  .google-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  }
+  .hero-title {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero-subtitle {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: var(--muted);
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+  .floating { animation: floating 3s ease-in-out infinite; }
+  @keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .glow {
+    box-shadow: 0 0 60px rgba(255,107,157,0.3);
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+  .template-stars { background: linear-gradient(135deg, #0c0c3d, #1a1a5e, #2d1b69); }
+  .template-galaxy { background: radial-gradient(ellipse at center, #4a1a6b, #1a0a2e); }
+  .template-letter { background: linear-gradient(135deg, #f5e6d3, #e8d5b7); color: #5d4e37 !important; font-family: 'Dancing Script', cursive; }
+  .template-neon { background: #0a0a0a; color: #ff00ff !important; text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff; }
+  .template-ocean { background: linear-gradient(180deg, #006994, #003366, #001a33); }
+  .template-sunset { background: linear-gradient(180deg, #ff7e5f, #feb47b, #ff6b6b); }
+  .template-sakura { background: linear-gradient(135deg, #ffb7c5, #ffc0cb, #fff0f5); color: #8b4557 !important; }
+  .template-aurora { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364, #00aa88); }
+  .template-moonlight { background: linear-gradient(180deg, #1a1a2e, #16213e, #0f3460); }
+  .template-matrix { background: #000; color: #00ff00 !important; font-family: monospace; }
+  .template-clouds { background: linear-gradient(180deg, #87ceeb, #b0e0e6, #e0f0ff); color: #4a6fa5 !important; }
+  .link-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 13px;
+    word-break: break-all;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .link-box:hover { background: rgba(255,107,157,0.1); border-color: var(--primary); }
   .badge {
     display: inline-block;
     padding: 4px 12px;
@@ -290,338 +503,305 @@
     font-size: 12px;
     font-weight: 600;
   }
-  .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-  .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-  .badge-warning { background: rgba(234, 179, 8, 0.15); color: #facc15; }
-  .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-  .toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 16px 24px;
-    border-radius: 12px;
-    color: white;
-    font-weight: 500;
-    z-index: 1000;
-    animation: toastIn 0.3s ease;
-    max-width: 350px;
-  }
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateX(100px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
-  .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
-  .toast.info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-  .toggle-switch {
-    position: relative;
-    width: 50px;
-    height: 26px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 13px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  .toggle-switch.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-  }
-  .toggle-switch::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-  }
-  .toggle-switch.active::after { left: 27px; }
-  .hero-title {
-    font-size: clamp(32px, 6vw, 64px);
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff, var(--accent), var(--accent2), var(--accent3));
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 4s ease infinite;
-    text-align: center;
-  }
-  @keyframes shimmer {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  .glow-text {
-    text-shadow: 0 0 20px rgba(233, 30, 140, 0.5);
-  }
-  .password-field {
-    -webkit-text-security: disc;
-    text-security: disc;
-  }
-  .link-box {
-    background: rgba(255,255,255,0.05);
-    border: 1px dashed var(--accent);
-    border-radius: 12px;
-    padding: 16px;
-    word-break: break-all;
-    font-family: monospace;
-    font-size: 14px;
-    color: var(--accent);
-  }
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-
-  /* Template Styles */
-  .tpl-stars { background: linear-gradient(135deg, #0c0c2e, #1a1a4e); color: #fff; }
-  .tpl-galaxy { background: radial-gradient(ellipse at center, #2d1b4e, #0a0a1a); color: #e0d4f7; }
-  .tpl-letter { background: linear-gradient(135deg, #f5e6d3, #e8d4b8); color: #5c4033; font-family: Georgia, serif; }
-  .tpl-neon { background: #0a0a0a; color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-  .tpl-ocean { background: linear-gradient(135deg, #006994, #003366); color: #b3e5fc; }
-  .tpl-sunset { background: linear-gradient(135deg, #ff6b6b, #feca57, #ff9ff3); color: #fff; }
-  .tpl-sakura { background: linear-gradient(135deg, #ffb7c5, #ffc0cb); color: #8b0045; }
-  .tpl-aurora { background: linear-gradient(135deg, #004d40, #1b5e20, #006064); color: #b9f6ca; }
-  .tpl-moonlight { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #c9d6ff; }
-  .tpl-matrix { background: #000; color: #00ff00; font-family: 'Courier New', monospace; }
-  .tpl-clouds { background: linear-gradient(135deg, #87ceeb, #e0f7fa); color: #1565c0; }
-
-  .message-display {
-    min-height: 400px;
-    border-radius: 20px;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .floating-heart {
-    position: absolute;
-    font-size: 20px;
-    animation: floatHeart 3s ease-in-out infinite;
-    opacity: 0.6;
-  }
-  @keyframes floatHeart {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(10deg); }
-  }
-  .select-field {
-    width: 100%;
-    padding: 14px 18px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    font-size: 15px;
-    outline: none;
-    cursor: pointer;
-  }
-  .select-field option { background: var(--card-solid); color: var(--text); }
-  .checkbox-custom {
-    width: 20px; height: 20px;
-    accent-color: var(--accent);
-    cursor: pointer;
-  }
+  .badge-locked { background: rgba(255,107,157,0.2); color: var(--primary); }
+  .badge-active { background: rgba(46,213,115,0.2); color: #2ed573; }
+  .badge-disabled { background: rgba(255,71,87,0.2); color: #ff4757; }
   @media (max-width: 640px) {
     .modal-content { padding: 24px; }
-    .message-display { padding: 24px; }
+    .countdown-item { min-width: 60px; padding: 12px; }
+    .countdown-num { font-size: 24px; }
   }
 </style>
 </head>
 <body>
 
 <canvas id="starsCanvas"></canvas>
-<div class="galaxy-bg"></div>
-<div id="bubblesContainer"></div>
+<div class="galaxy-overlay"></div>
 
-<div class="app-container">
+<!-- Announcement Bar -->
+<div id="announcementBar" class="announcement-bar">
+  <span id="announcementText"></span>
+  <span id="announcementCountdown" style="margin-left: 12px; opacity: 0.8;"></span>
+</div>
 
-  <!-- Announcement Bar -->
-  <div id="announcementBar" class="announcement-bar" style="display:none;"></div>
+<!-- Toast -->
+<div id="toast" class="toast"></div>
 
-  <!-- Maintenance Screen -->
-  <div id="maintenanceScreen" class="maintenance-screen" style="display:none;">
-    <div style="font-size: 80px; margin-bottom: 20px;">
-      <i class="fas fa-rocket" style="color: var(--accent);"></i>
+<!-- Maintenance Screen -->
+<div id="maintenanceScreen" class="maintenance-screen" style="display: none;">
+  <i class="fas fa-tools" style="font-size: 64px; color: var(--accent); margin-bottom: 24px;"></i>
+  <h1 id="maintenanceTitle" style="font-size: 32px; margin-bottom: 16px;">Đang Bảo Trì</h1>
+  <p id="maintenanceText" style="color: var(--muted); max-width: 500px; margin-bottom: 8px;">Hệ thống đang được nâng cấp, vui lòng quay lại sau.</p>
+  <div class="countdown" id="maintenanceCountdown"></div>
+  <p style="color: var(--muted); font-size: 13px;">Sẽ hoạt động trở lại sau</p>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay">
+  <div class="modal-content text-center">
+    <div class="floating" style="margin-bottom: 24px;">
+      <i class="fas fa-heart" style="font-size: 72px; color: var(--primary); filter: drop-shadow(0 0 20px rgba(255,107,157,0.5));"></i>
     </div>
-    <h1 id="maintenanceTitle" style="font-size: 32px; margin-bottom: 16px; font-weight: 700;">Đang Bảo Trì</h1>
-    <p id="maintenanceText" style="color: var(--muted); margin-bottom: 24px; max-width: 500px;">Hệ thống đang được nâng cấp, vui lòng quay lại sau.</p>
-    <div id="maintenanceCountdown" style="font-size: 24px; font-weight: 700; color: var(--accent);"></div>
+    <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">Chào Mừng Đến Với</h2>
+    <h1 style="font-size: 36px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px;">Vũ Trụ Tình Yêu</h1>
+    <p style="color: var(--muted); margin-bottom: 32px; line-height: 1.6;">Tạo những thông điệp lãng mạn độc đáo<br>gửi đến người bạn thương yêu</p>
+    <button class="google-btn" onclick="loginWithGoogle()">
+      <i class="fab fa-google" style="font-size: 20px;"></i>
+      Đăng nhập bằng Google
+    </button>
   </div>
+</div>
+
+<!-- Name Modal -->
+<div id="nameModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="text-center" style="margin-bottom: 24px;">
+      <i class="fas fa-user-astronaut" style="font-size: 56px; color: var(--accent); margin-bottom: 16px;"></i>
+      <h2 style="font-size: 24px; font-weight: 700;">Chọn Tên Hiển Thị</h2>
+      <p style="color: var(--muted); margin-top: 8px;">Tên này sẽ xuất hiện trên thông điệp của bạn</p>
+    </div>
+    <input type="text" id="displayNameInput" class="input-field" placeholder="Nhập tên của bạn..." maxlength="30">
+    <p id="nameError" style="color: #ff4757; font-size: 13px; margin-top: 8px; display: none;"></p>
+    <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="saveDisplayName()">
+      Tiếp Tục <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Password Modal for Message -->
+<div id="passwordModal" class="modal-overlay">
+  <div class="modal-content text-center">
+    <i class="fas fa-lock" style="font-size: 56px; color: var(--primary); margin-bottom: 20px;"></i>
+    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Mật Mã Tình Yêu</h2>
+    <p style="color: var(--muted); margin-bottom: 24px;">Thông điệp này được bảo vệ bởi mật khẩu</p>
+    <input type="password" id="msgPasswordInput" class="input-field" placeholder="Nhập mật khẩu..." autocomplete="off">
+    <p id="passwordError" style="color: #ff4757; font-size: 13px; margin-top: 8px; display: none;"></p>
+    <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="verifyMessagePassword()">
+      Mở Khóa <i class="fas fa-key" style="margin-left: 8px;"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div id="adminLoginModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="text-center" style="margin-bottom: 24px;">
+      <i class="fas fa-shield-alt" style="font-size: 56px; color: var(--accent); margin-bottom: 16px;"></i>
+      <h2 style="font-size: 24px; font-weight: 700;">Đăng Nhập Quản Trị</h2>
+      <p style="color: var(--muted); margin-top: 8px;">Nhập mật khẩu quản trị viên</p>
+    </div>
+    <input type="password" id="adminPasswordInput" class="input-field" placeholder="Mật khẩu quản trị..." autocomplete="off">
+    <p id="adminPasswordError" style="color: #ff4757; font-size: 13px; margin-top: 8px; display: none;"></p>
+    <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="verifyAdminPassword()">
+      Truy Cập <i class="fas fa-sign-in-alt" style="margin-left: 8px;"></i>
+    </button>
+    <button class="btn-ghost" style="width: 100%; margin-top: 12px;" onclick="closeAdminLogin()">Quay lại</button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
 
   <!-- HOME VIEW -->
-  <div id="viewHome" class="view active">
-    <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 40px;">
-        <div style="font-size: 60px; margin-bottom: 20px;">
-          <i class="fas fa-heart" style="color: var(--accent); animation: pulse 2s ease infinite;"></i>
+  <div id="homeView" class="view">
+    <div style="min-height: 100vh; display: flex; flex-direction: column;">
+      <!-- Header -->
+      <header style="padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fas fa-meteor" style="font-size: 28px; color: var(--primary);"></i>
+          <span style="font-size: 22px; font-weight: 700;" id="siteTitleHeader">Vũ Trụ Tình Yêu</span>
         </div>
-        <h1 class="hero-title">Vũ Trụ Tình Yêu</h1>
-        <p id="siteSubtitle" style="color: var(--muted); font-size: 18px; margin-top: 16px; max-width: 500px;">Gửi những thông điệp ngọt ngào xuyên qua vũ trụ đến người bạn yêu thương</p>
-      </div>
-      <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
-        <button class="btn-primary" onclick="showCreateView()" style="font-size: 16px; padding: 16px 36px;">
-          <i class="fas fa-pen-fancy" style="margin-right: 8px;"></i>Tạo Thông Điệp
-        </button>
-        <button class="btn-secondary" onclick="document.getElementById('userInfo').style.display === 'none' ? showLoginModal() : showUserMenu()">
-          <i class="fas fa-user" style="margin-right: 8px;"></i><span id="userBtnText">Đăng Nhập</span>
-        </button>
-      </div>
-      <div id="userInfo" style="display:none; margin-top: 20px; text-align: center;">
-        <p style="color: var(--muted);">Xin chào, <span id="userNameDisplay" style="color: var(--accent); font-weight: 600;"></span></p>
-      </div>
-      <div style="margin-top: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 800px; width: 100%;">
-        <div class="glass" style="padding: 24px; text-align: center;">
-          <i class="fas fa-magic" style="font-size: 32px; color: var(--accent); margin-bottom: 12px;"></i>
-          <h3 style="font-weight: 600; margin-bottom: 8px;">11 Mẫu Đẹp</h3>
-          <p style="color: var(--muted); font-size: 14px;">Lựa chọn phong cách yêu thích</p>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span id="userDisplayName" style="color: var(--muted);"></span>
+          <button class="btn-secondary" onclick="showCreateView()">
+            <i class="fas fa-plus" style="margin-right: 8px;"></i>Tạo Thông Điệp
+          </button>
+          <button class="btn-ghost" onclick="logout()" title="Đăng xuất">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
         </div>
-        <div class="glass" style="padding: 24px; text-align: center;">
-          <i class="fas fa-lock" style="font-size: 32px; color: var(--accent2); margin-bottom: 12px;"></i>
-          <h3 style="font-weight: 600; margin-bottom: 8px;">Bảo Mật Mật Khẩu</h3>
-          <p style="color: var(--muted); font-size: 14px;">Chỉ người mới được xem</p>
-        </div>
-        <div class="glass" style="padding: 24px; text-align: center;">
-          <i class="fas fa-share-alt" style="font-size: 32px; color: var(--accent3); margin-bottom: 12px;"></i>
-          <h3 style="font-weight: 600; margin-bottom: 8px;">Chia Sẽ Dễ Dàng</h3>
-          <p style="color: var(--muted); font-size: 14px;">Gửi link đến người ấy</p>
+      </header>
+
+      <!-- Hero -->
+      <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+        <div class="text-center" style="max-width: 800px;">
+          <h1 class="hero-title" id="heroTitle">Vũ Trụ Tình Yêu</h1>
+          <p class="hero-subtitle" id="heroSubtitle">Nơi những lời yêu thương bay ngang qua thiên hà, đến với người bạn thương yêu nhất. Tạo thông điệp lãng mạn với 11 mẫu giao diện độc đáo.</p>
+          <button class="btn-primary glow" onclick="showCreateView()" style="font-size: 17px; padding: 18px 44px;">
+            <i class="fas fa-rocket" style="margin-right: 10px;"></i>
+            Bắt Đầu Tạo Thông Điệp
+          </button>
+          <div style="margin-top: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
+            <div class="glass" style="padding: 24px;">
+              <i class="fas fa-palette" style="font-size: 32px; color: var(--primary); margin-bottom: 12px;"></i>
+              <h3 style="font-weight: 600; margin-bottom: 6px;">11 Mẫu Giao Diện</h3>
+              <p style="color: var(--muted); font-size: 14px;">Lãng mạn, độc đáo</p>
+            </div>
+            <div class="glass" style="padding: 24px;">
+              <i class="fas fa-lock" style="font-size: 32px; color: var(--accent); margin-bottom: 12px;"></i>
+              <h3 style="font-weight: 600; margin-bottom: 6px;">Bảo Vệ Mật Khẩu</h3>
+              <p style="color: var(--muted); font-size: 14px;">Chỉ người ấy mới xem được</p>
+            </div>
+            <div class="glass" style="padding: 24px;">
+              <i class="fas fa-share-alt" style="font-size: 32px; color: #2ed573; margin-bottom: 12px;"></i>
+              <h3 style="font-weight: 600; margin-bottom: 6px;">Chia Sẻ Dễ Dàng</h3>
+              <p style="color: var(--muted); font-size: 14px;">Chỉ cần một đường link</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- CREATE VIEW -->
-  <div id="viewCreate" class="view">
-    <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
-        <button class="btn-secondary" onclick="showHomeView()">
-          <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>Quay lại
-        </button>
-        <h2 style="font-size: 28px; font-weight: 700;">Tạo Thông Điệp Tình Yêu</h2>
-        <div style="width: 100px;"></div>
-      </div>
+  <div id="createView" class="view">
+    <div style="padding: 24px 40px; max-width: 1200px; margin: 0 auto;">
+      <button class="btn-ghost" onclick="showHomeView()" style="margin-bottom: 24px;">
+        <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>Quay lại
+      </button>
+      
+      <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 8px;">Tạo Thông Điệp Mới</h1>
+      <p style="color: var(--muted); margin-bottom: 40px;">Chọn mẫu giao diện yêu thích và viết lời nhắn của bạn</p>
 
-      <div class="glass" style="padding: 28px; margin-bottom: 28px;">
+      <div class="glass" style="padding: 32px; margin-bottom: 32px;">
         <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
-          <i class="fas fa-palette" style="color: var(--accent); margin-right: 8px;"></i>Chọn Mẫu Giao Diện
+          <i class="fas fa-palette" style="color: var(--primary); margin-right: 10px;"></i>
+          Chọn Mẫu Giao Diện
         </h3>
         <div id="templateGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;"></div>
       </div>
 
-      <div class="glass" style="padding: 28px;">
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
-          <i class="fas fa-edit" style="color: var(--accent); margin-right: 8px;"></i>Nội Dung Thông Điệp
+      <div class="glass" style="padding: 32px;">
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 24px;">
+          <i class="fas fa-envelope" style="color: var(--accent); margin-right: 10px;"></i>
+          Nội Dung Thông Điệp
         </h3>
+        
         <div style="display: grid; gap: 20px;">
           <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tên người gửi</label>
-            <input type="text" id="inputFrom" class="input-field" readonly style="background: rgba(255,255,255,0.03); color: var(--muted);">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Người gửi</label>
+            <input type="text" id="fromInput" class="input-field" disabled style="background: rgba(255,255,255,0.03); color: var(--muted);">
           </div>
+          
           <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tên người nhận <span style="color: var(--accent);">*</span></label>
-            <input type="text" id="inputTo" class="input-field" placeholder="Nhập tên người nhận...">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Tên người nhận <span style="color: var(--primary);">*</span></label>
+            <input type="text" id="toInput" class="input-field" placeholder="Nhập tên người nhận..." maxlength="50">
           </div>
+          
           <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Nội dung thông điệp <span style="color: var(--accent);">*</span></label>
-            <textarea id="inputContent" class="input-field" placeholder="Viết những điều ngọt ngào bạn muốn gửi..." rows="6"></textarea>
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Nội dung thông điệp <span style="color: var(--primary);">*</span></label>
+            <textarea id="contentInput" class="input-field" placeholder="Viết những lời yêu thương của bạn..." maxlength="2000"></textarea>
           </div>
-          <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 12px;">
-            <input type="checkbox" id="enablePassword" class="checkbox-custom" onchange="togglePasswordField()">
-            <label for="enablePassword" style="cursor: pointer; font-weight: 500;">
-              <i class="fas fa-lock" style="color: var(--accent); margin-right: 6px;"></i>Tạo mật khẩu cho thông điệp
+          
+          <div>
+            <label class="checkbox-custom">
+              <input type="checkbox" id="usePassword" onchange="togglePasswordField()">
+              <span><i class="fas fa-lock" style="color: var(--primary); margin-right: 6px;"></i>Tạo mật khẩu cho thông điệp</span>
             </label>
+            <div id="passwordFieldContainer" style="display: none; margin-top: 16px;">
+              <input type="password" id="createPasswordInput" class="input-field" placeholder="Nhập mật khẩu..." autocomplete="off" style="max-width: 360px;">
+            </div>
           </div>
-          <div id="passwordFieldContainer" style="display: none;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Mật khẩu</label>
-            <input type="password" id="inputPassword" class="input-field password-field" placeholder="Nhập mật khẩu..." autocomplete="off">
-          </div>
-          <button class="btn-primary" onclick="createMessage()" style="width: 100%; padding: 16px; font-size: 16px;">
-            <i class="fas fa-rocket" style="margin-right: 8px;"></i>Tạo Và Chia Sẻ
+        </div>
+
+        <div style="margin-top: 32px; display: flex; gap: 16px; flex-wrap: wrap;">
+          <button class="btn-primary" onclick="createMessage()">
+            <i class="fas fa-paper-plane" style="margin-right: 10px;"></i>
+            Tạo Thông Điệp
           </button>
+          <button class="btn-secondary" onclick="showHomeView()">Hủy</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- MESSAGE VIEW -->
-  <div id="viewMessage" class="view">
-    <div style="max-width: 800px; margin: 0 auto; padding: 40px 20px; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-      <div id="messageDisplayContainer" style="width: 100%;"></div>
+  <div id="messageView" class="view">
+    <div class="message-display" id="messageDisplay">
+      <!-- Message content will be rendered here -->
     </div>
   </div>
 
   <!-- ADMIN VIEW -->
-  <div id="viewAdmin" class="view">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 30px 20px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-        <h2 style="font-size: 28px; font-weight: 700;">
-          <i class="fas fa-crown" style="color: var(--accent); margin-right: 10px;"></i>Trang Quản Trị
-        </h2>
-        <button class="btn-secondary" onclick="showHomeView()">
-          <i class="fas fa-home" style="margin-right: 8px;"></i>Về Trang Chủ
+  <div id="adminView" class="view">
+    <div style="padding: 24px 40px; max-width: 1400px; margin: 0 auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h1 style="font-size: 32px; font-weight: 700;">
+            <i class="fas fa-crown" style="color: var(--accent); margin-right: 12px;"></i>
+            Trang Quản Trị
+          </h1>
+          <p style="color: var(--muted); margin-top: 4px;">Quản lý toàn bộ hệ thống Vũ Trụ Tình Yêu</p>
+        </div>
+        <button class="btn-ghost" onclick="showHomeView()">
+          <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>Về trang chủ
         </button>
       </div>
 
-      <div style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; flex-wrap: wrap;">
-        <button class="admin-tab active" onclick="switchAdminTab('stats')">
-          <i class="fas fa-chart-line"></i> Thống Kê
-        </button>
-        <button class="admin-tab" onclick="switchAdminTab('messages')">
-          <i class="fas fa-envelope"></i> Thông Điệp
-        </button>
-        <button class="admin-tab" onclick="switchAdminTab('templates')">
-          <i class="fas fa-palette"></i> Mẫu Giao Diện
-        </button>
-        <button class="admin-tab" onclick="switchAdminTab('maintenance')">
-          <i class="fas fa-wrench"></i> Bảo Trì
-        </button>
-        <button class="admin-tab" onclick="switchAdminTab('announcement')">
-          <i class="fas fa-bullhorn"></i> Thông Báo
-        </button>
-        <button class="admin-tab" onclick="switchAdminTab('settings')">
-          <i class="fas fa-cog"></i> Cài Đặt
-        </button>
-        <button class="admin-tab" onclick="switchAdminTab('tools')">
-          <i class="fas fa-tools"></i> Công Cụ
-        </button>
+      <!-- Admin Tabs -->
+      <div class="glass" style="padding: 4px; margin-bottom: 24px; overflow-x: auto;">
+        <div style="display: flex; gap: 4px;">
+          <button class="admin-tab active" onclick="showAdminSection('stats')">
+            <i class="fas fa-chart-line" style="margin-right: 6px;"></i>Thống Kê
+          </button>
+          <button class="admin-tab" onclick="showAdminSection('messages')">
+            <i class="fas fa-envelope" style="margin-right: 6px;"></i>Thông Điệp
+          </button>
+          <button class="admin-tab" onclick="showAdminSection('templates')">
+            <i class="fas fa-palette" style="margin-right: 6px;"></i>Mẫu Giao Diện
+          </button>
+          <button class="admin-tab" onclick="showAdminSection('maintenance')">
+            <i class="fas fa-tools" style="margin-right: 6px;"></i>Bảo Trì
+          </button>
+          <button class="admin-tab" onclick="showAdminSection('announcement')">
+            <i class="fas fa-bullhorn" style="margin-right: 6px;"></i>Thông Báo
+          </button>
+          <button class="admin-tab" onclick="showAdminSection('settings')">
+            <i class="fas fa-cog" style="margin-right: 6px;"></i>Cài Đặt
+          </button>
+          <button class="admin-tab" onclick="showAdminSection('tools')">
+            <i class="fas fa-wrench" style="margin-right: 6px;"></i>Công Cụ
+          </button>
+        </div>
       </div>
 
-      <!-- Stats Tab -->
-      <div id="adminStats" class="admin-content active">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;">
+      <!-- Stats Section -->
+      <div id="adminStats" class="admin-section active">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 32px;">
           <div class="stat-card">
-            <div class="stat-number" id="statMessages">0</div>
-            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Tổng Thông Điệp</div>
+            <div class="stat-num" id="statMessages">0</div>
+            <div class="stat-label">Tổng Thông Điệp</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number" id="statTemplatesActive">0</div>
-            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Mẫu Đang Bật</div>
+            <div class="stat-num" id="statTemplatesActive">0</div>
+            <div class="stat-label">Mẫu Đang Bật</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number" id="statTemplatesTotal">0</div>
-            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Tổng Mẫu</div>
+            <div class="stat-num" id="statTemplatesTotal">0</div>
+            <div class="stat-label">Tổng Mẫu</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number" id="statUsers">0</div>
-            <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">Người Dùng</div>
+            <div class="stat-num" id="statUsers">0</div>
+            <div class="stat-label">Người Dùng</div>
           </div>
         </div>
         <div class="glass" style="padding: 24px;">
-          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">
-            <i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>Hoạt Động Gần Đây
+          <h3 style="font-weight: 600; margin-bottom: 16px;">
+            <i class="fas fa-history" style="color: var(--primary); margin-right: 8px;"></i>
+            Hoạt Động Gần Đây
           </h3>
-          <div id="recentActivity" style="display: grid; gap: 12px;"></div>
+          <div id="recentActivity" style="color: var(--muted);">
+            <p style="padding: 20px; text-align: center;">Đang tải dữ liệu...</p>
+          </div>
         </div>
       </div>
 
-      <!-- Messages Tab -->
-      <div id="adminMessages" class="admin-content">
+      <!-- Messages Section -->
+      <div id="adminMessages" class="admin-section">
         <div class="glass" style="padding: 24px;">
-          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-            <input type="text" id="searchMessages" class="input-field" placeholder="Tìm kiếm theo tên..." style="max-width: 300px;" oninput="filterMessages()">
-            <select id="filterTemplate" class="select-field" style="max-width: 220px;" onchange="filterMessages()">
+          <div style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+            <input type="text" id="searchMessages" class="input-field" placeholder="Tìm kiếm theo tên người nhận..." style="flex: 1; min-width: 200px;" oninput="filterMessages()">
+            <select id="filterTemplate" class="input-field" style="max-width: 220px;" onchange="filterMessages()">
               <option value="">Tất cả mẫu</option>
             </select>
           </div>
@@ -637,251 +817,219 @@
                   <th>Thao tác</th>
                 </tr>
               </thead>
-              <tbody id="messagesTableBody"></tbody>
+              <tbody id="messagesTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--muted);">Đang tải...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- Templates Tab -->
-      <div id="adminTemplates" class="admin-content">
-        <div class="glass" style="padding: 24px; margin-bottom: 20px;">
+      <!-- Templates Section -->
+      <div id="adminTemplates" class="admin-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+          <h3 style="font-weight: 600; font-size: 18px;">
+            <i class="fas fa-palette" style="color: var(--primary); margin-right: 8px;"></i>
+            Quản Lý Mẫu Giao Diện
+          </h3>
           <button class="btn-primary" onclick="showAddTemplateModal()">
             <i class="fas fa-plus" style="margin-right: 8px;"></i>Thêm Mẫu Mới
           </button>
         </div>
-        <div class="glass" style="padding: 24px;">
-          <div id="adminTemplatesList" style="display: grid; gap: 16px;"></div>
-        </div>
+        <div id="adminTemplateGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;"></div>
       </div>
 
-      <!-- Maintenance Tab -->
-      <div id="adminMaintenance" class="admin-content">
-        <div class="glass" style="padding: 28px;">
-          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
-            <i class="fas fa-wrench" style="color: var(--accent); margin-right: 8px;"></i>Cấu Hình Bảo Trì
+      <!-- Maintenance Section -->
+      <div id="adminMaintenance" class="admin-section">
+        <div class="glass" style="padding: 32px; max-width: 700px;">
+          <h3 style="font-weight: 600; font-size: 18px; margin-bottom: 24px;">
+            <i class="fas fa-tools" style="color: var(--accent); margin-right: 8px;"></i>
+            Cấu Hình Chế Độ Bảo Trì
           </h3>
-          <div style="display: grid; gap: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-weight: 500;">Bật chế độ bảo trì</span>
-              <div id="maintenanceToggle" class="toggle-switch" onclick="toggleMaintenance()"></div>
-            </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 14px;">
             <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tiêu đề</label>
-              <input type="text" id="maintTitle" class="input-field" placeholder="Đang Bảo Trì">
+              <div style="font-weight: 600;">Bật Chế Độ Bảo Trì</div>
+              <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Trang chủ sẽ hiển thị màn hình bảo trì</div>
             </div>
-            <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Nội dung</label>
-              <textarea id="maintText" class="input-field" placeholder="Hệ thống đang được nâng cấp..." rows="3"></textarea>
-            </div>
-            <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Thời gian kết thúc (tự động tắt)</label>
-              <input type="datetime-local" id="maintEndTime" class="input-field">
-            </div>
-            <button class="btn-primary" onclick="saveMaintenance()">Lưu Cấu Hình</button>
+            <label class="switch">
+              <input type="checkbox" id="maintenanceEnabled">
+              <span class="slider"></span>
+            </label>
           </div>
+          <div style="display: grid; gap: 20px;">
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Tiêu đề</label>
+              <input type="text" id="maintenanceTitleInput" class="input-field" placeholder="Đang Bảo Trì">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Nội dung</label>
+              <textarea id="maintenanceTextInput" class="input-field" placeholder="Hệ thống đang được nâng cấp..." style="min-height: 80px;"></textarea>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Thời gian kết thúc</label>
+              <input type="datetime-local" id="maintenanceEndTime" class="input-field">
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top: 24px; width: 100%;" onclick="saveMaintenanceConfig()">
+            <i class="fas fa-save" style="margin-right: 8px;"></i>Lưu Cấu Hình
+          </button>
         </div>
       </div>
 
-      <!-- Announcement Tab -->
-      <div id="adminAnnouncement" class="admin-content">
-        <div class="glass" style="padding: 28px;">
-          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
-            <i class="fas fa-bullhorn" style="color: var(--accent); margin-right: 8px;"></i>Cấu Hình Thông Báo
+      <!-- Announcement Section -->
+      <div id="adminAnnouncement" class="admin-section">
+        <div class="glass" style="padding: 32px; max-width: 700px;">
+          <h3 style="font-weight: 600; font-size: 18px; margin-bottom: 24px;">
+            <i class="fas fa-bullhorn" style="color: var(--primary); margin-right: 8px;"></i>
+            Cấu Hình Thông Báo
           </h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 14px;">
+            <div>
+              <div style="font-weight: 600;">Hiển Thị Thông Báo</div>
+              <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Thanh thông báo ở đầu trang</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="announcementEnabled">
+              <span class="slider"></span>
+            </label>
+          </div>
           <div style="display: grid; gap: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-weight: 500;">Bật thông báo</span>
-              <div id="announcementToggle" class="toggle-switch" onclick="toggleAnnouncement()"></div>
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Nội dung thông báo</label>
+              <textarea id="announcementTextInput" class="input-field" placeholder="Nhập nội dung thông báo..." style="min-height: 80px;"></textarea>
             </div>
             <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Nội dung thông báo</label>
-              <textarea id="announcementText" class="input-field" placeholder="Nhập nội dung thông báo..." rows="3"></textarea>
-            </div>
-            <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Thời gian hết hạn</label>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Thời gian hết hạn</label>
               <input type="datetime-local" id="announcementEndTime" class="input-field">
             </div>
-            <button class="btn-primary" onclick="saveAnnouncement()">Lưu Cấu Hình</button>
           </div>
+          <button class="btn-primary" style="margin-top: 24px; width: 100%;" onclick="saveAnnouncementConfig()">
+            <i class="fas fa-save" style="margin-right: 8px;"></i>Lưu Cấu Hình
+          </button>
         </div>
       </div>
 
-      <!-- Settings Tab -->
-      <div id="adminSettings" class="admin-content">
-        <div class="glass" style="padding: 28px;">
-          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
-            <i class="fas fa-cog" style="color: var(--accent); margin-right: 8px;"></i>Cài Đặt Hệ Thống
+      <!-- Settings Section -->
+      <div id="adminSettings" class="admin-section">
+        <div class="glass" style="padding: 32px; max-width: 700px;">
+          <h3 style="font-weight: 600; font-size: 18px; margin-bottom: 24px;">
+            <i class="fas fa-cog" style="color: var(--accent); margin-right: 8px;"></i>
+            Cài Đặt Hệ Thống
           </h3>
           <div style="display: grid; gap: 20px;">
             <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tiêu đề trang</label>
-              <input type="text" id="settingTitle" class="input-field" placeholder="Vũ Trụ Tình Yêu">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Tiêu đề trang</label>
+              <input type="text" id="siteTitleInput" class="input-field" placeholder="Vũ Trụ Tình Yêu">
             </div>
             <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Phụ đề trang</label>
-              <textarea id="settingDesc" class="input-field" placeholder="Gửi những thông điệp ngọt ngào..." rows="2"></textarea>
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Phụ đề trang</label>
+              <textarea id="siteDescInput" class="input-field" placeholder="Nơi những lời yêu thương bay ngang qua thiên hà..." style="min-height: 80px;"></textarea>
             </div>
             <div>
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Mật khẩu quản trị</label>
-              <input type="password" id="settingAdminPassword" class="input-field" placeholder="Để trống nếu không muốn đặt">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted); font-size: 14px;">Mật khẩu quản trị</label>
+              <input type="password" id="newAdminPassword" class="input-field" placeholder="Để trống nếu không muốn đổi" autocomplete="off">
             </div>
-            <button class="btn-primary" onclick="saveSettings()">Lưu Cài Đặt</button>
           </div>
+          <button class="btn-primary" style="margin-top: 24px; width: 100%;" onclick="saveSiteSettings()">
+            <i class="fas fa-save" style="margin-right: 8px;"></i>Lưu Cài Đặt
+          </button>
         </div>
       </div>
 
-      <!-- Tools Tab -->
-      <div id="adminTools" class="admin-content">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+      <!-- Tools Section -->
+      <div id="adminTools" class="admin-section">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
           <div class="glass" style="padding: 24px;">
-            <h4 style="font-weight: 600; margin-bottom: 12px;"><i class="fas fa-download" style="color: var(--accent); margin-right: 8px;"></i>Xuất Backup</h4>
-            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Tải xuống toàn bộ dữ liệu hệ thống</p>
-            <button class="btn-secondary" onclick="exportBackup()">Xuất Dữ Liệu</button>
+            <i class="fas fa-download" style="font-size: 32px; color: var(--primary); margin-bottom: 16px;"></i>
+            <h4 style="font-weight: 600; margin-bottom: 8px;">Xuất Dữ Liệu Backup</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Tải về file JSON chứa toàn bộ cấu hình hệ thống</p>
+            <button class="btn-secondary" onclick="exportBackup()">Xuất Backup</button>
           </div>
           <div class="glass" style="padding: 24px;">
-            <h4 style="font-weight: 600; margin-bottom: 12px;"><i class="fas fa-upload" style="color: var(--accent); margin-right: 8px;"></i>Nhập Backup</h4>
-            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Phục hồi dữ liệu từ file backup</p>
+            <i class="fas fa-upload" style="font-size: 32px; color: #2ed573; margin-bottom: 16px;"></i>
+            <h4 style="font-weight: 600; margin-bottom: 8px;">Nhập Dữ Liệu Backup</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Khôi phục cấu hình từ file JSON</p>
             <input type="file" id="backupFile" accept=".json" style="display: none;" onchange="importBackup(event)">
             <button class="btn-secondary" onclick="document.getElementById('backupFile').click()">Chọn File</button>
           </div>
           <div class="glass" style="padding: 24px;">
-            <h4 style="font-weight: 600; margin-bottom: 12px;"><i class="fas fa-link" style="color: var(--accent); margin-right: 8px;"></i>Link Admin</h4>
-            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Sao chép link truy cập quản trị</p>
+            <i class="fas fa-link" style="font-size: 32px; color: var(--accent); margin-bottom: 16px;"></i>
+            <h4 style="font-weight: 600; margin-bottom: 8px;">Sao Chép Link Admin</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Sao chép đường dẫn truy cập nhanh trang quản trị</p>
             <button class="btn-secondary" onclick="copyAdminLink()">Sao Chép Link</button>
           </div>
-          <div class="glass" style="padding: 24px; border-color: rgba(239,68,68,0.3);">
-            <h4 style="font-weight: 600; margin-bottom: 12px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>Đặt Lại Dữ Liệu</h4>
-            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Xóa toàn bộ dữ liệu (không thể khôi phục)</p>
+          <div class="glass" style="padding: 24px; border-color: rgba(255,71,87,0.3);">
+            <i class="fas fa-exclamation-triangle" style="font-size: 32px; color: #ff4757; margin-bottom: 16px;"></i>
+            <h4 style="font-weight: 600; margin-bottom: 8px;">Đặt Lại Dữ Liệu</h4>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Xóa toàn bộ cấu hình và khôi phục mặc định</p>
             <button class="btn-danger" onclick="resetAllData()">Đặt Lại Hệ Thống</button>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-</div>
-
-<!-- Login Modal -->
-<div id="loginModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content" style="text-align: center;">
-    <div style="font-size: 60px; margin-bottom: 20px;">
-      <i class="fas fa-heart" style="color: var(--accent);"></i>
-    </div>
-    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">Chào Mừng Đến Vũ Trụ Tình Yêu</h2>
-    <p style="color: var(--muted); margin-bottom: 28px;">Đăng nhập để bắt đầu tạo những thông điệp ngọt ngào</p>
-    <button class="btn-primary" onclick="loginWithGoogle()" style="width: 100%; padding: 14px; font-size: 16px;">
-      <i class="fab fa-google" style="margin-right: 10px;"></i>Đăng Nhập Bằng Google
-    </button>
-  </div>
-</div>
-
-<!-- Name Modal -->
-<div id="nameModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 12px; text-align: center;">
-      <i class="fas fa-user-edit" style="color: var(--accent); margin-right: 8px;"></i>Chọn Tên Hiển Thị
-    </h2>
-    <p style="color: var(--muted); margin-bottom: 20px; text-align: center; font-size: 14px;">Tên này sẽ xuất hiện trên thông điệp bạn gửi</p>
-    <input type="text" id="nameInput" class="input-field" placeholder="Nhập tên của bạn..." maxlength="30">
-    <p id="nameError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></p>
-    <button class="btn-primary" onclick="saveUserName()" style="width: 100%; margin-top: 20px; padding: 14px;">Tiếp Tục</button>
-  </div>
-</div>
-
-<!-- Message Password Modal -->
-<div id="msgPasswordModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content" style="text-align: center;">
-    <div style="font-size: 50px; margin-bottom: 16px;">
-      <i class="fas fa-lock" style="color: var(--accent);"></i>
-    </div>
-    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Mật Mã Tình Yêu</h2>
-    <p style="color: var(--muted); margin-bottom: 24px;">Thông điệp này được bảo vệ bởi mật khẩu</p>
-    <input type="password" id="msgPasswordInput" class="input-field password-field" placeholder="Nhập mật khẩu..." autocomplete="off">
-    <p id="msgPasswordError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></p>
-    <button class="btn-primary" onclick="verifyMessagePassword()" style="width: 100%; margin-top: 20px; padding: 14px;">Mở Khóa Thông Điệp</button>
-  </div>
-</div>
-
-<!-- Admin Login Modal -->
-<div id="adminLoginModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px; text-align: center;">
-      <i class="fas fa-shield-alt" style="color: var(--accent); margin-right: 8px;"></i>Đăng Nhập Quản Trị
-    </h2>
-    <input type="password" id="adminPasswordInput" class="input-field" placeholder="Nhập mật khẩu quản trị...">
-    <p id="adminPasswordError" style="color: #ef4444; font-size: 13px; margin-top: 8px; display: none;"></p>
-    <button class="btn-primary" onclick="verifyAdminPassword()" style="width: 100%; margin-top: 20px; padding: 14px;">Truy Cập</button>
-    <button class="btn-secondary" onclick="closeAdminLoginModal()" style="width: 100%; margin-top: 10px;">Hủy</button>
-  </div>
 </div>
 
 <!-- Add Template Modal -->
-<div id="addTemplateModal" class="modal-overlay" style="display: none;">
+<div id="addTemplateModal" class="modal-overlay">
   <div class="modal-content" style="max-width: 600px;">
-    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">
-      <i class="fas fa-plus" style="color: var(--accent); margin-right: 8px;"></i>Thêm Mẫu Mới
-    </h2>
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">Thêm Mẫu Giao Diện Mới</h2>
     <div style="display: grid; gap: 16px;">
       <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">ID mẫu (không dấu, không khoảng trắng)</label>
+        <label style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--muted); font-size: 13px;">ID mẫu (không dấu, không khoảng trắng)</label>
         <input type="text" id="newTemplateId" class="input-field" placeholder="vd: mytemplate">
       </div>
       <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">Tên mẫu</label>
-        <input type="text" id="newTemplateName" class="input-field" placeholder="vd: Mẫu Của Tôi">
+        <label style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--muted); font-size: 13px;">Tên mẫu</label>
+        <input type="text" id="newTemplateName" class="input-field" placeholder="vd: Mẫu của tôi">
       </div>
       <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">HTML tùy chỉnh (dùng {{to}}, {{from}}, {{content}})</label>
-        <textarea id="newTemplateHtml" class="input-field" placeholder='<div style="padding: 20px;"><h2>Gửi {{to}}</h2><p>{{content}}</p><p style="text-align:right;">— {{from}}</p></div>' rows="8"></textarea>
-      </div>
-      <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--muted);">CSS nền xem trước (mã màu)</label>
-        <input type="text" id="newTemplateBg" class="input-field" placeholder="vd: linear-gradient(135deg, #ff6b6b, #feca57)">
+        <label style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--muted); font-size: 13px;">HTML tùy chỉnh (dùng {{to}}, {{from}}, {{content}})</label>
+        <textarea id="newTemplateHtml" class="input-field" placeholder="<div style='padding: 40px;'><h2>Gửi {{to}}</h2><p>{{content}}</p><p style='text-align:right;'>{{from}}</p></div>" style="min-height: 150px; font-family: monospace; font-size: 13px;"></textarea>
       </div>
     </div>
-    <div style="display: flex; gap: 12px; margin-top: 20px;">
-      <button class="btn-secondary" onclick="closeAddTemplateModal()" style="flex: 1;">Hủy</button>
-      <button class="btn-primary" onclick="saveNewTemplate()" style="flex: 1;">Lưu Mẫu</button>
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+      <button class="btn-primary" style="flex: 1;" onclick="addNewTemplate()">Thêm Mẫu</button>
+      <button class="btn-secondary" onclick="closeAddTemplateModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Template Modal -->
+<div id="editTemplateModal" class="modal-overlay">
+  <div class="modal-content" style="max-width: 600px;">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">Sửa Mẫu Giao Diện</h2>
+    <input type="hidden" id="editTemplateId">
+    <div style="display: grid; gap: 16px;">
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--muted); font-size: 13px;">Tên mẫu</label>
+        <input type="text" id="editTemplateName" class="input-field">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--muted); font-size: 13px;">HTML tùy chỉnh</label>
+        <textarea id="editTemplateHtml" class="input-field" style="min-height: 150px; font-family: monospace; font-size: 13px;"></textarea>
+      </div>
+    </div>
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+      <button class="btn-primary" style="flex: 1;" onclick="saveEditTemplate()">Lưu</button>
+      <button class="btn-secondary" onclick="closeEditTemplateModal()">Hủy</button>
     </div>
   </div>
 </div>
 
 <!-- View Message Modal (admin) -->
-<div id="viewMsgModal" class="modal-overlay" style="display: none;">
+<div id="viewMsgModal" class="modal-overlay">
   <div class="modal-content" style="max-width: 600px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <h2 style="font-size: 20px; font-weight: 700;">Chi Tiết Thông Điệp</h2>
-      <button onclick="closeViewMsgModal()" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px;">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div id="viewMsgContent"></div>
-  </div>
-</div>
-
-<!-- Share Link Modal -->
-<div id="shareModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content" style="text-align: center;">
-    <div style="font-size: 50px; margin-bottom: 16px;">
-      <i class="fas fa-check-circle" style="color: #4ade80;"></i>
-    </div>
-    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Tạo Thông Điệp Thành Công!</h2>
-    <p style="color: var(--muted); margin-bottom: 20px;">Sao chép link dưới đây và gửi đến người ấy</p>
-    <div class="link-box" id="shareLinkBox"></div>
-    <div style="display: flex; gap: 12px; margin-top: 20px;">
-      <button class="btn-primary" onclick="copyShareLink()" style="flex: 1;">
-        <i class="fas fa-copy" style="margin-right: 8px;"></i>Sao Chép Link
-      </button>
-      <button class="btn-secondary" onclick="closeShareModal()" style="flex: 1;">Đóng</button>
-    </div>
+    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Chi Tiết Thông Điệp</h2>
+    <div id="viewMsgContent" style="max-height: 60vh; overflow-y: auto;"></div>
+    <button class="btn-secondary" style="width: 100%; margin-top: 20px;" onclick="closeViewMsgModal()">Đóng</button>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, query, getDocs, deleteDoc, serverTimestamp, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, getDocs, deleteDoc, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDmQkodF3NruRl1QIGWmu4UNsvQ3yIb0RY",
@@ -898,475 +1046,133 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const GOOGLE_PROVIDER = new GoogleAuthProvider();
 
-// ============ DEFAULT TEMPLATES ============
+// ============ CONSTANTS ============
+const BAD_WORDS = ['địt', 'đụ', 'cặc', 'bú', 'lồn', 'chịch', 'đm', 'đcm', 'vcl', 'vl', 'fuck', 'shit', 'dick', 'pussy', 'cunt', 'bitch', 'asshole', 'sex', 'porn', 'rác', 'điên', 'ngu', 'vô dụng', 'chết tiệt', 'đồ khốn'];
+
 const DEFAULT_TEMPLATES = [
-  {
-    id: 'stars', name: 'Bầu Trời Sao',
-    previewClass: 'tpl-stars',
-    bgStyle: 'linear-gradient(135deg, #0c0c2e, #1a1a4e)',
-    html: `<div style="background: linear-gradient(135deg, #0c0c2e, #1a1a4e); color: #fff; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20% 30%, white, transparent), radial-gradient(2px 2px at 60% 70%, white, transparent), radial-gradient(1px 1px at 50% 50%, white, transparent), radial-gradient(1px 1px at 80% 10%, white, transparent), radial-gradient(2px 2px at 90% 60%, white, transparent); background-size: 200px 200px; opacity: 0.5;"></div>
-      <div style="position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-star" style="color: #ffd700; font-size: 40px;"></i></div>
-        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Gửi đến {{to}}</h3>
-        <p style="font-size: 18px; line-height: 1.8; text-align: center; font-style: italic;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px; opacity: 0.8;">— {{from}}</p>
+  { id: 'stars', name: 'Bầu Trời Sao', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(135deg, #0c0c3d, #1a1a5e, #2d1b69); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+      <div style="position: absolute; inset: 0; background-image: radial-gradient(2px 2px at 20% 30%, white, transparent), radial-gradient(2px 2px at 60% 70%, white, transparent), radial-gradient(1px 1px at 50% 50%, white, transparent), radial-gradient(1px 1px at 80% 10%, white, transparent), radial-gradient(2px 2px at 90% 60%, white, transparent); background-size: 200px 200px; animation: twinkle 3s ease-in-out infinite;"></div>
+      <div style="max-width: 600px; text-align: center; position: relative; z-index: 1; color: white;">
+        <div style="font-size: 48px; margin-bottom: 20px;">⭐</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px; color: #ffd700;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px; opacity: 0.95;">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'galaxy', name: 'Thiên Hà Sâu Thẳm',
-    previewClass: 'tpl-galaxy',
-    bgStyle: 'radial-gradient(ellipse at center, #2d1b4e, #0a0a1a)',
-    html: `<div style="background: radial-gradient(ellipse at center, #4a2c7a, #1a0a30); color: #e0d4f7; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
-      <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(186,85,211,0.3), transparent); top: -100px; right: -100px; border-radius: 50%;"></div>
-      <div style="position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-meteor" style="color: #c084fc; font-size: 40px;"></i></div>
-        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px; letter-spacing: 2px;">{{to}} thân mến,</h3>
-        <p style="font-size: 18px; line-height: 2; text-align: center;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px; font-style: italic;">— {{from}}</p>
+      <style>@keyframes twinkle {0%,100%{opacity:0.3}50%{opacity:1}}</style>
+    </div>` },
+  { id: 'galaxy', name: 'Thiên Hà Sâu Thẳm', enabled: true, custom: false,
+    html: `<div style="background: radial-gradient(ellipse at center, #4a1a6b 0%, #1a0a2e 50%, #000 100%); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center;">
+      <div style="max-width: 600px; text-align: center; color: white; position: relative;">
+        <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,107,157,0.3), transparent 70%); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse 4s ease-in-out infinite;"></div>
+        <div style="position: relative; z-index: 1;">
+          <div style="font-size: 48px; margin-bottom: 20px;">🌌</div>
+          <h1 style="font-size: 28px; margin-bottom: 16px; background: linear-gradient(135deg, #ff6b9d, #c44569); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Gửi {{to}}</h1>
+          <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px;">{{content}}</div>
+          <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
+        </div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'letter', name: 'Thư Tay Bí Mật',
-    previewClass: 'tpl-letter',
-    bgStyle: 'linear-gradient(135deg, #f5e6d3, #e8d4b8)',
-    html: `<div style="background: linear-gradient(135deg, #fef9ef, #f5e6d3); color: #5c4033; padding: 50px 40px; border-radius: 8px; min-height: 400px; font-family: Georgia, serif; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative;">
-      <div style="position: absolute; top: 10px; right: 20px; font-size: 30px; opacity: 0.3;">💌</div>
-      <h3 style="font-size: 20px; margin-bottom: 24px; font-style: italic;">Gửi {{to}},</h3>
-      <p style="font-size: 17px; line-height: 2; white-space: pre-wrap;">{{content}}</p>
-      <p style="text-align: right; margin-top: 40px; font-style: italic;">Trân trọng,<br><strong>{{from}}</strong></p>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'neon', name: 'Neon Tình Yêu',
-    previewClass: 'tpl-neon',
-    bgStyle: '#0a0a0a',
-    html: `<div style="background: #0a0a0a; color: #ff00ff; padding: 40px; border-radius: 20px; min-height: 400px; border: 2px solid #ff00ff; box-shadow: 0 0 30px rgba(255,0,255,0.5), inset 0 0 30px rgba(255,0,255,0.1);">
-      <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-bolt" style="color: #00ffff; font-size: 40px; text-shadow: 0 0 20px #00ffff;"></i></div>
-      <h3 style="text-align: center; color: #00ffff; text-shadow: 0 0 15px #00ffff; margin-bottom: 24px; font-size: 16px;">HEY {{to}}!</h3>
-      <p style="font-size: 18px; line-height: 1.8; text-align: center; text-shadow: 0 0 10px #ff00ff;">{{content}}</p>
-      <p style="text-align: right; margin-top: 40px; color: #00ffff; text-shadow: 0 0 10px #00ffff;">— {{from}}</p>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'ocean', name: 'Đại Dương Xanh',
-    previewClass: 'tpl-ocean',
-    bgStyle: 'linear-gradient(135deg, #006994, #003366)',
-    html: `<div style="background: linear-gradient(180deg, #0077be, #001f3f); color: #b3e5fc; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
-      <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(transparent, rgba(0,119,190,0.5));"></div>
-      <div style="position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-water" style="color: #4fc3f7; font-size: 40px;"></i></div>
-        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Gửi {{to}},</h3>
-        <p style="font-size: 18px; line-height: 1.8; text-align: center;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px; font-style: italic;">— {{from}}</p>
+      <style>@keyframes pulse {0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.5}50%{transform:translate(-50%,-50%) scale(1.2);opacity:0.8}}</style>
+    </div>` },
+  { id: 'letter', name: 'Thư Tay Bí Mật', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(135deg, #f5e6d3, #e8d5b7); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center;">
+      <div style="max-width: 600px; background: #fffef5; padding: 50px; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; font-family: 'Dancing Script', cursive; color: #5d4e37;">
+        <div style="position: absolute; top: 10px; right: 20px; font-size: 40px;">💌</div>
+        <div style="font-size: 24px; margin-bottom: 20px;">Gửi {{to}} thân yêu,</div>
+        <div style="font-size: 22px; line-height: 1.8; margin-bottom: 30px; white-space: pre-wrap;">{{content}}</div>
+        <div style="text-align: right; font-size: 24px;">Yêu bạn,<br>{{from}}</div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'sunset', name: 'Hoàng Hôn',
-    previewClass: 'tpl-sunset',
-    bgStyle: 'linear-gradient(135deg, #ff6b6b, #feca57)',
-    html: `<div style="background: linear-gradient(135deg, #ff6b6b, #feca57, #ff9ff3); color: #fff; padding: 40px; border-radius: 20px; min-height: 400px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
-      <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-sun" style="color: #fff59d; font-size: 40px;"></i></div>
-      <h3 style="text-align: center; font-size: 14px; opacity: 0.9; margin-bottom: 20px;">{{to}} ơi,</h3>
-      <p style="font-size: 18px; line-height: 1.8; text-align: center; font-weight: 500;">{{content}}</p>
-      <p style="text-align: right; margin-top: 40px;">— {{from}}</p>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'sakura', name: 'Hoa Anh Đào',
-    previewClass: 'tpl-sakura',
-    bgStyle: 'linear-gradient(135deg, #ffb7c5, #ffc0cb)',
-    html: `<div style="background: linear-gradient(135deg, #ffe4ec, #ffb7c5); color: #8b0045; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: 20px; left: 20px; font-size: 24px; opacity: 0.5;">🌸</div>
-      <div style="position: absolute; top: 40px; right: 30px; font-size: 20px; opacity: 0.4;">🌸</div>
-      <div style="position: absolute; bottom: 30px; left: 40px; font-size: 18px; opacity: 0.3;">🌸</div>
-      <div style="position: relative; z-index: 1;">
-        <h3 style="text-align: center; font-size: 16px; margin-bottom: 24px; font-style: italic;">Gửi {{to}} thân yêu,</h3>
-        <p style="font-size: 18px; line-height: 1.9; text-align: center;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px;">— {{from}} 🌸</p>
+    </div>` },
+  { id: 'neon', name: 'Neon Tình Yêu', enabled: true, custom: false,
+    html: `<div style="background: #0a0a0a; min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center;">
+      <div style="max-width: 600px; text-align: center; color: white;">
+        <div style="font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 20px #ff00ff;">💜</div>
+        <h1 style="font-size: 32px; margin-bottom: 24px; color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px; color: #00ffff; text-shadow: 0 0 5px #00ffff;">{{content}}</div>
+        <div style="font-style: italic; color: #ff00ff; text-shadow: 0 0 10px #ff00ff;">— {{from}}</div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'aurora', name: 'Cực Quang',
-    previewClass: 'tpl-aurora',
-    bgStyle: 'linear-gradient(135deg, #004d40, #1b5e20)',
-    html: `<div style="background: linear-gradient(180deg, #001a1a, #004d40, #1b5e20); color: #b9f6ca; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(180deg, rgba(76,175,80,0.3), transparent); filter: blur(20px);"></div>
-      <div style="position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 30px;"><i class="fas fa-north-star" style="color: #69f0ae; font-size: 40px;"></i></div>
-        <h3 style="text-align: center; font-size: 14px; opacity: 0.7; margin-bottom: 20px;">{{to}},</h3>
-        <p style="font-size: 18px; line-height: 1.8; text-align: center;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px; font-style: italic;">— {{from}}</p>
+    </div>` },
+  { id: 'ocean', name: 'Đại Dương Xanh', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(180deg, #006994 0%, #003366 50%, #001a33 100%); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(transparent, rgba(0,100,150,0.5));"></div>
+      <div style="max-width: 600px; text-align: center; color: white; position: relative; z-index: 1;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🌊</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px; color: #87ceeb;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px;">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'moonlight', name: 'Dưới Ánh Trăng',
-    previewClass: 'tpl-moonlight',
-    bgStyle: 'linear-gradient(135deg, #1a1a2e, #16213e)',
-    html: `<div style="background: linear-gradient(135deg, #1a1a2e, #16213e); color: #c9d6ff; padding: 40px; border-radius: 20px; min-height: 400px; position: relative;">
-      <div style="position: absolute; top: 30px; right: 30px; width: 60px; height: 60px; background: radial-gradient(circle at 30% 30%, #fffacd, #ffd700); border-radius: 50%; box-shadow: 0 0 40px rgba(255,215,0,0.4);"></div>
-      <div style="position: relative; z-index: 1; padding-top: 20px;">
-        <h3 style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">Dưới ánh trăng, gửi {{to}},</h3>
-        <p style="font-size: 18px; line-height: 2; font-style: italic;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px;">🌙 {{from}}</p>
+    </div>` },
+  { id: 'sunset', name: 'Hoàng Hôn', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(180deg, #ff7e5f 0%, #feb47b 50%, #ff6b6b 100%); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center;">
+      <div style="max-width: 600px; text-align: center; color: white;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🌅</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.9;">— {{from}}</div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'matrix', name: 'Ma Trận Code',
-    previewClass: 'tpl-matrix',
-    bgStyle: '#000',
-    html: `<div style="background: #000; color: #00ff00; padding: 40px; border-radius: 20px; min-height: 400px; font-family: 'Courier New', monospace; border: 1px solid #00ff00;">
-      <div style="font-size: 12px; opacity: 0.5; margin-bottom: 20px;">// INITIALIZING LOVE.exe...</div>
-      <div style="margin-bottom: 20px; color: #00ff00;">
-        <span style="opacity: 0.7;">to:</span> <strong>{{to}}</strong><br>
-        <span style="opacity: 0.7;">from:</span> <strong>{{from}}</strong><br>
-        <span style="opacity: 0.7;">status:</span> <span style="color: #4ade80;">● TRANSMITTING</span>
+    </div>` },
+  { id: 'sakura', name: 'Hoa Anh Đào', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(135deg, #ffb7c5, #ffc0cb, #fff0f5); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+      <div style="max-width: 600px; text-align: center; color: #8b4557; position: relative; z-index: 1;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🌸</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px;">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
       </div>
-      <div style="border-left: 2px solid #00ff00; padding-left: 16px; margin: 20px 0;">
-        <p style="font-size: 16px; line-height: 1.8; white-space: pre-wrap;">{{content}}</p>
+    </div>` },
+  { id: 'aurora', name: 'Cực Quang', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(135deg, #0f2027, #203a43, #2c5364, #00aa88); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center; background-size: 400% 400%; animation: auroraShift 8s ease infinite;">
+      <div style="max-width: 600px; text-align: center; color: white;">
+        <div style="font-size: 48px; margin-bottom: 20px;">✨</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px; color: #98fb98;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px;">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
       </div>
-      <div style="font-size: 12px; opacity: 0.5; margin-top: 20px;">// END_OF_MESSAGE // LOVE: true</div>
-    </div>`,
-    enabled: true, custom: false
-  },
-  {
-    id: 'clouds', name: 'Trên Chín Tầng Mây',
-    previewClass: 'tpl-clouds',
-    bgStyle: 'linear-gradient(135deg, #87ceeb, #e0f7fa)',
-    html: `<div style="background: linear-gradient(180deg, #87ceeb, #e0f7fa, #fff); color: #1565c0; padding: 40px; border-radius: 20px; min-height: 400px; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: 20px; left: 10%; width: 80px; height: 30px; background: white; border-radius: 50%; opacity: 0.8;"></div>
-      <div style="position: absolute; top: 50px; right: 15%; width: 100px; height: 35px; background: white; border-radius: 50%; opacity: 0.7;"></div>
-      <div style="position: relative; z-index: 1; padding-top: 30px;">
-        <div style="text-align: center; margin-bottom: 24px;"><i class="fas fa-cloud" style="color: #fff; font-size: 40px; text-shadow: 0 2px 10px rgba(0,0,0,0.1);"></i></div>
-        <h3 style="text-align: center; font-size: 16px; margin-bottom: 20px;">Gửi {{to}} từ trên mây,</h3>
-        <p style="font-size: 18px; line-height: 1.8; text-align: center; font-weight: 500;">{{content}}</p>
-        <p style="text-align: right; margin-top: 40px;">☁️ {{from}}</p>
+      <style>@keyframes auroraShift {0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}</style>
+    </div>` },
+  { id: 'moonlight', name: 'Dưới Ánh Trăng', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center; position: relative;">
+      <div style="position: absolute; top: 40px; right: 60px; width: 80px; height: 80px; background: radial-gradient(circle at 30% 30%, #fffacd, #f0e68c); border-radius: 50%; box-shadow: 0 0 40px rgba(255,250,205,0.5);"></div>
+      <div style="max-width: 600px; text-align: center; color: white; position: relative; z-index: 1;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🌙</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px; color: #e6e6fa;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px;">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
       </div>
-    </div>`,
-    enabled: true, custom: false
-  }
+    </div>` },
+  { id: 'matrix', name: 'Ma Trận Code', enabled: true, custom: false,
+    html: `<div style="background: #000; min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center; font-family: monospace;">
+      <div style="max-width: 600px; text-align: center; color: #00ff00;">
+        <div style="font-size: 48px; margin-bottom: 20px;">💻</div>
+        <h1 style="font-size: 24px; margin-bottom: 16px; text-shadow: 0 0 10px #00ff00;">{'>>>'} Gửi: {{to}}</h1>
+        <div style="font-size: 16px; line-height: 1.8; margin-bottom: 32px; text-shadow: 0 0 5px #00ff00; white-space: pre-wrap;">{{content}}</div>
+        <div style="opacity: 0.8;">{'---'} {{from}}</div>
+      </div>
+    </div>` },
+  { id: 'clouds', name: 'Trên Chín Tầng Mây', enabled: true, custom: false,
+    html: `<div style="background: linear-gradient(180deg, #87ceeb 0%, #b0e0e6 50%, #e0f0ff 100%); min-height: 100vh; padding: 60px 20px; display: flex; align-items: center; justify-content: center;">
+      <div style="max-width: 600px; text-align: center; color: #4a6fa5; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); padding: 50px; border-radius: 30px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">☁️</div>
+        <h1 style="font-size: 28px; margin-bottom: 16px;">Gửi {{to}}</h1>
+        <div style="font-size: 18px; line-height: 1.8; margin-bottom: 32px;">{{content}}</div>
+        <div style="font-style: italic; opacity: 0.8;">— {{from}}</div>
+      </div>
+    </div>` }
 ];
-
-// ============ BAD WORDS FILTER ============
-const BAD_WORDS = ['địt', 'đụ', 'cặc', 'bú', 'lồn', 'chịch', 'má mày', 'đồ điên', 'vãi lồn', 'đm', 'clm', 'vkl', 'duma', 'con mẹ', 'con đĩ', 'đĩ', 'khốn', 'ngu xuẩn', 'thằng ngu', 'súc vật', 'chó đẻ', 'đồ chó', 'mặt phẳng', 'xấu xí', 'đồ tồi', 'tồi tệ', 'chết tiệt', 'đồ chết', 'phế', 'vô dụng', 'đồ đb', 'đồ ngu', 'đồ khốn', 'bần đảo', 'bần tiện', 'đê tiện', 'phụ nữ bẩn', 'con gà', 'gà con', 'thằng điên', 'con điên', 'bố mày', 'mẹ mày', 'đụ mẹ', 'địt mẹ', 'lồn mẹ', 'cặc mẹ', 'chịch mẹ', 'đụ má', 'địt má', 'lồn má', 'cặc má', 'chịch má', 'fuck', 'shit', 'bitch', 'asshole', 'dick', 'pussy', 'cunt', 'whore', 'slut', 'nigger', 'nigga', 'retard', 'faggot', 'trash', 'idiot', 'stupid', 'moron', 'dumbass'];
-
-function containsBadWord(text) {
-  if (!text) return false;
-  const lower = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  for (const word of BAD_WORDS) {
-    const normalizedWord = word.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (lower.includes(normalizedWord)) return true;
-  }
-  return false;
-}
 
 // ============ STATE ============
 let currentUser = null;
+let currentUserName = null;
 let selectedTemplateId = 'stars';
+let currentMessageData = null;
 let allTemplates = [...DEFAULT_TEMPLATES];
-let allMessages = [];
-let systemConfig = null;
-let currentMessageId = null;
-let pendingMessageData = null;
 let adminAuthenticated = false;
+let systemConfig = null;
+let allMessages = [];
+let maintenanceCountdownInterval = null;
+let announcementCountdownInterval = null;
 
-// ============ STARS CANVAS ============
-const canvas = document.getElementById('starsCanvas');
-const ctx = canvas.getContext('2d');
-let stars = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
-function initStars() {
-  stars = [];
-  const count = Math.floor((canvas.width * canvas.height) / 4000);
-  for (let i = 0; i < count; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 0.5,
-      speed: Math.random() * 0.3 + 0.05,
-      opacity: Math.random() * 0.8 + 0.2,
-      twinkle: Math.random() * Math.PI * 2
-    });
-  }
-}
-
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(star => {
-    star.twinkle += 0.02;
-    const twinkleOpacity = star.opacity * (0.5 + 0.5 * Math.sin(star.twinkle));
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${twinkleOpacity})`;
-    ctx.fill();
-    star.y += star.speed;
-    if (star.y > canvas.height) {
-      star.y = 0;
-      star.x = Math.random() * canvas.width;
-    }
-  });
-  requestAnimationFrame(drawStars);
-}
-
-resizeCanvas();
-initStars();
-drawStars();
-window.addEventListener('resize', () => {
-  resizeCanvas();
-  initStars();
-});
-
-// ============ BUBBLES ============
-function createBubble() {
-  const container = document.getElementById('bubblesContainer');
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
-  const size = Math.random() * 40 + 10;
-  bubble.style.width = size + 'px';
-  bubble.style.height = size + 'px';
-  bubble.style.left = Math.random() * 100 + '%';
-  bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
-  container.appendChild(bubble);
-  setTimeout(() => bubble.remove(), 20000);
-}
-setInterval(createBubble, 2000);
-
-// ============ TOAST ============
-function showToast(message, type = 'success') {
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100px)';
-    toast.style.transition = 'all 0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
-// ============ VIEW NAVIGATION ============
-function showView(viewId) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(viewId).classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function showHomeView() {
-  showView('viewHome');
-  history.pushState(null, '', window.location.pathname);
-}
-
-function showCreateView() {
-  if (!currentUser) {
-    showLoginModal();
-    return;
-  }
-  renderTemplateGrid();
-  document.getElementById('inputFrom').value = currentUser.name || '';
-  showView('viewCreate');
-}
-
-function showMessageView() {
-  showView('viewMessage');
-}
-
-function showAdminView() {
-  showView('viewAdmin');
-  loadAdminData();
-}
-
-// ============ MODALS ============
-function showLoginModal() {
-  document.getElementById('loginModal').style.display = 'flex';
-}
-function closeLoginModal() {
-  document.getElementById('loginModal').style.display = 'none';
-}
-
-function showNameModal() {
-  document.getElementById('nameModal').style.display = 'flex';
-  document.getElementById('nameInput').focus();
-}
-function closeNameModal() {
-  document.getElementById('nameModal').style.display = 'none';
-}
-
-function showMsgPasswordModal() {
-  document.getElementById('msgPasswordModal').style.display = 'flex';
-  document.getElementById('msgPasswordInput').value = '';
-  document.getElementById('msgPasswordInput').focus();
-  document.getElementById('msgPasswordError').style.display = 'none';
-}
-function closeMsgPasswordModal() {
-  document.getElementById('msgPasswordModal').style.display = 'none';
-}
-
-function showAdminLoginModal() {
-  document.getElementById('adminLoginModal').style.display = 'flex';
-  document.getElementById('adminPasswordInput').value = '';
-  document.getElementById('adminPasswordInput').focus();
-  document.getElementById('adminPasswordError').style.display = 'none';
-}
-function closeAdminLoginModal() {
-  document.getElementById('adminLoginModal').style.display = 'none';
-}
-
-function showAddTemplateModal() {
-  document.getElementById('addTemplateModal').style.display = 'flex';
-  document.getElementById('newTemplateId').value = '';
-  document.getElementById('newTemplateName').value = '';
-  document.getElementById('newTemplateHtml').value = '';
-  document.getElementById('newTemplateBg').value = '';
-}
-function closeAddTemplateModal() {
-  document.getElementById('addTemplateModal').style.display = 'none';
-}
-
-function closeViewMsgModal() {
-  document.getElementById('viewMsgModal').style.display = 'none';
-}
-
-function closeShareModal() {
-  document.getElementById('shareModal').style.display = 'none';
-}
-
-// ============ AUTH ============
-async function loginWithGoogle() {
-  try {
-    const result = await signInWithPopup(auth, GOOGLE_PROVIDER);
-    closeLoginModal();
-    const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-    if (!userDoc.exists()) {
-      showNameModal();
-    } else {
-      currentUser = { uid: result.user.uid, ...userDoc.data() };
-      updateUserUI();
-      showToast('Đăng nhập thành công!');
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    showToast('Đăng nhập thất bại, vui lòng thử lại', 'error');
-  }
-}
-
-async function saveUserName() {
-  const nameInput = document.getElementById('nameInput');
-  const nameError = document.getElementById('nameError');
-  const name = nameInput.value.trim();
-
-  if (!name) {
-    nameError.textContent = 'Vui lòng nhập tên';
-    nameError.style.display = 'block';
-    return;
-  }
-  if (name.length < 2) {
-    nameError.textContent = 'Tên quá ngắn (tối thiểu 2 ký tự)';
-    nameError.style.display = 'block';
-    return;
-  }
-  if (containsBadWord(name)) {
-    nameError.textContent = 'Tên không hợp lệ';
-    nameError.style.display = 'block';
-    return;
-  }
-
-  try {
-    const q = query(collection(db, 'users'), where('name', '==', name));
-    const snapshot = await getDocs(q);
-    if (!snapshot.empty) {
-      nameError.textContent = 'Tên đã tồn tại, vui lòng chọn tên khác';
-      nameError.style.display = 'block';
-      return;
-    }
-
-    await setDoc(doc(db, 'users', auth.currentUser.uid), {
-      name: name,
-      email: auth.currentUser.email,
-      createdAt: serverTimestamp()
-    });
-
-    currentUser = { uid: auth.currentUser.uid, name: name, email: auth.currentUser.email };
-    closeNameModal();
-    updateUserUI();
-    showToast('Đăng ký thành công!');
-  } catch (error) {
-    console.error('Save name error:', error);
-    showToast('Có lỗi xảy ra, vui lòng thử lại', 'error');
-  }
-}
-
-function updateUserUI() {
-  if (currentUser) {
-    document.getElementById('userBtnText').textContent = currentUser.name;
-    document.getElementById('userInfo').style.display = 'block';
-    document.getElementById('userNameDisplay').textContent = currentUser.name;
-  } else {
-    document.getElementById('userBtnText').textContent = 'Đăng Nhập';
-    document.getElementById('userInfo').style.display = 'none';
-  }
-}
-
-function showUserMenu() {
-  if (confirm('Bạn có muốn đăng xuất không?')) {
-    signOut(auth).then(() => {
-      currentUser = null;
-      updateUserUI();
-      showToast('Đã đăng xuất');
-    });
-  }
-}
-
-// ============ TEMPLATES ============
-function renderTemplateGrid() {
-  const grid = document.getElementById('templateGrid');
-  grid.innerHTML = '';
-  const enabledTemplates = allTemplates.filter(t => t.enabled !== false);
-  enabledTemplates.forEach(template => {
-    const card = document.createElement('div');
-    card.className = `template-card ${template.id === selectedTemplateId ? 'selected' : ''}`;
-    card.onclick = () => selectTemplate(template.id);
-    card.innerHTML = `
-      <div class="template-preview" style="background: ${template.bgStyle};">
-        <div style="opacity: 0.8;">${template.name}</div>
-      </div>
-      <div style="text-align: center; font-weight: 500; font-size: 14px;">${template.name}</div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function selectTemplate(id) {
-  selectedTemplateId = id;
-  renderTemplateGrid();
-}
-
-// ============ CREATE MESSAGE ============
-function togglePasswordField() {
-  const enabled = document.getElementById('enablePassword').checked;
-  document.getElementById('passwordFieldContainer').style.display = enabled ? 'block' : 'none';
-}
-
+// ============ UTILITY FUNCTIONS ============
 function generateId(length = 12) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -1376,31 +1182,262 @@ function generateId(length = 12) {
   return result;
 }
 
-async function createMessage() {
-  if (!currentUser) {
-    showLoginModal();
+function containsBadWord(text) {
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  return BAD_WORDS.some(word => lower.includes(word.toLowerCase()));
+}
+
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '') + ' show';
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+function showModal(id) { document.getElementById(id).classList.add('active'); }
+function hideModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function formatDate(ts) {
+  if (!ts) return 'N/A';
+  try {
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleString('vi-VN');
+  } catch { return 'N/A'; }
+}
+
+// ============ CANVAS STARS ============
+function initStarsCanvas() {
+  const canvas = document.getElementById('starsCanvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const STAR_COUNT = 200;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < STAR_COUNT; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5 + 0.5,
+        opacity: Math.random(),
+        speed: Math.random() * 0.02 + 0.005,
+        twinkleSpeed: Math.random() * 0.02 + 0.01
+      });
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(star => {
+      star.opacity += star.twinkleSpeed;
+      if (star.opacity > 1 || star.opacity < 0.2) star.twinkleSpeed *= -1;
+      
+      star.y += star.speed;
+      if (star.y > canvas.height) {
+        star.y = 0;
+        star.x = Math.random() * canvas.width;
+      }
+
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(animate);
+  }
+
+  resize();
+  createStars();
+  animate();
+  window.addEventListener('resize', () => { resize(); createStars(); });
+}
+
+// ============ BUBBLES ============
+function createBubbles() {
+  const container = document.querySelector('.main-content');
+  for (let i = 0; i < 15; i++) {
+    setTimeout(() => {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      const size = Math.random() * 40 + 10;
+      bubble.style.width = size + 'px';
+      bubble.style.height = size + 'px';
+      bubble.style.left = Math.random() * 100 + '%';
+      bubble.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      bubble.style.animationDelay = Math.random() * 5 + 's';
+      container.appendChild(bubble);
+    }, i * 300);
+  }
+}
+
+// ============ VIEW MANAGEMENT ============
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showHomeView() { showView('homeView'); }
+
+function showCreateView() {
+  if (!currentUser) { showModal('loginModal'); return; }
+  document.getElementById('fromInput').value = currentUserName || '';
+  renderTemplateGrid();
+  showView('createView');
+}
+
+function showMessageView() { showView('messageView'); }
+function showAdminView() { showView('adminView'); loadAdminData(); }
+
+// ============ AUTH ============
+window.loginWithGoogle = async function() {
+  try {
+    const result = await signInWithPopup(auth, GOOGLE_PROVIDER);
+    const user = result.user;
+    currentUser = user;
+    
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+      currentUserName = userDoc.data().name;
+      document.getElementById('userDisplayName').textContent = 'Xin chào, ' + currentUserName;
+      hideModal('loginModal');
+      checkUrlParams();
+    } else {
+      hideModal('loginModal');
+      showModal('nameModal');
+      setTimeout(() => document.getElementById('displayNameInput').focus(), 300);
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    showToast('Đăng nhập thất bại: ' + error.message, 'error');
+  }
+};
+
+window.saveDisplayName = async function() {
+  const name = document.getElementById('displayNameInput').value.trim();
+  const errorEl = document.getElementById('nameError');
+  
+  if (!name) {
+    errorEl.textContent = 'Vui lòng nhập tên';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  if (name.length < 2) {
+    errorEl.textContent = 'Tên phải có ít nhất 2 ký tự';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  if (containsBadWord(name)) {
+    errorEl.textContent = 'Tên không hợp lệ';
+    errorEl.style.display = 'block';
     return;
   }
 
-  const to = document.getElementById('inputTo').value.trim();
-  const content = document.getElementById('inputContent').value.trim();
-  const enablePassword = document.getElementById('enablePassword').checked;
-  const password = enablePassword ? document.getElementById('inputPassword').value : '';
+  // Check duplicate
+  try {
+    const usersRef = collection(db, 'users');
+    const snapshot = await getDocs(usersRef);
+    let duplicate = false;
+    snapshot.forEach(doc => {
+      if (doc.data().name && doc.data().name.toLowerCase() === name.toLowerCase() && doc.id !== currentUser.uid) {
+        duplicate = true;
+      }
+    });
+    
+    if (duplicate) {
+      errorEl.textContent = 'Tên đã tồn tại';
+      errorEl.style.display = 'block';
+      return;
+    }
 
-  if (!to) {
-    showToast('Vui lòng nhập tên người nhận', 'error');
-    return;
+    await setDoc(doc(db, 'users', currentUser.uid), {
+      name: name,
+      email: currentUser.email,
+      createdAt: serverTimestamp()
+    });
+    
+    currentUserName = name;
+    document.getElementById('userDisplayName').textContent = 'Xin chào, ' + name;
+    hideModal('nameModal');
+    errorEl.style.display = 'none';
+    document.getElementById('displayNameInput').value = '';
+    checkUrlParams();
+  } catch (error) {
+    console.error(error);
+    showToast('Lỗi: ' + error.message, 'error');
   }
-  if (!content) {
-    showToast('Vui lòng nhập nội dung thông điệp', 'error');
-    return;
+};
+
+window.logout = async function() {
+  try {
+    await signOut(auth);
+    currentUser = null;
+    currentUserName = null;
+    document.getElementById('userDisplayName').textContent = '';
+    showModal('loginModal');
+  } catch (error) {
+    showToast('Lỗi: ' + error.message, 'error');
   }
+};
+
+// ============ TEMPLATES ============
+function getActiveTemplates() {
+  return allTemplates.filter(t => t.enabled);
+}
+
+function renderTemplateGrid() {
+  const grid = document.getElementById('templateGrid');
+  const activeTemplates = getActiveTemplates();
+  grid.innerHTML = activeTemplates.map(t => `
+    <div class="template-card ${t.id === selectedTemplateId ? 'selected' : ''}" onclick="selectTemplate('${t.id}')">
+      <div class="template-preview template-${t.id}">
+        <span style="font-weight: 600;">${escapeHtml(t.name)}</span>
+      </div>
+      <div class="template-name">${escapeHtml(t.name)}</div>
+    </div>
+  `).join('');
+}
+
+window.selectTemplate = function(id) {
+  selectedTemplateId = id;
+  renderTemplateGrid();
+};
+
+window.togglePasswordField = function() {
+  const checked = document.getElementById('usePassword').checked;
+  document.getElementById('passwordFieldContainer').style.display = checked ? 'block' : 'none';
+  if (checked) setTimeout(() => document.getElementById('createPasswordInput').focus(), 100);
+};
+
+// ============ CREATE MESSAGE ============
+window.createMessage = async function() {
+  if (!currentUser) { showModal('loginModal'); return; }
+  
+  const to = document.getElementById('toInput').value.trim();
+  const content = document.getElementById('contentInput').value.trim();
+  const usePassword = document.getElementById('usePassword').checked;
+  const password = usePassword ? document.getElementById('createPasswordInput').value : '';
+
+  if (!to) { showToast('Vui lòng nhập tên người nhận', 'error'); return; }
+  if (!content) { showToast('Vui lòng nhập nội dung thông điệp', 'error'); return; }
+  if (usePassword && !password) { showToast('Vui lòng nhập mật khẩu', 'error'); return; }
+  
   if (containsBadWord(to) || containsBadWord(content)) {
     showToast('Nội dung chứa từ ngữ không phù hợp', 'error');
-    return;
-  }
-  if (enablePassword && !password) {
-    showToast('Vui lòng nhập mật khẩu', 'error');
     return;
   }
 
@@ -1409,49 +1446,83 @@ async function createMessage() {
     const msgData = {
       id: msgId,
       to: to,
-      from: currentUser.name,
+      from: currentUserName,
       content: content,
       templateId: selectedTemplateId,
-      password: enablePassword ? password : null,
+      password: password || null,
       createdAt: serverTimestamp(),
       userId: currentUser.uid
     };
-
+    
     await setDoc(doc(db, 'messages', msgId), msgData);
-
+    
     const shareUrl = window.location.origin + window.location.pathname + '?msg=' + msgId;
-    document.getElementById('shareLinkBox').textContent = shareUrl;
-    document.getElementById('shareModal').style.display = 'flex';
-
-    document.getElementById('inputTo').value = '';
-    document.getElementById('inputContent').value = '';
-    document.getElementById('enablePassword').checked = false;
-    document.getElementById('passwordFieldContainer').style.display = 'none';
-    document.getElementById('inputPassword').value = '';
+    
+    // Show result
+    const display = document.getElementById('messageDisplay');
+    display.innerHTML = `
+      <div class="glass-strong" style="max-width: 500px; width: 100%; padding: 40px; text-align: center;">
+        <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+        <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 12px;">Thông Điệp Đã Được Tạo!</h2>
+        <p style="color: var(--muted); margin-bottom: 24px;">Sao chép link dưới đây và gửi đến người ấy</p>
+        <div class="link-box" onclick="copyToClipboard('${shareUrl}')" title="Nhấp để sao chép">
+          <i class="fas fa-link" style="margin-right: 8px; color: var(--primary);"></i>
+          ${escapeHtml(shareUrl)}
+        </div>
+        <p style="font-size: 12px; color: var(--muted); margin-top: 8px;">Nhấp vào link để sao chép</p>
+        <div style="margin-top: 32px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-primary" onclick="copyToClipboard('${shareUrl}')">
+            <i class="fas fa-copy" style="margin-right: 8px;"></i>Sao Chép Link
+          </button>
+          <button class="btn-secondary" onclick="resetCreateForm(); showCreateView();">
+            Tạo Thông Điệp Mới
+          </button>
+          <button class="btn-ghost" onclick="showHomeView();">Về Trang Chủ</button>
+        </div>
+      </div>
+    `;
+    showMessageView();
+    showToast('Tạo thông điệp thành công!', 'success');
   } catch (error) {
-    console.error('Create message error:', error);
-    showToast('Tạo thông điệp thất bại, vui lòng thử lại', 'error');
+    console.error(error);
+    showToast('Lỗi: ' + error.message, 'error');
   }
+};
+
+function resetCreateForm() {
+  document.getElementById('toInput').value = '';
+  document.getElementById('contentInput').value = '';
+  document.getElementById('usePassword').checked = false;
+  document.getElementById('createPasswordInput').value = '';
+  document.getElementById('passwordFieldContainer').style.display = 'none';
+  selectedTemplateId = 'stars';
 }
 
-function copyShareLink() {
-  const link = document.getElementById('shareLinkBox').textContent;
-  navigator.clipboard.writeText(link).then(() => {
-    showToast('Đã sao chép link!');
+window.copyToClipboard = function(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Đã sao chép vào bộ nhớ tạm!', 'success');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Đã sao chép vào bộ nhớ tạm!', 'success');
   });
-}
+};
 
 // ============ VIEW MESSAGE ============
 async function loadMessage(msgId) {
-  currentMessageId = msgId;
   try {
     const docSnap = await getDoc(doc(db, 'messages', msgId));
     if (!docSnap.exists()) {
-      document.getElementById('messageDisplayContainer').innerHTML = `
-        <div class="glass" style="padding: 60px; text-align: center;">
-          <div style="font-size: 60px; margin-bottom: 20px;"><i class="fas fa-question-circle" style="color: var(--muted);"></i></div>
+      document.getElementById('messageDisplay').innerHTML = `
+        <div class="glass-strong" style="max-width: 450px; padding: 40px; text-align: center;">
+          <i class="fas fa-question-circle" style="font-size: 56px; color: var(--muted); margin-bottom: 20px;"></i>
           <h2 style="font-size: 24px; margin-bottom: 12px;">Không Tìm Thấy Thông Điệp</h2>
-          <p style="color: var(--muted); margin-bottom: 24px;">Thông điệp này không tồn tại hoặc đã bị xóa.</p>
+          <p style="color: var(--muted); margin-bottom: 24px;">Link này không tồn tại hoặc đã bị xóa.</p>
           <button class="btn-primary" onclick="showHomeView()">Về Trang Chủ</button>
         </div>
       `;
@@ -1459,627 +1530,832 @@ async function loadMessage(msgId) {
       return;
     }
 
-    const msgData = docSnap.data();
-    pendingMessageData = msgData;
-
-    if (msgData.password) {
-      showMsgPasswordModal();
+    currentMessageData = docSnap.data();
+    
+    if (currentMessageData.password) {
+      showModal('passwordModal');
+      setTimeout(() => document.getElementById('msgPasswordInput').focus(), 300);
     } else {
-      displayMessage(msgData);
+      renderMessage();
     }
   } catch (error) {
-    console.error('Load message error:', error);
-    showToast('Có lỗi xảy ra', 'error');
+    console.error(error);
+    showToast('Lỗi: ' + error.message, 'error');
   }
 }
 
-function verifyMessagePassword() {
+window.verifyMessagePassword = function() {
   const input = document.getElementById('msgPasswordInput').value;
-  const errorEl = document.getElementById('msgPasswordError');
-
-  if (!pendingMessageData) return;
-
-  if (input === pendingMessageData.password) {
-    closeMsgPasswordModal();
-    displayMessage(pendingMessageData);
+  const errorEl = document.getElementById('passwordError');
+  
+  if (input === currentMessageData.password) {
+    hideModal('passwordModal');
+    errorEl.style.display = 'none';
+    document.getElementById('msgPasswordInput').value = '';
+    renderMessage();
   } else {
-    errorEl.textContent = 'Mật khẩu không đúng, vui lòng thử lại';
+    errorEl.textContent = 'Mật khẩu không đúng';
     errorEl.style.display = 'block';
   }
-}
+};
 
-function displayMessage(msgData) {
-  const template = allTemplates.find(t => t.id === msgData.templateId) || allTemplates[0];
+function renderMessage() {
+  const msg = currentMessageData;
+  const template = allTemplates.find(t => t.id === msg.templateId) || allTemplates[0];
+  
   let html = template.html
-    .replace(/\{\{to\}\}/g, escapeHtml(msgData.to))
-    .replace(/\{\{from\}\}/g, escapeHtml(msgData.from))
-    .replace(/\{\{content\}\}/g, escapeHtml(msgData.content).replace(/\n/g, '<br>'));
-
-  document.getElementById('messageDisplayContainer').innerHTML = `
-    ${html}
-    <div style="text-align: center; margin-top: 24px;">
-      <button class="btn-secondary" onclick="showHomeView()">
-        <i class="fas fa-home" style="margin-right: 8px;"></i>Về Trang Chủ
-      </button>
+    .replace(/\{\{to\}\}/g, escapeHtml(msg.to))
+    .replace(/\{\{from\}\}/g, escapeHtml(msg.from))
+    .replace(/\{\{content\}\}/g, escapeHtml(msg.content).replace(/\n/g, '<br>'));
+  
+  document.getElementById('messageDisplay').innerHTML = `
+    <div style="width: 100%; max-width: 900px;">
+      ${html}
+      <div style="text-align: center; margin-top: 24px;">
+        <button class="btn-secondary" onclick="showHomeView()">
+          <i class="fas fa-home" style="margin-right: 8px;"></i>Về Trang Chủ
+        </button>
+      </div>
     </div>
   `;
   showMessageView();
 }
 
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-// ============ SYSTEM CONFIG ============
-async function loadSystemConfig() {
-  try {
-    const docSnap = await getDoc(doc(db, 'settings', 'config'));
-    if (docSnap.exists()) {
-      systemConfig = docSnap.data();
-    } else {
-      systemConfig = {
-        maintenance: { enabled: false, title: 'Đang Bảo Trì', text: 'Hệ thống đang được nâng cấp', endTime: null },
-        announcement: { enabled: false, text: '', endTime: null },
-        site: { title: 'Vũ Trụ Tình Yêu', description: 'Gửi những thông điệp ngọt ngào xuyên qua vũ trụ đến người bạn yêu thương' },
-        adminPassword: '',
-        customTemplates: []
-      };
-      await setDoc(doc(db, 'settings', 'config'), systemConfig);
-    }
-
-    if (systemConfig.customTemplates && systemConfig.customTemplates.length > 0) {
-      allTemplates = [...DEFAULT_TEMPLATES, ...systemConfig.customTemplates];
-    } else {
-      allTemplates = [...DEFAULT_TEMPLATES];
-    }
-
-    applySiteSettings();
-    checkMaintenanceAndAnnouncement();
-  } catch (error) {
-    console.error('Load config error:', error);
-  }
-}
-
-function applySiteSettings() {
-  if (systemConfig?.site) {
-    document.title = systemConfig.site.title || 'Vũ Trụ Tình Yêu';
-    if (systemConfig.site.description) {
-      document.getElementById('siteSubtitle').textContent = systemConfig.site.description;
-    }
-  }
-}
-
-function checkMaintenanceAndAnnouncement() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const hasMsgParam = urlParams.has('msg');
-  const hasAdminKey = urlParams.get('key') === 'admin';
-
-  if (!hasMsgParam && systemConfig?.maintenance?.enabled && !hasAdminKey) {
-    const endTime = systemConfig.maintenance.endTime?.toDate?.() || systemConfig.maintenance.endTime;
-    if (endTime && new Date(endTime) <= new Date()) {
-      systemConfig.maintenance.enabled = false;
-      saveSystemConfig();
-      return;
-    }
-    showMaintenanceScreen();
-  } else {
-    document.getElementById('maintenanceScreen').style.display = 'none';
-  }
-
-  if (!hasMsgParam && systemConfig?.announcement?.enabled) {
-    const endTime = systemConfig.announcement.endTime?.toDate?.() || systemConfig.announcement.endTime;
-    if (endTime && new Date(endTime) <= new Date()) {
-      systemConfig.announcement.enabled = false;
-      saveSystemConfig();
-      return;
-    }
-    showAnnouncementBar();
-  } else {
-    document.getElementById('announcementBar').style.display = 'none';
-  }
-}
-
-function showMaintenanceScreen() {
-  const screen = document.getElementById('maintenanceScreen');
-  document.getElementById('maintenanceTitle').textContent = systemConfig.maintenance.title || 'Đang Bảo Trì';
-  document.getElementById('maintenanceText').textContent = systemConfig.maintenance.text || '';
-  screen.style.display = 'flex';
-
-  const endTime = systemConfig.maintenance.endTime?.toDate?.() || systemConfig.maintenance.endTime;
-  if (endTime) {
-    updateCountdown('maintenanceCountdown', new Date(endTime));
-  }
-}
-
-function showAnnouncementBar() {
-  const bar = document.getElementById('announcementBar');
-  const endTime = systemConfig.announcement.endTime?.toDate?.() || systemConfig.announcement.endTime;
-  let html = `<i class="fas fa-bullhorn" style="margin-right: 8px;"></i>${escapeHtml(systemConfig.announcement.text || '')}`;
-  if (endTime) {
-    const now = new Date();
-    const diff = new Date(endTime) - now;
-    if (diff > 0) {
-      const hours = Math.floor(diff / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
-      html += ` <span style="margin-left: 16px; opacity: 0.9; font-size: 13px;">(còn ${hours}h ${mins}m)</span>`;
-    }
-  }
-  bar.innerHTML = html;
-  bar.style.display = 'block';
-}
-
-function updateCountdown(elementId, targetDate) {
-  const el = document.getElementById(elementId);
-  function tick() {
-    const diff = targetDate - new Date();
-    if (diff <= 0) {
-      el.textContent = 'Đã kết thúc';
-      return;
-    }
-    const days = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    el.textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
-    setTimeout(tick, 1000);
-  }
-  tick();
-}
-
-async function saveSystemConfig() {
-  try {
-    await setDoc(doc(db, 'settings', 'config'), systemConfig);
-  } catch (error) {
-    console.error('Save config error:', error);
-  }
-}
-
 // ============ ADMIN ============
-async function enterAdmin() {
-  if (systemConfig?.adminPassword && !adminAuthenticated) {
-    showAdminLoginModal();
-    return false;
-  }
-  adminAuthenticated = true;
-  showAdminView();
-  return true;
-}
-
-function verifyAdminPassword() {
-  const input = document.getElementById('adminPasswordInput').value;
-  const errorEl = document.getElementById('adminPasswordError');
-
-  if (input === systemConfig.adminPassword) {
-    adminAuthenticated = true;
-    closeAdminLoginModal();
-    showAdminView();
-  } else {
-    errorEl.textContent = 'Mật khẩu không đúng';
-    errorEl.style.display = 'block';
-  }
-}
-
-function switchAdminTab(tabId) {
+window.showAdminSection = function(section) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   event.target.classList.add('active');
-  document.getElementById('admin' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
-}
+  document.getElementById('admin' + section.charAt(0).toUpperCase() + section.slice(1)).classList.add('active');
+};
 
 async function loadAdminData() {
+  loadStats();
+  loadMessages();
+  loadAdminTemplates();
+  loadConfigToForm();
+}
+
+async function loadStats() {
   try {
-    const [messagesSnap, usersSnap] = await Promise.all([
-      getDocs(query(collection(db, 'messages'), orderBy('createdAt', 'desc'))),
+    const [msgSnap, userSnap] = await Promise.all([
+      getDocs(collection(db, 'messages')),
       getDocs(collection(db, 'users'))
     ]);
-
-    allMessages = [];
-    messagesSnap.forEach(doc => allMessages.push({ id: doc.id, ...doc.data() }));
-
-    const users = [];
-    usersSnap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-
-    const enabledTemplates = allTemplates.filter(t => t.enabled !== false);
-
-    document.getElementById('statMessages').textContent = allMessages.length;
-    document.getElementById('statTemplatesActive').textContent = enabledTemplates.length;
+    
+    document.getElementById('statMessages').textContent = msgSnap.size;
+    document.getElementById('statTemplatesActive').textContent = allTemplates.filter(t => t.enabled).length;
     document.getElementById('statTemplatesTotal').textContent = allTemplates.length;
-    document.getElementById('statUsers').textContent = users.length;
-
-    const recent = allMessages.slice(0, 5);
-    const recentHtml = recent.map(msg => {
-      const date = msg.createdAt?.toDate?.() ? msg.createdAt.toDate() : new Date();
-      return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px;">
-        <div>
-          <strong>${escapeHtml(msg.from)}</strong>
-          <span style="color: var(--muted);"> → </span>
-          <strong>${escapeHtml(msg.to)}</strong>
-          <span class="badge badge-info" style="margin-left: 8px;">${msg.templateId}</span>
+    document.getElementById('statUsers').textContent = userSnap.size;
+    
+    // Recent activity
+    const msgs = [];
+    msgSnap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
+    msgs.sort((a, b) => {
+      const ta = a.createdAt?.toDate?.() || new Date(0);
+      const tb = b.createdAt?.toDate?.() || new Date(0);
+      return tb - ta;
+    });
+    
+    const recent = msgs.slice(0, 5);
+    const activityEl = document.getElementById('recentActivity');
+    if (recent.length === 0) {
+      activityEl.innerHTML = '<p style="padding: 20px; text-align: center;">Chưa có hoạt động nào</p>';
+    } else {
+      activityEl.innerHTML = recent.map(m => `
+        <div style="padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <i class="fas fa-envelope" style="color: var(--primary); margin-right: 10px;"></i>
+            <strong>${escapeHtml(m.from || '?')}</strong> gửi cho <strong>${escapeHtml(m.to || '?')}</strong>
+            ${m.password ? '<span class="badge badge-locked" style="margin-left: 8px;">Đã khóa</span>' : ''}
+          </div>
+          <span style="font-size: 12px; color: var(--muted);">${formatDate(m.createdAt)}</span>
         </div>
-        <span style="color: var(--muted); font-size: 13px;">${formatDate(date)}</span>
-      </div>`;
-    }).join('') || '<p style="color: var(--muted); text-align: center; padding: 20px;">Chưa có hoạt động nào</p>';
-    document.getElementById('recentActivity').innerHTML = recentHtml;
-
-    renderMessagesTable(allMessages);
-    renderAdminTemplatesList();
-    populateTemplateFilter();
-    loadAdminFormValues();
+      `).join('');
+    }
   } catch (error) {
-    console.error('Load admin data error:', error);
+    console.error(error);
   }
 }
 
-function formatDate(date) {
-  return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+async function loadMessages() {
+  try {
+    const snap = await getDocs(collection(db, 'messages'));
+    allMessages = [];
+    snap.forEach(d => allMessages.push({ id: d.id, ...d.data() }));
+    
+    // Populate template filter
+    const filterSelect = document.getElementById('filterTemplate');
+    filterSelect.innerHTML = '<option value="">Tất cả mẫu</option>' + 
+      allTemplates.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
+    
+    renderMessagesTable(allMessages);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function renderMessagesTable(messages) {
   const tbody = document.getElementById('messagesTableBody');
   if (messages.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--muted);">Không có thông điệp nào</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--muted);">Không có thông điệp nào</td></tr>';
     return;
   }
-  tbody.innerHTML = messages.map(msg => {
-    const date = msg.createdAt?.toDate?.() ? msg.createdAt.toDate() : new Date();
-    return `<tr>
-      <td><strong>${escapeHtml(msg.to)}</strong></td>
-      <td>${escapeHtml(msg.from)}</td>
-      <td><span class="badge badge-info">${msg.templateId}</span></td>
-      <td>${msg.password ? '<span class="badge badge-warning"><i class="fas fa-lock"></i> Có</span>' : '<span class="badge badge-success">Không</span>'}</td>
-      <td style="font-size: 13px; color: var(--muted);">${formatDate(date)}</td>
-      <td>
-        <button onclick="viewMessageDetail('${msg.id}')" style="background: none; border: none; color: var(--accent); cursor: pointer; margin-right: 12px;"><i class="fas fa-eye"></i></button>
-        <button onclick="deleteMessage('${msg.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer;"><i class="fas fa-trash"></i></button>
-      </td>
-    </tr>`;
+  
+  tbody.innerHTML = messages.map(m => {
+    const template = allTemplates.find(t => t.id === m.templateId);
+    return `
+      <tr>
+        <td><strong>${escapeHtml(m.to || '?')}</strong></td>
+        <td>${escapeHtml(m.from || '?')}</td>
+        <td>${template ? escapeHtml(template.name) : escapeHtml(m.templateId)}</td>
+        <td>${m.password ? '<span class="badge badge-locked"><i class="fas fa-lock"></i> Có</span>' : '<span style="color: var(--muted);">Không</span>'}</td>
+        <td style="font-size: 13px; color: var(--muted);">${formatDate(m.createdAt)}</td>
+        <td>
+          <button class="btn-ghost" style="padding: 6px 12px;" onclick="viewMessageDetail('${m.id}')" title="Xem"><i class="fas fa-eye"></i></button>
+          <button class="btn-ghost" style="padding: 6px 12px; color: #ff4757;" onclick="deleteMessage('${m.id}')" title="Xóa"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
   }).join('');
 }
 
-function filterMessages() {
+window.filterMessages = function() {
   const search = document.getElementById('searchMessages').value.toLowerCase();
   const templateFilter = document.getElementById('filterTemplate').value;
-  let filtered = allMessages;
-  if (search) {
-    filtered = filtered.filter(m =>
-      m.to.toLowerCase().includes(search) ||
-      m.from.toLowerCase().includes(search)
-    );
-  }
-  if (templateFilter) {
-    filtered = filtered.filter(m => m.templateId === templateFilter);
-  }
-  renderMessagesTable(filtered);
-}
-
-function populateTemplateFilter() {
-  const select = document.getElementById('filterTemplate');
-  const currentValue = select.value;
-  select.innerHTML = '<option value="">Tất cả mẫu</option>';
-  allTemplates.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t.id;
-    opt.textContent = t.name;
-    select.appendChild(opt);
+  
+  let filtered = allMessages.filter(m => {
+    const matchSearch = !search || (m.to && m.to.toLowerCase().includes(search)) || (m.from && m.from.toLowerCase().includes(search));
+    const matchTemplate = !templateFilter || m.templateId === templateFilter;
+    return matchSearch && matchTemplate;
   });
-  select.value = currentValue;
-}
+  
+  renderMessagesTable(filtered);
+};
 
-function viewMessageDetail(msgId) {
-  const msg = allMessages.find(m => m.id === msgId);
+window.viewMessageDetail = function(id) {
+  const msg = allMessages.find(m => m.id === id);
   if (!msg) return;
-  const date = msg.createdAt?.toDate?.() ? msg.createdAt.toDate() : new Date();
+  
+  const template = allTemplates.find(t => t.id === msg.templateId);
   document.getElementById('viewMsgContent').innerHTML = `
     <div style="display: grid; gap: 12px; margin-bottom: 20px;">
       <div><strong>Người nhận:</strong> ${escapeHtml(msg.to)}</div>
       <div><strong>Người gửi:</strong> ${escapeHtml(msg.from)}</div>
-      <div><strong>Mẫu:</strong> ${msg.templateId}</div>
-      <div><strong>Mật khẩu:</strong> ${msg.password || '(không)'}</div>
-      <div><strong>Thời gian:</strong> ${formatDate(date)}</div>
-      <div><strong>Nội dung:</strong></div>
-      <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 10px; white-space: pre-wrap;">${escapeHtml(msg.content)}</div>
+      <div><strong>Mẫu:</strong> ${template ? escapeHtml(template.name) : escapeHtml(msg.templateId)}</div>
+      <div><strong>Mật khẩu:</strong> ${msg.password ? escapeHtml(msg.password) : '(không)'}</div>
+      <div><strong>Thời gian:</strong> ${formatDate(msg.createdAt)}</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
+      <strong style="display: block; margin-bottom: 8px;">Nội dung:</strong>
+      <div style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(msg.content)}</div>
     </div>
   `;
-  document.getElementById('viewMsgModal').style.display = 'flex';
-}
+  showModal('viewMsgModal');
+};
 
-async function deleteMessage(msgId) {
-  if (!confirm('Bạn có chắc muốn xóa thông điệp này không?')) return;
+window.closeViewMsgModal = function() { hideModal('viewMsgModal'); };
+
+window.deleteMessage = async function(id) {
+  if (!confirm('Bạn có chắc muốn xóa thông điệp này?')) return;
   try {
-    await deleteDoc(doc(db, 'messages', msgId));
-    allMessages = allMessages.filter(m => m.id !== msgId);
-    filterMessages();
-    showToast('Đã xóa thông điệp');
+    await deleteDoc(doc(db, 'messages', id));
+    showToast('Đã xóa thông điệp', 'success');
+    loadMessages();
+    loadStats();
   } catch (error) {
-    showToast('Xóa thất bại', 'error');
+    showToast('Lỗi: ' + error.message, 'error');
   }
-}
+};
 
-function renderAdminTemplatesList() {
-  const container = document.getElementById('adminTemplatesList');
-  container.innerHTML = allTemplates.map(t => `
-    <div class="glass" style="padding: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-      <div style="width: 80px; height: 60px; border-radius: 8px; background: ${t.bgStyle}; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; text-align: center; padding: 4px; flex-shrink: 0;">${t.name}</div>
-      <div style="flex: 1; min-width: 150px;">
-        <div style="font-weight: 600;">${t.name}</div>
-        <div style="font-size: 13px; color: var(--muted);">ID: ${t.id} ${t.custom ? '<span class="badge badge-warning" style="margin-left: 8px;">Tùy chỉnh</span>' : ''}</div>
+function loadAdminTemplates() {
+  const grid = document.getElementById('adminTemplateGrid');
+  grid.innerHTML = allTemplates.map(t => `
+    <div class="glass" style="padding: 16px;">
+      <div class="template-preview template-${t.id}" style="height: 100px; margin-bottom: 12px;">
+        <span style="font-weight: 600;">${escapeHtml(t.name)}</span>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 13px; color: var(--muted);">${t.enabled !== false ? 'Bật' : 'Tắt'}</span>
-        <div class="toggle-switch ${t.enabled !== false ? 'active' : ''}" onclick="toggleTemplate('${t.id}')"></div>
-        ${t.custom ? `<button onclick="deleteTemplate('${t.id}')" class="btn-danger" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-trash"></i></button>` : ''}
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <strong>${escapeHtml(t.name)}</strong>
+        <span class="badge ${t.enabled ? 'badge-active' : 'badge-disabled'}">${t.enabled ? 'Bật' : 'Tắt'}</span>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn-secondary" style="padding: 8px 14px; font-size: 13px; flex: 1;" onclick="toggleTemplate('${t.id}')">
+          ${t.enabled ? 'Tắt' : 'Bật'}
+        </button>
+        ${t.custom ? `
+          <button class="btn-secondary" style="padding: 8px 14px; font-size: 13px;" onclick="editTemplate('${t.id}')">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-ghost" style="padding: 8px 14px; font-size: 13px; color: #ff4757;" onclick="deleteTemplate('${t.id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        ` : `<span style="font-size: 11px; color: var(--muted); align-self: center;">Mặc định</span>`}
       </div>
     </div>
   `).join('');
 }
 
-async function toggleTemplate(id) {
-  const template = allTemplates.find(t => t.id === id);
-  if (!template) return;
-  template.enabled = template.enabled === false ? true : false;
-  if (template.custom) {
-    systemConfig.customTemplates = allTemplates.filter(t => t.custom);
-    await saveSystemConfig();
+window.toggleTemplate = function(id) {
+  const t = allTemplates.find(x => x.id === id);
+  if (t) {
+    t.enabled = !t.enabled;
+    saveTemplatesConfig();
+    loadAdminTemplates();
+    loadStats();
   }
-  renderAdminTemplatesList();
-  showToast('Đã cập nhật');
-}
+};
 
-async function deleteTemplate(id) {
-  if (!confirm('Bạn có chắc muốn xóa mẫu này không?')) return;
+window.editTemplate = function(id) {
+  const t = allTemplates.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('editTemplateId').value = id;
+  document.getElementById('editTemplateName').value = t.name;
+  document.getElementById('editTemplateHtml').value = t.html;
+  showModal('editTemplateModal');
+};
+
+window.saveEditTemplate = function() {
+  const id = document.getElementById('editTemplateId').value;
+  const name = document.getElementById('editTemplateName').value.trim();
+  const html = document.getElementById('editTemplateHtml').value.trim();
+  
+  if (!name || !html) { showToast('Vui lòng điền đầy đủ', 'error'); return; }
+  
+  const t = allTemplates.find(x => x.id === id);
+  if (t) {
+    t.name = name;
+    t.html = html;
+    saveTemplatesConfig();
+    hideModal('editTemplateModal');
+    loadAdminTemplates();
+    showToast('Đã lưu', 'success');
+  }
+};
+
+window.closeEditTemplateModal = function() { hideModal('editTemplateModal'); };
+
+window.deleteTemplate = function(id) {
+  if (!confirm('Xóa mẫu này?')) return;
   allTemplates = allTemplates.filter(t => t.id !== id);
-  systemConfig.customTemplates = allTemplates.filter(t => t.custom);
-  await saveSystemConfig();
-  renderAdminTemplatesList();
-  showToast('Đã xóa mẫu');
-}
+  saveTemplatesConfig();
+  loadAdminTemplates();
+  loadStats();
+  showToast('Đã xóa mẫu', 'success');
+};
 
-async function saveNewTemplate() {
-  const id = document.getElementById('newTemplateId').value.trim();
+window.showAddTemplateModal = function() {
+  document.getElementById('newTemplateId').value = '';
+  document.getElementById('newTemplateName').value = '';
+  document.getElementById('newTemplateHtml').value = '';
+  showModal('addTemplateModal');
+};
+
+window.closeAddTemplateModal = function() { hideModal('addTemplateModal'); };
+
+window.addNewTemplate = function() {
+  const id = document.getElementById('newTemplateId').value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
   const name = document.getElementById('newTemplateName').value.trim();
   const html = document.getElementById('newTemplateHtml').value.trim();
-  const bg = document.getElementById('newTemplateBg').value.trim() || '#1e1e3c';
+  
+  if (!id || !name || !html) { showToast('Vui lòng điền đầy đủ', 'error'); return; }
+  if (allTemplates.find(t => t.id === id)) { showToast('ID đã tồn tại', 'error'); return; }
+  
+  allTemplates.push({ id, name, html, enabled: true, custom: true });
+  saveTemplatesConfig();
+  hideModal('addTemplateModal');
+  loadAdminTemplates();
+  loadStats();
+  showToast('Đã thêm mẫu mới', 'success');
+};
 
-  if (!id || !name || !html) {
-    showToast('Vui lòng điền đầy đủ thông tin', 'error');
-    return;
-  }
-  if (!/^[a-z0-9]+$/.test(id)) {
-    showToast('ID chỉ chứa chữ thường và số', 'error');
-    return;
-  }
-  if (allTemplates.find(t => t.id === id)) {
-    showToast('ID đã tồn tại', 'error');
-    return;
-  }
-
-  const newTemplate = {
-    id: id, name: name, html: html, bgStyle: bg,
-    previewClass: '', enabled: true, custom: true
-  };
-
-  allTemplates.push(newTemplate);
-  systemConfig.customTemplates = allTemplates.filter(t => t.custom);
-  await saveSystemConfig();
-  closeAddTemplateModal();
-  renderAdminTemplatesList();
-  showToast('Đã thêm mẫu mới');
+async function saveTemplatesConfig() {
+  const customTemplates = allTemplates.filter(t => t.custom);
+  const defaultStates = {};
+  DEFAULT_TEMPLATES.forEach(t => {
+    const cur = allTemplates.find(x => x.id === t.id);
+    if (cur) defaultStates[t.id] = cur.enabled;
+  });
+  
+  await setDoc(doc(db, 'settings', 'config'), {
+    ...(systemConfig || {}),
+    customTemplates: customTemplates,
+    defaultTemplateStates: defaultStates
+  }, { merge: true });
+  
+  // Rebuild allTemplates
+  allTemplates = DEFAULT_TEMPLATES.map(dt => ({
+    ...dt,
+    enabled: defaultStates[dt.id] !== undefined ? defaultStates[dt.id] : dt.enabled
+  })).concat(customTemplates);
 }
 
-function loadAdminFormValues() {
-  if (!systemConfig) return;
-
-  const maint = systemConfig.maintenance || {};
-  document.getElementById('maintenanceToggle').classList.toggle('active', maint.enabled);
-  document.getElementById('maintTitle').value = maint.title || '';
-  document.getElementById('maintText').value = maint.text || '';
-  if (maint.endTime) {
-    const d = maint.endTime.toDate ? maint.endTime.toDate() : new Date(maint.endTime);
-    document.getElementById('maintEndTime').value = toLocalInput(d);
-  }
-
-  const ann = systemConfig.announcement || {};
-  document.getElementById('announcementToggle').classList.toggle('active', ann.enabled);
-  document.getElementById('announcementText').value = ann.text || '';
-  if (ann.endTime) {
-    const d = ann.endTime.toDate ? ann.endTime.toDate() : new Date(ann.endTime);
-    document.getElementById('announcementEndTime').value = toLocalInput(d);
-  }
-
-  const site = systemConfig.site || {};
-  document.getElementById('settingTitle').value = site.title || '';
-  document.getElementById('settingDesc').value = site.description || '';
-}
-
-function toLocalInput(date) {
-  const pad = n => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function toggleMaintenance() {
-  document.getElementById('maintenanceToggle').classList.toggle('active');
-}
-
-function toggleAnnouncement() {
-  document.getElementById('announcementToggle').classList.toggle('active');
-}
-
-async function saveMaintenance() {
-  const endTimeInput = document.getElementById('maintEndTime').value;
-  systemConfig.maintenance = {
-    enabled: document.getElementById('maintenanceToggle').classList.contains('active'),
-    title: document.getElementById('maintTitle').value,
-    text: document.getElementById('maintText').value,
-    endTime: endTimeInput ? new Date(endTimeInput) : null
-  };
-  await saveSystemConfig();
-  checkMaintenanceAndAnnouncement();
-  showToast('Đã lưu cấu hình bảo trì');
-}
-
-async function saveAnnouncement() {
-  const endTimeInput = document.getElementById('announcementEndTime').value;
-  systemConfig.announcement = {
-    enabled: document.getElementById('announcementToggle').classList.contains('active'),
-    text: document.getElementById('announcementText').value,
-    endTime: endTimeInput ? new Date(endTimeInput) : null
-  };
-  await saveSystemConfig();
-  checkMaintenanceAndAnnouncement();
-  showToast('Đã lưu cấu hình thông báo');
-}
-
-async function saveSettings() {
-  systemConfig.site = {
-    title: document.getElementById('settingTitle').value,
-    description: document.getElementById('settingDesc').value
-  };
-  const newAdminPwd = document.getElementById('settingAdminPassword').value;
-  if (newAdminPwd) {
-    systemConfig.adminPassword = newAdminPwd;
-  }
-  await saveSystemConfig();
-  applySiteSettings();
-  showToast('Đã lưu cài đặt');
-}
-
-function copyAdminLink() {
-  const link = window.location.origin + window.location.pathname + '?key=admin';
-  navigator.clipboard.writeText(link).then(() => showToast('Đã sao chép link admin!'));
-}
-
-async function exportBackup() {
+// ============ MAINTENANCE & ANNOUNCEMENT ============
+async function loadSystemConfig() {
   try {
-    const [messagesSnap, usersSnap] = await Promise.all([
-      getDocs(collection(db, 'messages')),
-      getDocs(collection(db, 'users'))
-    ]);
-    const messages = [];
-    messagesSnap.forEach(d => messages.push({ id: d.id, ...d.data() }));
-    const users = [];
-    usersSnap.forEach(d => users.push({ id: d.id, ...d.data() }));
+    const snap = await getDoc(doc(db, 'settings', 'config'));
+    if (snap.exists()) {
+      systemConfig = snap.data();
+      
+      // Merge custom templates
+      if (systemConfig.customTemplates && Array.isArray(systemConfig.customTemplates)) {
+        const defaultStates = systemConfig.defaultTemplateStates || {};
+        allTemplates = DEFAULT_TEMPLATES.map(dt => ({
+          ...dt,
+          enabled: defaultStates[dt.id] !== undefined ? defaultStates[dt.id] : dt.enabled
+        })).concat(systemConfig.customTemplates);
+      }
+      
+      // Update site title
+      if (systemConfig.site) {
+        if (systemConfig.site.title) {
+          document.getElementById('siteTitleHeader').textContent = systemConfig.site.title;
+          document.getElementById('heroTitle').textContent = systemConfig.site.title;
+          document.title = systemConfig.site.title;
+        }
+        if (systemConfig.site.description) {
+          document.getElementById('heroSubtitle').textContent = systemConfig.site.description;
+        }
+      }
+    } else {
+      systemConfig = {};
+    }
+  } catch (error) {
+    console.error('Config load error:', error);
+    systemConfig = {};
+  }
+}
 
-    const backup = {
-      exportedAt: new Date().toISOString(),
-      systemConfig: systemConfig,
-      messages: messages,
-      users: users
+function loadConfigToForm() {
+  if (!systemConfig) return;
+  
+  const mt = systemConfig.maintenance || {};
+  document.getElementById('maintenanceEnabled').checked = mt.enabled || false;
+  document.getElementById('maintenanceTitleInput').value = mt.title || '';
+  document.getElementById('maintenanceTextInput').value = mt.text || '';
+  if (mt.endTime) {
+    try {
+      const d = mt.endTime.toDate ? mt.endTime.toDate() : new Date(mt.endTime);
+      document.getElementById('maintenanceEndTime').value = d.toISOString().slice(0, 16);
+    } catch {}
+  }
+  
+  const an = systemConfig.announcement || {};
+  document.getElementById('announcementEnabled').checked = an.enabled || false;
+  document.getElementById('announcementTextInput').value = an.text || '';
+  if (an.endTime) {
+    try {
+      const d = an.endTime.toDate ? an.endTime.toDate() : new Date(an.endTime);
+      document.getElementById('announcementEndTime').value = d.toISOString().slice(0, 16);
+    } catch {}
+  }
+  
+  const site = systemConfig.site || {};
+  document.getElementById('siteTitleInput').value = site.title || '';
+  document.getElementById('siteDescInput').value = site.description || '';
+}
+
+async function checkMaintenanceAndAnnouncement(isMessageView = false) {
+  if (!systemConfig) return;
+  
+  // Check maintenance expiry
+  const mt = systemConfig.maintenance || {};
+  if (mt.enabled && mt.endTime) {
+    try {
+      const endDate = mt.endTime.toDate ? mt.endTime.toDate() : new Date(mt.endTime);
+      if (new Date() >= endDate) {
+        mt.enabled = false;
+        await setDoc(doc(db, 'settings', 'config'), { maintenance: mt }, { merge: true });
+        systemConfig.maintenance = mt;
+      }
+    } catch {}
+  }
+  
+  // Check announcement expiry
+  const an = systemConfig.announcement || {};
+  if (an.enabled && an.endTime) {
+    try {
+      const endDate = an.endTime.toDate ? an.endTime.toDate() : new Date(an.endTime);
+      if (new Date() >= endDate) {
+        an.enabled = false;
+        await setDoc(doc(db, 'settings', 'config'), { announcement: an }, { merge: true });
+        systemConfig.announcement = an;
+      }
+    } catch {}
+  }
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdminBypass = urlParams.get('key') === 'admin';
+  
+  // Show maintenance (only on main views, NOT on message view)
+  const mScreen = document.getElementById('maintenanceScreen');
+  if (!isMessageView && !isAdminBypass && mt.enabled) {
+    mScreen.style.display = 'flex';
+    document.getElementById('maintenanceTitle').textContent = mt.title || 'Đang Bảo Trì';
+    document.getElementById('maintenanceText').textContent = mt.text || 'Hệ thống đang được nâng cấp.';
+    startMaintenanceCountdown(mt.endTime);
+  } else {
+    mScreen.style.display = 'none';
+    if (maintenanceCountdownInterval) clearInterval(maintenanceCountdownInterval);
+  }
+  
+  // Show announcement (only on main views)
+  const aBar = document.getElementById('announcementBar');
+  if (!isMessageView && an.enabled && an.text) {
+    aBar.classList.add('show');
+    document.getElementById('announcementText').textContent = an.text;
+    startAnnouncementCountdown(an.endTime);
+  } else {
+    aBar.classList.remove('show');
+    if (announcementCountdownInterval) clearInterval(announcementCountdownInterval);
+  }
+}
+
+function startMaintenanceCountdown(endTime) {
+  if (!endTime) return;
+  const update = () => {
+    try {
+      const end = endTime.toDate ? endTime.toDate() : new Date(endTime);
+      const diff = end - new Date();
+      if (diff <= 0) {
+        document.getElementById('maintenanceCountdown').innerHTML = '<div style="color: var(--muted);">Sắp hoàn tất...</div>';
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('maintenanceCountdown').innerHTML = `
+        <div class="countdown-item"><div class="countdown-num">${d}</div><div class="countdown-label">NGÀY</div></div>
+        <div class="countdown-item"><div class="countdown-num">${h}</div><div class="countdown-label">GIỜ</div></div>
+        <div class="countdown-item"><div class="countdown-num">${m}</div><div class="countdown-label">PHÚT</div></div>
+        <div class="countdown-item"><div class="countdown-num">${s}</div><div class="countdown-label">GIÂY</div></div>
+      `;
+    } catch {}
+  };
+  update();
+  maintenanceCountdownInterval = setInterval(update, 1000);
+}
+
+function startAnnouncementCountdown(endTime) {
+  if (!endTime) { document.getElementById('announcementCountdown').textContent = ''; return; }
+  const update = () => {
+    try {
+      const end = endTime.toDate ? endTime.toDate() : new Date(endTime);
+      const diff = end - new Date();
+      if (diff <= 0) { document.getElementById('announcementCountdown').textContent = ''; return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('announcementCountdown').textContent = `(${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')})`;
+    } catch {}
+  };
+  update();
+  announcementCountdownInterval = setInterval(update, 1000);
+}
+
+window.saveMaintenanceConfig = async function() {
+  const endTimeVal = document.getElementById('maintenanceEndTime').value;
+  const mt = {
+    enabled: document.getElementById('maintenanceEnabled').checked,
+    title: document.getElementById('maintenanceTitleInput').value.trim(),
+    text: document.getElementById('maintenanceTextInput').value.trim(),
+    endTime: endTimeVal ? new Date(endTimeVal) : null
+  };
+  
+  try {
+    await setDoc(doc(db, 'settings', 'config'), { maintenance: mt }, { merge: true });
+    systemConfig.maintenance = mt;
+    showToast('Đã lưu cấu hình bảo trì', 'success');
+    checkMaintenanceAndAnnouncement();
+  } catch (error) {
+    showToast('Lỗi: ' + error.message, 'error');
+  }
+};
+
+window.saveAnnouncementConfig = async function() {
+  const endTimeVal = document.getElementById('announcementEndTime').value;
+  const an = {
+    enabled: document.getElementById('announcementEnabled').checked,
+    text: document.getElementById('announcementTextInput').value.trim(),
+    endTime: endTimeVal ? new Date(endTimeVal) : null
+  };
+  
+  try {
+    await setDoc(doc(db, 'settings', 'config'), { announcement: an }, { merge: true });
+    systemConfig.announcement = an;
+    showToast('Đã lưu cấu hình thông báo', 'success');
+    checkMaintenanceAndAnnouncement();
+  } catch (error) {
+    showToast('Lỗi: ' + error.message, 'error');
+  }
+};
+
+window.saveSiteSettings = async function() {
+  const site = {
+    title: document.getElementById('siteTitleInput').value.trim(),
+    description: document.getElementById('siteDescInput').value.trim()
+  };
+  
+  const newAdminPw = document.getElementById('newAdminPassword').value;
+  
+  try {
+    const updates = { site };
+    if (newAdminPw) {
+      if (containsBadWord(newAdminPw)) {
+        showToast('Mật khẩu không hợp lệ', 'error');
+        return;
+      }
+      updates.adminPassword = newAdminPw;
+    }
+    
+    await setDoc(doc(db, 'settings', 'config'), updates, { merge: true });
+    systemConfig.site = site;
+    if (newAdminPw) systemConfig.adminPassword = newAdminPw;
+    
+    // Update UI
+    if (site.title) {
+      document.getElementById('siteTitleHeader').textContent = site.title;
+      document.getElementById('heroTitle').textContent = site.title;
+      document.title = site.title;
+    }
+    if (site.description) {
+      document.getElementById('heroSubtitle').textContent = site.description;
+    }
+    
+    document.getElementById('newAdminPassword').value = '';
+    showToast('Đã lưu cài đặt', 'success');
+  } catch (error) {
+    showToast('Lỗi: ' + error.message, 'error');
+  }
+};
+
+// ============ ADMIN AUTH ============
+async function tryAccessAdmin() {
+  if (!systemConfig) await loadSystemConfig();
+  
+  if (!systemConfig.adminPassword) {
+    adminAuthenticated = true;
+    showAdminView();
+    return;
+  }
+  
+  if (adminAuthenticated) {
+    showAdminView();
+    return;
+  }
+  
+  showModal('adminLoginModal');
+  setTimeout(() => document.getElementById('adminPasswordInput').focus(), 300);
+}
+
+window.verifyAdminPassword = function() {
+  const input = document.getElementById('adminPasswordInput').value;
+  const errorEl = document.getElementById('adminPasswordError');
+  
+  if (input === systemConfig.adminPassword) {
+    adminAuthenticated = true;
+    hideModal('adminLoginModal');
+    errorEl.style.display = 'none';
+    document.getElementById('adminPasswordInput').value = '';
+    showAdminView();
+  } else {
+    errorEl.textContent = 'Mật khẩu không đúng';
+    errorEl.style.display = 'block';
+  }
+};
+
+window.closeAdminLogin = function() {
+  hideModal('adminLoginModal');
+  document.getElementById('adminPasswordError').style.display = 'none';
+  document.getElementById('adminPasswordInput').value = '';
+  showHomeView();
+};
+
+// ============ TOOLS ============
+window.exportBackup = async function() {
+  try {
+    const configSnap = await getDoc(doc(db, 'settings', 'config'));
+    const data = {
+      config: configSnap.exists() ? configSnap.data() : {},
+      exportTime: new Date().toISOString()
     };
-
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `backup-vutrutinhyeu-${Date.now()}.json`;
+    a.download = `loveuniverse-backup-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Đã xuất backup');
+    showToast('Đã xuất file backup', 'success');
   } catch (error) {
-    showToast('Xuất backup thất bại', 'error');
+    showToast('Lỗi: ' + error.message, 'error');
   }
-}
+};
 
-async function importBackup(event) {
+window.importBackup = async function(event) {
   const file = event.target.files[0];
   if (!file) return;
-  if (!confirm('Nhập dữ liệu sẽ ghi đè lên cấu hình hiện tại. Tiếp tục?')) return;
-
+  
   try {
     const text = await file.text();
-    const backup = JSON.parse(text);
-
-    if (backup.systemConfig) {
-      systemConfig = backup.systemConfig;
-      await saveSystemConfig();
-    }
-
-    showToast('Đã nhập cấu hình hệ thống');
-    location.reload();
+    const data = JSON.parse(text);
+    
+    if (!data.config) throw new Error('File không hợp lệ');
+    
+    if (!confirm('Khôi phục dữ liệu từ file này? Dữ liệu hiện tại sẽ bị ghi đè.')) return;
+    
+    await setDoc(doc(db, 'settings', 'config'), data.config);
+    await loadSystemConfig();
+    loadConfigToForm();
+    showToast('Đã khôi phục dữ liệu', 'success');
   } catch (error) {
-    showToast('File không hợp lệ', 'error');
+    showToast('Lỗi: ' + error.message, 'error');
   }
-}
+  event.target.value = '';
+};
 
-async function resetAllData() {
-  if (!confirm('CẢNH BÁO: Điều này sẽ xóa TOÀN BỘ dữ liệu (thông điệp, người dùng, cấu hình) và KHÔNG thể khôi phục! Tiếp tục?')) return;
-  if (!confirm('Bạn có CHẮC CHẮN không? Hành động này không thể hoàn tác!')) return;
+window.copyAdminLink = function() {
+  const url = window.location.origin + window.location.pathname + '?key=admin';
+  copyToClipboard(url);
+};
 
+window.resetAllData = async function() {
+  if (!confirm('Bạn có chắc muốn đặt lại toàn bộ hệ thống? Mọi cấu hình sẽ bị xóa!')) return;
+  if (!confirm('Hành động này KHÔNG thể hoàn tác. Tiếp tục?')) return;
+  
   try {
-    const messagesSnap = await getDocs(collection(db, 'messages'));
-    for (const docSnap of messagesSnap.docs) {
-      await deleteDoc(doc(db, 'messages', docSnap.id));
-    }
-    systemConfig = {
-      maintenance: { enabled: false, title: 'Đang Bảo Trì', text: 'Hệ thống đang được nâng cấp', endTime: null },
+    await setDoc(doc(db, 'settings', 'config'), {
+      site: { title: 'Vũ Trụ Tình Yêu', description: 'Nơi những lời yêu thương bay ngang qua thiên hà' },
+      maintenance: { enabled: false, title: '', text: '', endTime: null },
       announcement: { enabled: false, text: '', endTime: null },
-      site: { title: 'Vũ Trụ Tình Yêu', description: 'Gửi những thông điệp ngọt ngào xuyên qua vũ trụ đến người bạn yêu thương' },
-      adminPassword: '',
-      customTemplates: []
-    };
-    await saveSystemConfig();
-    showToast('Đã đặt lại hệ thống');
-    setTimeout(() => location.reload(), 1500);
+      customTemplates: [],
+      defaultTemplateStates: {}
+    });
+    
+    await loadSystemConfig();
+    loadConfigToForm();
+    allTemplates = [...DEFAULT_TEMPLATES];
+    loadAdminTemplates();
+    loadStats();
+    
+    // Reset UI
+    document.getElementById('siteTitleHeader').textContent = 'Vũ Trụ Tình Yêu';
+    document.getElementById('heroTitle').textContent = 'Vũ Trụ Tình Yêu';
+    document.getElementById('heroSubtitle').textContent = 'Nơi những lời yêu thương bay ngang qua thiên hà';
+    document.title = 'Vũ Trụ Tình Yêu';
+    
+    showToast('Đã đặt lại hệ thống', 'success');
   } catch (error) {
-    showToast('Đặt lại thất bại', 'error');
+    showToast('Lỗi: ' + error.message, 'error');
   }
+};
+
+// ============ URL PARAMS ============
+async function checkUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const msgId = urlParams.get('msg');
+  const key = urlParams.get('key');
+  
+  if (msgId) {
+    await loadMessage(msgId);
+    checkMaintenanceAndAnnouncement(true);
+    return;
+  }
+  
+  if (key === 'admin') {
+    if (!currentUser) {
+      showModal('loginModal');
+      return;
+    }
+    await tryAccessAdmin();
+    checkMaintenanceAndAnnouncement(false);
+    return;
+  }
+  
+  // Normal home
+  if (!currentUser) {
+    showModal('loginModal');
+  } else {
+    showHomeView();
+  }
+  checkMaintenanceAndAnnouncement(false);
 }
 
 // ============ SECURITY ============
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (e.key === 'F12') { e.preventDefault(); return; }
-  if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) { e.preventDefault(); return; }
-  if (e.ctrlKey && e.key.toUpperCase() === 'U') { e.preventDefault(); return; }
-});
-document.addEventListener('selectstart', e => {
-  if (!e.target.closest('input') && !e.target.closest('textarea')) e.preventDefault();
-});
-setInterval(() => {
-  console.clear();
-}, 1000);
-
-// ============ INIT ============
-async function initApp() {
-  await loadSystemConfig();
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const msgId = urlParams.get('msg');
-  const adminKey = urlParams.get('key');
-
-  if (msgId) {
-    await loadMessage(msgId);
-    return;
-  }
-
-  if (adminKey === 'admin') {
-    await enterAdmin();
-    return;
-  }
-
-  showHomeView();
+function enableSecurity() {
+  // Disable right click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  
+  // Disable keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12') { e.preventDefault(); return; }
+    if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) { e.preventDefault(); return; }
+    if (e.ctrlKey && e.key.toUpperCase() === 'U') { e.preventDefault(); return; }
+    if (e.ctrlKey && e.key.toUpperCase() === 'S') { e.preventDefault(); return; }
+  });
+  
+  // Disable text selection
+  document.addEventListener('selectstart', e => {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  });
+  
+  // Auto clear console
+  setInterval(() => {
+    console.clear();
+  }, 2000);
+  
+  // DevTools detection
+  let devToolsOpen = false;
+  const threshold = 160;
+  setInterval(() => {
+    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+    if (widthThreshold || heightThreshold) {
+      if (!devToolsOpen) {
+        devToolsOpen = true;
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0a1a;color:#ff4757;font-family:monospace;text-align:center;padding:40px;"><div><i class="fas fa-exclamation-triangle" style="font-size:64px;margin-bottom:20px;"></i><h2>Phát hiện DevTools!</h2><p>Vui lòng tắt DevTools để tiếp tục sử dụng.</p></div></div>';
+      }
+    } else {
+      devToolsOpen = false;
+    }
+  }, 1000);
 }
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (userDoc.exists()) {
-      currentUser = { uid: user.uid, ...userDoc.data() };
-      updateUserUI();
+// ============ INIT ============
+async function init() {
+  initStarsCanvas();
+  createBubbles();
+  enableSecurity();
+  
+  await loadSystemConfig();
+  
+  // Auth state observer
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        currentUserName = userDoc.data().name;
+        document.getElementById('userDisplayName').textContent = 'Xin chào, ' + currentUserName;
+        hideModal('loginModal');
+      }
     }
-  } else {
-    currentUser = null;
-    updateUserUI();
-  }
-});
+    checkUrlParams();
+  });
+  
+  // Enter key handlers
+  document.getElementById('displayNameInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') saveDisplayName();
+  });
+  document.getElementById('msgPasswordInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') verifyMessagePassword();
+  });
+  document.getElementById('adminPasswordInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') verifyAdminPassword();
+  });
+}
 
-initApp();
+// Make functions globally available
+window.showHomeView = showHomeView;
+window.showCreateView = showCreateView;
+window.showAdminView = showAdminView;
+window.loginWithGoogle = loginWithGoogle;
+window.saveDisplayName = saveDisplayName;
+window.logout = logout;
+window.selectTemplate = selectTemplate;
+window.togglePasswordField = togglePasswordField;
+window.createMessage = createMessage;
+window.copyToClipboard = copyToClipboard;
+window.verifyMessagePassword = verifyMessagePassword;
+window.resetCreateForm = resetCreateForm;
+window.filterMessages = filterMessages;
+window.viewMessageDetail = viewMessageDetail;
+window.closeViewMsgModal = closeViewMsgModal;
+window.deleteMessage = deleteMessage;
+window.toggleTemplate = toggleTemplate;
+window.editTemplate = editTemplate;
+window.saveEditTemplate = saveEditTemplate;
+window.closeEditTemplateModal = closeEditTemplateModal;
+window.deleteTemplate = deleteTemplate;
+window.showAddTemplateModal = showAddTemplateModal;
+window.closeAddTemplateModal = closeAddTemplateModal;
+window.addNewTemplate = addNewTemplate;
+window.saveMaintenanceConfig = saveMaintenanceConfig;
+window.saveAnnouncementConfig = saveAnnouncementConfig;
+window.saveSiteSettings = saveSiteSettings;
+window.verifyAdminPassword = verifyAdminPassword;
+window.closeAdminLogin = closeAdminLogin;
+window.exportBackup = exportBackup;
+window.importBackup = importBackup;
+window.copyAdminLink = copyAdminLink;
+window.resetAllData = resetAllData;
+window.showAdminSection = showAdminSection;
 
-// Enter key handlers
-document.getElementById('nameInput').addEventListener('keypress', e => { if (e.key === 'Enter') saveUserName(); });
-document.getElementById('msgPasswordInput').addEventListener('keypress', e => { if (e.key === 'Enter') verifyMessagePassword(); });
-document.getElementById('adminPasswordInput').addEventListener('keypress', e => { if (e.key === 'Enter') verifyAdminPassword(); });
+init();
 </script>
 
 </body>
