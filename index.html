@@ -3,916 +3,721 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vũ Trụ Tình Yêu</title>
+    <title>Vũ Trụ Tình Yêu ✨ Love Universe</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;700&family=Great+Vibes&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root {
-            --bg-color: #050510;
-            --accent-pink: #ff6b9e;
-            --accent-blue: #4db8ff;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        .font-romantic { font-family: 'Dancing Script', cursive; }
-        .font-elegant { font-family: 'Playfair Display', serif; }
-
-        /* Canvas Background */
-        #star-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        /* Galaxy Effect */
-        .galaxy-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(76, 29, 149, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(190, 24, 93, 0.2) 0%, transparent 40%);
-            filter: blur(30px);
-            opacity: 0;
-            transition: opacity 1s ease;
-            pointer-events: none;
-        }
-        .galaxy-bg.active { opacity: 1; }
-
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .animate-float { animation: float 4s ease-in-out infinite; }
-
-        @keyframes pulse-glow {
-            0%, 100% { text-shadow: 0 0 10px var(--accent-pink), 0 0 20px var(--accent-pink); }
-            50% { text-shadow: 0 0 20px var(--accent-pink), 0 0 40px var(--accent-pink), 0 0 60px var(--accent-pink); }
-        }
-        .glow-text { animation: pulse-glow 3s infinite alternate; }
-
-        /* Envelope CSS */
-        .envelope-wrapper {
-            perspective: 1000px;
-            cursor: pointer;
-        }
-        .envelope {
-            position: relative;
-            width: 300px;
-            height: 200px;
-            background: #d1d5db;
-            border-radius: 4px;
-            margin: 0 auto;
-            transform-style: preserve-3d;
-            transition: transform 1s ease;
-        }
-        .envelope-flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-top: 100px solid #9ca3af;
-            transform-origin: top;
-            transition: transform 0.5s ease 0.5s;
-            z-index: 10;
-        }
-        .envelope-body {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 150px solid #f3f4f6;
-            border-right: 150px solid #f3f4f6;
-            border-bottom: 100px solid #e5e7eb;
-            z-index: 5;
-        }
-        .envelope-letter {
-            position: absolute;
-            bottom: 5px;
-            left: 10px;
-            right: 10px;
-            height: 180px;
-            background: white;
-            color: #1f2937;
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            transition: transform 1s ease, height 1s ease;
-            z-index: 2;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
-        .envelope-wrapper.open .envelope-letter { transform: translateY(-100px); height: 400px; z-index: 20; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow-y: auto;}
-
-        /* New Template Animations */
-        @keyframes aurora-bg {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .bg-aurora {
-            background: linear-gradient(-45deg, #1e3a8a, #4c1d95, #0f766e, #064e3b);
-            background-size: 400% 400%;
-            animation: aurora-bg 15s ease infinite;
-        }
-
-        @keyframes float-bubble {
-            0% { transform: translateY(100vh) scale(0); opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-        }
-        .bubble {
-            position: absolute;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            animation: float-bubble 10s infinite linear;
-        }
-
-        .matrix-text {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        .neon-text-pink { text-shadow: 0 0 5px #ff00de, 0 0 10px #ff00de, 0 0 20px #ff00de; }
-        .neon-text-cyan { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff; }
-        
-        .animate-spin-slow { animation: spin 8s linear infinite; }
-
-        /* Utilities */
-        .hidden-view { display: none !important; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+        :root{--bg:#050510;--pink:#ff6b9e;--blue:#4db8ff;--gold:#fbbf24;--purple:#a855f7}
+        *{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+        input,textarea{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}
+        body{background:var(--bg);color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden;margin:0;min-height:100vh}
+        .font-romantic{font-family:'Dancing Script',cursive}
+        .font-elegant{font-family:'Playfair Display',serif}
+        .font-vibes{font-family:'Great Vibes',cursive}
+        .font-cinzel{font-family:'Cinzel',serif}
+        #star-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+        .galaxy-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(circle at 20% 30%,rgba(76,29,149,.25) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(190,24,93,.25) 0%,transparent 40%);filter:blur(40px);opacity:0;transition:opacity 1s;pointer-events:none}
+        .galaxy-bg.active{opacity:1}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        .animate-float{animation:float 4s ease-in-out infinite}
+        @keyframes float-slow{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-20px) rotate(3deg)}}
+        .animate-float-slow{animation:float-slow 6s ease-in-out infinite}
+        @keyframes pulse-glow{0%,100%{text-shadow:0 0 10px var(--pink),0 0 20px var(--pink)}50%{text-shadow:0 0 25px var(--pink),0 0 50px var(--pink),0 0 75px var(--pink)}}
+        .glow-text{animation:pulse-glow 3s infinite alternate}
+        @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+        .shimmer-text{background:linear-gradient(90deg,#ff6b9e,#fbbf24,#ff6b9e,#a855f7,#ff6b9e);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+        @keyframes heartbeat{0%,100%{transform:scale(1)}25%{transform:scale(1.1)}50%{transform:scale(1)}75%{transform:scale(1.1)}}
+        .animate-heartbeat{animation:heartbeat 1.5s ease-in-out infinite}
+        @keyframes aurora-bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .bg-aurora{background:linear-gradient(-45deg,#1e3a8a,#4c1d95,#0f766e,#064e3b);background-size:400% 400%;animation:aurora-bg 15s ease infinite}
+        @keyframes float-bubble{0%{transform:translateY(100vh) scale(0);opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+        .bubble{position:absolute;background:rgba(255,255,255,.2);border-radius:50%;animation:float-bubble 10s infinite linear}
+        @keyframes petal-fall{0%{transform:translateY(-10vh) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+        .petal{position:absolute;animation:petal-fall linear infinite}
+        @keyframes rainbow-shift{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
+        .animate-rainbow{animation:rainbow-shift 8s linear infinite}
+        .matrix-text{color:#0f0;text-shadow:0 0 5px #0f0;font-family:'Courier New',monospace}
+        .neon-text-pink{text-shadow:0 0 5px #ff00de,0 0 10px #ff00de,0 0 20px #ff00de}
+        .neon-text-cyan{text-shadow:0 0 5px #00ffff,0 0 10px #00ffff}
+        .neon-text-gold{text-shadow:0 0 5px #ffd700,0 0 10px #ffd700,0 0 20px #ffa500}
+        .animate-spin-slow{animation:spin 8s linear infinite}
+        .animate-spin-reverse{animation:spin 12s linear infinite reverse}
+        .hidden-view{display:none!important}
+        .glass-panel{background:rgba(255,255,255,.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.12)}
+        .glass-panel-strong{background:rgba(255,255,255,.1);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.18)}
+        .envelope-wrapper{perspective:1000px;cursor:pointer}
+        .envelope{position:relative;width:300px;height:200px;background:#d1d5db;border-radius:4px;margin:0 auto;transform-style:preserve-3d;transition:transform 1s}
+        .envelope-flap{position:absolute;top:0;left:0;width:0;height:0;border-left:150px solid transparent;border-right:150px solid transparent;border-top:100px solid #9ca3af;transform-origin:top;transition:transform .5s ease .5s;z-index:10}
+        .envelope-body{position:absolute;bottom:0;left:0;width:0;height:0;border-left:150px solid #f3f4f6;border-right:150px solid #f3f4f6;border-bottom:100px solid #e5e7eb;z-index:5}
+        .envelope-letter{position:absolute;bottom:5px;left:10px;right:10px;height:180px;background:#fff;color:#1f2937;padding:20px;border-radius:4px;box-shadow:0 0 10px rgba(0,0,0,.1);transition:transform 1s,height 1s;z-index:2;overflow:hidden;display:flex;flex-direction:column}
+        .envelope-wrapper.open .envelope-flap{transform:rotateX(180deg);z-index:1}
+        .envelope-wrapper.open .envelope-letter{transform:translateY(-100px);height:400px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.5);overflow-y:auto}
+        .template-card{transition:all .3s cubic-bezier(.4,0,.2,1)}
+        .template-card:hover{transform:translateY(-4px)}
+        .template-card.selected{border-color:#ec4899!important;box-shadow:0 0 25px rgba(236,72,153,.35)}
+        ::-webkit-scrollbar{width:8px;height:8px}
+        ::-webkit-scrollbar-track{background:rgba(0,0,0,.2);border-radius:4px}
+        ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(236,72,153,.5),rgba(168,85,247,.5));border-radius:4px}
+        ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(236,72,153,.8),rgba(168,85,247,.8))}
+        .btn-primary{background:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);transition:all .3s}
+        .btn-primary:hover{box-shadow:0 0 30px rgba(236,72,153,.5);transform:translateY(-2px)}
+        .admin-badge{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .fade-in-up{animation:fadeInUp .6s ease forwards}
+        .vintage-border{border:3px double #8b4513;position:relative}
+        .vintage-border::before,.vintage-border::after{content:'❦';position:absolute;color:#8b4513;font-size:20px}
+        .vintage-border::before{top:-12px;left:50%;transform:translateX(-50%);background:#fdf6e3;padding:0 10px}
+        .vintage-border::after{bottom:-12px;left:50%;transform:translateX(-50%);background:#fdf6e3;padding:0 10px}
+        .announcement-bar{position:fixed;top:0;left:0;right:0;z-index:40;background:linear-gradient(90deg,#f59e0b,#ef4444,#f59e0b);background-size:200% 100%;animation:shimmer 3s linear infinite;color:#fff;text-align:center;padding:10px 16px;font-size:14px;font-weight:500;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+        .announcement-bar i{margin-right:8px}
+        body.has-announcement{padding-top:44px}
+        .maintenance-overlay{position:fixed;inset:0;z-index:100;background:linear-gradient(135deg,#0f0f23 0%,#1a0b2e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+        .maintenance-icon{font-size:80px;margin-bottom:24px;animation:float 3s ease-in-out infinite}
+        .admin-tab{padding:12px 20px;cursor:pointer;border-radius:10px;transition:all .2s;font-weight:500;font-size:14px}
+        .admin-tab:hover{background:rgba(255,255,255,.05)}
+        .admin-tab.active{background:linear-gradient(135deg,rgba(236,72,153,.2),rgba(168,85,247,.2));color:#fff;border:1px solid rgba(236,72,153,.3)}
+        .switch{position:relative;display:inline-block;width:48px;height:26px}
+        .switch input{opacity:0;width:0;height:0}
+        .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#4b5563;transition:.3s;border-radius:26px}
+        .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+        input:checked+.slider{background:linear-gradient(135deg,#ec4899,#a855f7)}
+        input:checked+.slider:before{transform:translateX(22px)}
+        .code-editor{font-family:'Courier New',monospace;font-size:13px;line-height:1.5;tab-size:2;background:#0a0a1a!important;color:#e5e7eb!important;border:1px solid #374151!important}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px}
+        .detected-warning{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px}
     </style>
 </head>
-<body class="relative min-h-screen flex flex-col items-center justify-center p-4">
-
+<body>
     <canvas id="star-canvas"></canvas>
     <div id="galaxy-bg" class="galaxy-bg"></div>
-
-    <!-- UI Overlay (Loading, Toast) -->
-    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-pink-600 text-white px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50"></div>
-    <div id="loading" class="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 hidden">
-        <i class="fas fa-heart fa-beat text-4xl text-pink-500 mb-4"></i>
-        <p class="text-white font-elegant tracking-widest text-lg">Đang kết nối đến các vì sao...</p>
+    
+    <div id="announcement-bar" class="announcement-bar hidden-view">
+        <i class="fas fa-bullhorn"></i>
+        <span id="announcement-text"></span>
     </div>
     
-    <!-- MAIN APP CONTAINER -->
-    <div id="app-container" class="w-full max-w-4xl mx-auto relative z-10 transition-opacity duration-500 opacity-0">
-
-        <!-- VIEW: HOME -->
-        <div id="view-home" class="view-section flex flex-col items-center justify-center text-center space-y-8 py-20">
-            <h1 class="font-romantic text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500 animate-float">
-                Vũ Trụ Tình Yêu
-            </h1>
-            <p class="font-elegant text-xl md:text-2xl text-gray-300 max-w-2xl">
-                Gửi gắm những lời yêu thương chân thành nhất qua những vì sao và dải ngân hà.
-            </p>
-            <button onclick="app.navigate('create')" class="mt-8 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full font-bold text-lg hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] transition-all transform hover:scale-105">
-                Tạo Thông Điệp Mới <i class="fas fa-magic ml-2"></i>
-            </button>
+    <div id="maintenance-overlay" class="maintenance-overlay hidden-view">
+        <div class="maintenance-icon">🛠️</div>
+        <h1 class="font-elegant text-4xl md:text-5xl text-white mb-4">Hệ thống đang bảo trì</h1>
+        <p class="text-gray-400 text-lg max-w-xl mb-2" id="maintenance-title">Chúng tôi đang nâng cấp hệ thống</p>
+        <p class="text-gray-500 max-w-xl mb-8" id="maintenance-msg">Vui lòng quay lại sau ít phút. Xin cảm ơn!</p>
+        <div class="flex items-center gap-2 text-sm text-gray-500">
+            <i class="fas fa-clock animate-spin-slow"></i>
+            <span>Đang được nâng cấp...</span>
         </div>
-
-        <!-- VIEW: CREATE -->
-        <div id="view-create" class="view-section hidden-view flex flex-col space-y-6 w-full">
-            <div class="flex items-center justify-between mb-4">
-                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white"><i class="fas fa-arrow-left mr-2"></i> Quay lại</button>
-                <h2 class="font-elegant text-3xl text-pink-400">Thiết Kế Thông Điệp</h2>
+    </div>
+    
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50 font-medium"></div>
+    
+    <div id="loading" class="fixed inset-0 bg-black/85 flex flex-col items-center justify-center z-50 hidden">
+        <div class="relative mb-6">
+            <i class="fas fa-heart fa-beat text-6xl text-pink-500 animate-heartbeat"></i>
+            <div class="absolute inset-0 animate-ping"><i class="fas fa-heart text-6xl text-pink-400 opacity-30"></i></div>
+        </div>
+        <p class="text-white font-elegant tracking-widest text-xl">Đang kết nối đến các vì sao...</p>
+        <div class="mt-4 w-48 h-1 bg-white/20 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full animate-pulse" style="width:70%"></div></div>
+    </div>
+    
+    <div id="app-container" class="w-full max-w-6xl mx-auto relative z-10 transition-opacity duration-700 opacity-0">
+        
+        <!-- HOME -->
+        <div id="view-home" class="view-section flex flex-col items-center justify-center text-center space-y-10 py-16 fade-in-up">
+            <div class="relative">
+                <div class="absolute -inset-10 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <h1 class="font-vibes text-7xl md:text-9xl shimmer-text relative animate-float-slow">Vũ Trụ Tình Yêu</h1>
+            </div>
+            <p class="font-elegant text-xl md:text-2xl text-gray-300 max-w-2xl leading-relaxed">Gửi gắm những lời yêu thương chân thành nhất<br><span class="text-pink-300">qua những vì sao và dải ngân hà vô tận</span></p>
+            <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                <button onclick="app.navigate('create')" class="btn-primary px-10 py-4 rounded-full font-bold text-lg text-white shadow-xl"><i class="fas fa-magic mr-2"></i>Tạo Thông Điệp Mới</button>
+            </div>
+            <div class="grid grid-cols-3 gap-8 mt-12 max-w-lg">
+                <div class="text-center"><div class="text-3xl font-bold text-pink-400" id="stat-templates">20+</div><div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Mẫu Giao Diện</div></div>
+                <div class="text-center"><div class="text-3xl font-bold text-purple-400"><i class="fas fa-infinity"></i></div><div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Thông Điệp</div></div>
+                <div class="text-center"><div class="text-3xl font-bold text-blue-400"><i class="fas fa-share-alt"></i></div><div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Dễ Chia Sẻ</div></div>
+            </div>
+        </div>
+        
+        <!-- CREATE -->
+        <div id="view-create" class="view-section hidden-view flex flex-col space-y-6 w-full fade-in-up">
+            <div class="flex items-center justify-between mb-2">
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-arrow-left"></i>Quay lại</button>
+                <h2 class="font-elegant text-3xl text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Thiết Kế Thông Điệp</h2>
                 <div class="w-20"></div>
             </div>
-
-            <!-- Step 1: Templates -->
             <div class="glass-panel p-6 rounded-2xl">
-                <h3 class="text-xl mb-4 font-semibold">1. Chọn Mẫu Giao Diện (13 Mẫu)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2" id="template-selector"></div>
+                <h3 class="text-xl mb-4 font-semibold flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-pink-500/20 text-pink-400 flex items-center justify-center text-sm font-bold">1</span>Chọn Mẫu Giao Diện</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-h-[480px] overflow-y-auto pr-2 p-1" id="template-selector"></div>
             </div>
-
-            <!-- Step 2: Content Form -->
             <div class="glass-panel p-6 rounded-2xl">
-                <h3 class="text-xl mb-4 font-semibold">2. Viết Lời Yêu Thương</h3>
+                <h3 class="text-xl mb-4 font-semibold flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">2</span>Viết Lời Yêu Thương</h3>
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Gửi đến (Tên người nhận)</label>
-                            <input type="text" id="input-to" class="w-full bg-black/30 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-pink-500" placeholder="VD: Cô gái của anh...">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Từ (Tên của bạn)</label>
-                            <input type="text" id="input-from" class="w-full bg-black/30 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-pink-500" placeholder="VD: Chàng trai giấu tên">
-                        </div>
+                        <div><label class="block text-sm text-gray-400 mb-2"><i class="fas fa-heart text-pink-400 mr-1"></i>Gửi đến</label><input type="text" id="input-to" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3.5 text-white focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all" placeholder="VD: Cô gái của anh..."></div>
+                        <div><label class="block text-sm text-gray-400 mb-2"><i class="fas fa-pen text-purple-400 mr-1"></i>Từ bạn</label><input type="text" id="input-from" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3.5 text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" placeholder="VD: Chàng trai giấu tên"></div>
                     </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Nội dung</label>
-                        <textarea id="input-message" rows="5" class="w-full bg-black/30 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-pink-500" placeholder="Viết những lời chân thật nhất từ trái tim..."></textarea>
-                    </div>
-                    
-                    <button id="btn-submit" onclick="app.submitMessage()" class="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl font-bold text-lg hover:from-pink-500 hover:to-purple-500 transition-colors mt-4">
-                        Tạo Và Nhận Link Chia Sẻ <i class="fas fa-paper-plane ml-2"></i>
-                    </button>
+                    <div><label class="block text-sm text-gray-400 mb-2"><i class="fas fa-envelope text-blue-400 mr-1"></i>Nội dung</label><textarea id="input-message" rows="6" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3.5 text-white focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all resize-none" placeholder="Viết những lời chân thật nhất từ trái tim..."></textarea></div>
+                    <button id="btn-submit" onclick="app.submitMessage()" class="w-full py-4 btn-primary rounded-xl font-bold text-lg text-white mt-4 shadow-lg"><i class="fas fa-paper-plane mr-2"></i>Tạo Và Nhận Link Chia Sẻ</button>
                 </div>
             </div>
         </div>
-
-        <!-- VIEW: SUCCESS / SHARE -->
-        <div id="view-success" class="view-section hidden-view flex flex-col items-center justify-center text-center space-y-6 py-20">
-            <div class="w-24 h-24 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-4">
-                <i class="fas fa-check text-5xl"></i>
-            </div>
-            <h2 class="font-elegant text-4xl text-white">Thành Công!</h2>
-            <p class="text-gray-300 mb-4">Thông điệp của bạn đã được gửi vào vũ trụ.</p>
-            
-            <div class="glass-panel p-4 rounded-xl flex items-center space-x-4 w-full max-w-md">
-                <input type="text" id="share-link" readonly class="bg-transparent border-none flex-1 text-sm text-gray-300 focus:outline-none truncate">
-                <button onclick="app.copyLink()" class="bg-pink-600 hover:bg-pink-500 p-2 rounded-lg transition-colors">
-                    <i class="fas fa-copy"></i>
-                </button>
-            </div>
-            
-            <div class="flex space-x-4 mt-8">
-                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white">Về trang chủ</button>
-                <button onclick="window.open(document.getElementById('share-link').value, '_blank')" class="text-pink-400 hover:text-pink-300 font-semibold">Xem thử</button>
+        
+        <!-- SUCCESS -->
+        <div id="view-success" class="view-section hidden-view flex flex-col items-center justify-center text-center space-y-6 py-16 fade-in-up">
+            <div class="relative mb-4"><div class="w-28 h-28 bg-green-500/20 rounded-full flex items-center justify-center"><div class="absolute w-28 h-28 bg-green-500/20 rounded-full animate-ping"></div><i class="fas fa-check text-5xl text-green-400 relative"></i></div></div>
+            <h2 class="font-elegant text-5xl text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Thành Công!</h2>
+            <p class="text-gray-300 text-lg mb-4">Thông điệp của bạn đã được gửi vào vũ trụ ✨</p>
+            <div class="glass-panel-strong p-4 rounded-2xl flex items-center space-x-3 w-full max-w-lg shadow-2xl"><div class="p-2 bg-pink-500/20 rounded-lg"><i class="fas fa-link text-pink-400"></i></div><input type="text" id="share-link" readonly class="bg-transparent border-none flex-1 text-sm text-gray-200 focus:outline-none truncate font-mono"><button onclick="app.copyLink()" class="btn-primary p-3 rounded-xl transition-all text-white"><i class="fas fa-copy"></i></button></div>
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <button onclick="app.navigate('home')" class="px-6 py-3 glass-panel rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all"><i class="fas fa-home mr-2"></i>Về trang chủ</button>
+                <button onclick="window.open(document.getElementById('share-link').value,'_blank')" class="px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl text-white font-semibold hover:shadow-lg transition-all"><i class="fas fa-eye mr-2"></i>Xem thử</button>
+                <button onclick="app.navigate('create')" class="px-6 py-3 glass-panel rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all"><i class="fas fa-plus mr-2"></i>Tạo thêm</button>
             </div>
         </div>
-
-        <!-- VIEW: DISPLAY MESSAGE (Shared Link View) -->
-        <div id="view-display" class="view-section hidden-view w-full min-h-[80vh] flex items-center justify-center relative">
+        
+        <!-- DISPLAY -->
+        <div id="view-display" class="view-section hidden-view w-full min-h-[85vh] flex items-center justify-center relative fade-in-up">
             <div id="display-container" class="w-full max-w-2xl mx-auto z-10"></div>
-            
-            <div class="absolute bottom-4 left-0 w-full text-center opacity-50 hover:opacity-100 transition-opacity">
-                <a href="./" class="text-xs text-white bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">Tạo thông điệp của riêng bạn <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
+            <div class="absolute bottom-4 left-0 w-full text-center opacity-40 hover:opacity-100 transition-opacity"><a href="./" class="text-xs text-white bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm hover:bg-black/70 transition-all"><i class="fas fa-magic mr-1"></i>Tạo thông điệp của riêng bạn</a></div>
         </div>
-
-        <!-- VIEW: ADMIN -->
-        <div id="view-admin" class="view-section hidden-view flex flex-col w-full">
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="font-elegant text-3xl text-purple-400"><i class="fas fa-shield-alt mr-2"></i> Trạm Kiểm Soát (Admin)</h2>
-                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white">Thoát</button>
+        
+        <!-- ADMIN -->
+        <div id="view-admin" class="view-section hidden-view flex flex-col w-full fade-in-up">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-4"><div class="w-14 h-14 rounded-2xl admin-badge flex items-center justify-center shadow-lg"><i class="fas fa-shield-alt text-2xl text-white"></i></div><div><h2 class="font-elegant text-3xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">Trạm Kiểm Soát</h2><p class="text-sm text-gray-400">Admin Dashboard — Quản lý hệ thống</p></div></div>
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2 px-4 py-2 glass-panel rounded-xl hover:bg-white/10"><i class="fas fa-sign-out-alt"></i>Thoát</button>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center">
-                    <h3 class="text-gray-400 text-sm uppercase tracking-wider mb-2">Tổng Thông Điệp</h3>
-                    <div class="text-5xl font-bold text-white" id="admin-stat-total">-</div>
-                </div>
-                <div class="glass-panel p-6 rounded-2xl">
-                    <h3 class="text-gray-400 text-sm uppercase tracking-wider mb-4">Quản Lý Mẫu</h3>
-                    <div class="space-y-3 max-h-[200px] overflow-y-auto pr-2" id="admin-template-toggles"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass-panel p-5 rounded-2xl"><div class="flex items-center justify-between"><div><p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Tổng Thông Điệp</p><div class="text-3xl font-bold text-white" id="admin-stat-total">-</div></div><div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center"><i class="fas fa-envelope text-pink-400 text-xl"></i></div></div></div>
+                <div class="glass-panel p-5 rounded-2xl"><div class="flex items-center justify-between"><div><p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Mẫu Đang Bật</p><div class="text-3xl font-bold text-white" id="admin-stat-active">-</div></div><div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center"><i class="fas fa-check-circle text-green-400 text-xl"></i></div></div></div>
+                <div class="glass-panel p-5 rounded-2xl"><div class="flex items-center justify-between"><div><p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Tổng Số Mẫu</p><div class="text-3xl font-bold text-white" id="admin-stat-all">-</div></div><div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center"><i class="fas fa-palette text-purple-400 text-xl"></i></div></div></div>
+                <div class="glass-panel p-5 rounded-2xl"><div class="flex items-center justify-between"><div><p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Trạng Thái</p><div class="text-lg font-bold" id="admin-stat-status"><span class="text-green-400">● Hoạt động</span></div></div><div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center"><i class="fas fa-server text-blue-400 text-xl"></i></div></div></div>
+            </div>
+            
+            <div class="glass-panel rounded-2xl p-2 mb-6 flex gap-2 overflow-x-auto" id="admin-tabs">
+                <div class="admin-tab active" data-tab="messages" onclick="app.switchAdminTab('messages')"><i class="fas fa-list mr-2"></i>Thông Điệp</div>
+                <div class="admin-tab" data-tab="templates" onclick="app.switchAdminTab('templates')"><i class="fas fa-palette mr-2"></i>Quản Lý Mẫu</div>
+                <div class="admin-tab" data-tab="settings" onclick="app.switchAdminTab('settings')"><i class="fas fa-cog mr-2"></i>Bảo Trì & Thông Báo</div>
+            </div>
+            
+            <!-- TAB: MESSAGES -->
+            <div id="admin-tab-messages" class="admin-tab-content">
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <div class="p-5 bg-white/5 border-b border-white/10 flex justify-between items-center"><h3 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-envelope text-pink-400"></i>Danh sách thông điệp</h3><button onclick="app.loadAdminData()" class="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"><i class="fas fa-sync-alt"></i>Làm mới</button></div>
+                    <div class="overflow-x-auto max-h-[500px] overflow-y-auto"><table class="w-full text-left border-collapse"><thead class="sticky top-0 bg-black/60 backdrop-blur-sm"><tr class="text-gray-400 text-xs uppercase tracking-wider"><th class="p-4 border-b border-white/10">Mã ID</th><th class="p-4 border-b border-white/10">Người Gửi</th><th class="p-4 border-b border-white/10">Người Nhận</th><th class="p-4 border-b border-white/10">Mẫu</th><th class="p-4 border-b border-white/10">Thời Gian</th><th class="p-4 border-b border-white/10 text-center">Hành Động</th></tr></thead><tbody id="admin-table-body" class="text-sm text-gray-200"></tbody></table></div>
                 </div>
             </div>
-
-            <div class="glass-panel rounded-2xl overflow-hidden">
-                <div class="p-4 bg-white/5 border-b border-white/10 flex justify-between items-center">
-                    <h3 class="font-semibold text-lg">Danh sách thông điệp gần đây</h3>
-                    <button onclick="app.loadAdminData()" class="text-sm text-blue-400 hover:text-blue-300"><i class="fas fa-sync-alt"></i> Làm mới</button>
+            
+            <!-- TAB: TEMPLATES -->
+            <div id="admin-tab-templates" class="admin-tab-content hidden-view">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel rounded-2xl overflow-hidden">
+                        <div class="p-5 bg-white/5 border-b border-white/10 flex justify-between items-center"><h3 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-list text-purple-400"></i>Danh Sách Mẫu</h3><button onclick="app.openAddTemplateModal()" class="btn-primary text-sm px-4 py-2 rounded-lg text-white"><i class="fas fa-plus mr-1"></i>Thêm Mẫu</button></div>
+                        <div class="p-4 space-y-2 max-h-[550px] overflow-y-auto" id="admin-template-list"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="font-semibold text-lg mb-4 flex items-center gap-2"><i class="fas fa-info-circle text-blue-400"></i>Hướng Dẫn Tạo Mẫu Mới</h3>
+                        <div class="space-y-4 text-sm text-gray-300">
+                            <div class="bg-black/30 p-4 rounded-xl border border-white/10"><p class="font-semibold text-white mb-2"><i class="fas fa-code text-pink-400 mr-2"></i>Biến số có thể dùng:</p><ul class="space-y-1 ml-4 text-gray-400"><li><code class="text-yellow-400 bg-black/40 px-2 py-0.5 rounded">{{to}}</code> — Tên người nhận</li><li><code class="text-yellow-400 bg-black/40 px-2 py-0.5 rounded">{{from}}</code> — Tên người gửi</li><li><code class="text-yellow-400 bg-black/40 px-2 py-0.5 rounded">{{content}}</code> — Nội dung thông điệp</li></ul></div>
+                            <div class="bg-black/30 p-4 rounded-xl border border-white/10"><p class="font-semibold text-white mb-2"><i class="fas fa-lightbulb text-yellow-400 mr-2"></i>Lưu ý:</p><ul class="space-y-1 ml-4 text-gray-400 list-disc">• Sử dụng CSS inline hoặc class Tailwind<br>• Có thể thêm hiệu ứng, hình ảnh, màu sắc<br>• Đảm bảo responsive trên di động<br>• Mẫu HTML sẽ được hiển thị trực tiếp</ul></div>
+                            <div class="bg-black/30 p-4 rounded-xl border border-white/10"><p class="font-semibold text-white mb-2"><i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>An toàn:</p><p class="text-gray-400">Không nhập các thẻ <code class="text-red-400">script</code> độc hại. Hệ thống sẽ tự động loại bỏ.</p></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-black/20 text-gray-400 text-sm">
-                                <th class="p-4 border-b border-white/5">Mã ID</th>
-                                <th class="p-4 border-b border-white/5">Người Gửi</th>
-                                <th class="p-4 border-b border-white/5">Người Nhận</th>
-                                <th class="p-4 border-b border-white/5">Mẫu</th>
-                                <th class="p-4 border-b border-white/5">Hành Động</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-table-body" class="text-sm text-gray-200"></tbody>
-                    </table>
+            </div>
+            
+            <!-- TAB: SETTINGS -->
+            <div id="admin-tab-settings" class="admin-tab-content hidden-view">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-6"><h3 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-tools text-orange-400"></i>Chế Độ Bảo Trì</h3><label class="switch"><input type="checkbox" id="maint-switch" onchange="app.toggleMaintenance(this.checked)"><span class="slider"></span></label></div>
+                        <div class="space-y-4">
+                            <div><label class="block text-sm text-gray-400 mb-2">Tiêu đề</label><input type="text" id="maint-title" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-orange-500" placeholder="Chúng tôi đang nâng cấp hệ thống" value="Chúng tôi đang nâng cấp hệ thống"></div>
+                            <div><label class="block text-sm text-gray-400 mb-2">Nội dung thông báo</label><textarea id="maint-msg" rows="4" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-orange-500 resize-none" placeholder="Vui lòng quay lại sau ít phút...">Vui lòng quay lại sau ít phút. Xin cảm ơn!</textarea></div>
+                            <button onclick="app.saveMaintenance()" class="btn-primary w-full py-3 rounded-xl text-white font-semibold"><i class="fas fa-save mr-2"></i>Lưu Cài Đặt Bảo Trì</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-6"><h3 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-bullhorn text-yellow-400"></i>Thông Báo Hệ Thống</h3><label class="switch"><input type="checkbox" id="ann-switch" onchange="app.toggleAnnouncement(this.checked)"><span class="slider"></span></label></div>
+                        <div class="space-y-4">
+                            <div><label class="block text-sm text-gray-400 mb-2">Nội dung thông báo</label><textarea id="ann-content" rows="4" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-yellow-500 resize-none" placeholder="Nhập nội dung thông báo hiển thị cho tất cả người dùng..."></textarea></div>
+                            <p class="text-xs text-gray-500"><i class="fas fa-info-circle mr-1"></i>Thông báo sẽ hiển thị ở đầu trang cho tất cả người dùng khi bật.</p>
+                            <button onclick="app.saveAnnouncement()" class="btn-primary w-full py-3 rounded-xl text-white font-semibold"><i class="fas fa-paper-plane mr-2"></i>Lưu & Phát Hành Thông Báo</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 lg:col-span-2">
+                        <h3 class="font-semibold text-lg mb-4 flex items-center gap-2"><i class="fas fa-database text-blue-400"></i>Quản Lý Dữ Liệu</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button onclick="app.exportConfig()" class="p-4 bg-black/30 hover:bg-black/50 rounded-xl border border-white/10 transition-all text-left"><i class="fas fa-download text-green-400 text-2xl mb-2"></i><p class="font-semibold">Xuất Cấu Hình</p><p class="text-xs text-gray-400">Tải file backup mẫu & cài đặt</p></button>
+                            <button onclick="app.clearAllCustom()" class="p-4 bg-black/30 hover:bg-red-900/30 rounded-xl border border-white/10 hover:border-red-500/30 transition-all text-left"><i class="fas fa-eraser text-red-400 text-2xl mb-2"></i><p class="font-semibold">Xóa Mẫu Tùy Chỉnh</p><p class="text-xs text-gray-400">Khôi phục mẫu mặc định</p></button>
+                            <button onclick="app.refreshAll()" class="p-4 bg-black/30 hover:bg-blue-900/30 rounded-xl border border-white/10 hover:border-blue-500/30 transition-all text-left"><i class="fas fa-sync text-blue-400 text-2xl mb-2"></i><p class="font-semibold">Làm Mới Hệ Thống</p><p class="text-xs text-gray-400">Tải lại toàn bộ cấu hình</p></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
+    </div>
+    
+    <!-- ADD TEMPLATE MODAL -->
+    <div id="template-modal" class="modal-overlay hidden-view">
+        <div class="glass-panel-strong rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-white/10 flex justify-between items-center"><h3 class="font-semibold text-xl" id="modal-title"><i class="fas fa-plus text-pink-400 mr-2"></i>Thêm Mẫu Mới</h3><button onclick="app.closeTemplateModal()" class="text-gray-400 hover:text-white text-2xl"><i class="fas fa-times"></i></button></div>
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm text-gray-400 mb-2">Tên mẫu *</label><input type="text" id="tpl-name" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500" placeholder="VD: Mẫu lãng mạn mới"></div>
+                    <div><label class="block text-sm text-gray-400 mb-2">Icon (FontAwesome class)</label><input type="text" id="tpl-icon" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500" placeholder="fa-heart" value="fa-heart"></div>
+                </div>
+                <div><label class="block text-sm text-gray-400 mb-2">Mô tả</label><input type="text" id="tpl-desc" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500" placeholder="Mô tả ngắn gọn về mẫu này"></div>
+                <div><label class="block text-sm text-gray-400 mb-2">Màu gradient (Tailwind classes)</label><input type="text" id="tpl-color" class="w-full bg-black/30 border border-gray-600 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500" placeholder="from-pink-500 to-purple-500" value="from-pink-500 to-purple-500"></div>
+                <div><label class="block text-sm text-gray-400 mb-2">Nội dung HTML *</label><textarea id="tpl-html" rows="14" class="code-editor w-full rounded-xl p-3 focus:outline-none focus:border-pink-500" placeholder='<div class="text-center p-8"><h2>Gửi {{to}},</h2><p>{{content}}</p><p>Từ {{from}}</p></div>'></textarea></div>
+            </div>
+            <div class="p-5 border-t border-white/10 flex justify-end gap-3">
+                <button onclick="app.closeTemplateModal()" class="px-5 py-2 glass-panel rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all">Hủy</button>
+                <button onclick="app.saveTemplate()" class="btn-primary px-6 py-2 rounded-xl text-white font-semibold"><i class="fas fa-save mr-2"></i>Lưu Mẫu</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Cấu hình Firebase của bạn
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmQkodF3NruRl1QIGWmu4UNsvQ3yIb0RY",
-            authDomain: "loveuniverse-5f41b.firebaseapp.com",
-            projectId: "loveuniverse-5f41b",
-            storageBucket: "loveuniverse-5f41b.firebasestorage.app",
-            messagingSenderId: "365851228357",
-            appId: "1:365851228357:web:0d41ea4841c0d088a558ac",
-            measurementId: "G-CFGLSL7Q1Y"
-        };
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, query, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    
+    const firebaseConfig = {apiKey:"AIzaSyDmQkodF3NruRl1QIGWmu4UNsvQ3yIb0RY",authDomain:"loveuniverse-5f41b.firebaseapp.com",projectId:"loveuniverse-5f41b",storageBucket:"loveuniverse-5f41b.firebasestorage.app",messagingSenderId:"365851228357",appId:"1:365851228357:web:0d41ea4841c0d088a558ac",measurementId:"G-CFGLSL7Q1Y"};
+    const appId='love-universe-custom';
+    const LS_KEY='lu_config_v2';
+    
+    const defaultTemplates=[
+        {id:'stars',name:'Bầu Trời Sao',icon:'fa-star',desc:'Thông điệp phát sáng giữa bầu trời đêm',color:'from-blue-400 to-indigo-500',active:true,builtin:true},
+        {id:'galaxy',name:'Thiên Hà Sâu Thẳm',icon:'fa-meteor',desc:'Hiệu ứng hố đen và vũ trụ',color:'from-purple-500 to-pink-500',active:true,builtin:true},
+        {id:'letter',name:'Thư Tay Bí Mật',icon:'fa-envelope',desc:'Bức thư có thể mở ra',color:'from-amber-400 to-orange-500',active:true,builtin:true},
+        {id:'neon',name:'Neon Tình Yêu',icon:'fa-bolt',desc:'Hiệu ứng đèn Neon rực rỡ',color:'from-pink-500 to-cyan-400',active:true,builtin:true},
+        {id:'ocean',name:'Đại Dương Xanh',icon:'fa-water',desc:'Chìm đắm dưới đại dương sâu',color:'from-cyan-400 to-blue-600',active:true,builtin:true},
+        {id:'sunset',name:'Hoàng Hôn',icon:'fa-sun',desc:'Cảnh hoàng hôn ấm áp lãng mạn',color:'from-orange-400 to-red-500',active:true,builtin:true},
+        {id:'polaroid',name:'Ảnh Polaroid',icon:'fa-camera-retro',desc:'Phong cách thẻ ảnh Vintage',color:'from-gray-400 to-gray-600',active:true,builtin:true},
+        {id:'sakura',name:'Hoa Anh Đào',icon:'fa-fan',desc:'Sắc hồng ngọt ngào dịu dàng',color:'from-pink-300 to-rose-400',active:true,builtin:true},
+        {id:'aurora',name:'Cực Quang',icon:'fa-wave-square',desc:'Dải màu ma thuật phương Bắc',color:'from-teal-400 to-emerald-500',active:true,builtin:true},
+        {id:'moonlight',name:'Dưới Ánh Trăng',icon:'fa-moon',desc:'Ánh trăng sáng và lãng mạn',color:'from-yellow-200 to-blue-400',active:true,builtin:true},
+        {id:'matrix',name:'Ma Trận Code',icon:'fa-code',desc:'Dành cho coder lãng mạn',color:'from-green-400 to-emerald-600',active:true,builtin:true},
+        {id:'clouds',name:'Trên Chín Tầng Mây',icon:'fa-cloud',desc:'Bồng bềnh giữa bầu trời xanh',color:'from-sky-300 to-blue-400',active:true,builtin:true},
+        {id:'fireworks',name:'Pháo Hoa',icon:'fa-fire',desc:'Bùng nổ cảm xúc rực rỡ',color:'from-red-400 to-yellow-400',active:true,builtin:true},
+        {id:'valentine',name:'Valentine Đỏ Hồng',icon:'fa-heart',desc:'Màu đỏ hồng chủ đạo lãng mạn',color:'from-red-500 to-pink-500',active:true,builtin:true},
+        {id:'vintage',name:'Phong Cách Vintage',icon:'fa-scroll',desc:'Nét cổ điển trang nhã',color:'from-amber-600 to-yellow-700',active:true,builtin:true},
+        {id:'space',name:'Không Gian Vũ Trụ',icon:'fa-rocket',desc:'Hành tinh và thiên hà 3D',color:'from-indigo-600 to-purple-800',active:true,builtin:true},
+        {id:'rose',name:'Vườn Hoa Hồng',icon:'fa-seedling',desc:'Nét đẹp của những bông hồng',color:'from-rose-500 to-pink-600',active:true,builtin:true},
+        {id:'minimalist',name:'Tối Giản Thanh Lịch',icon:'fa-feather',desc:'Thiết kế đơn giản tinh tế',color:'from-gray-300 to-gray-500',active:true,builtin:true},
+        {id:'gold',name:'Vàng Sang Trọng',icon:'fa-gem',desc:'Phong cách hoàng gia cao cấp',color:'from-yellow-400 to-amber-600',active:true,builtin:true},
+        {id:'rainbow',name:'Cầu Vồng',icon:'fa-rainbow',desc:'Bảy sắc màu đầy niềm vui',color:'from-red-400 via-yellow-400 to-blue-500',active:true,builtin:true}
+    ];
+    
+    function getConfig(){
+        try{
+            const raw=localStorage.getItem(LS_KEY);
+            if(raw) return JSON.parse(raw);
+        }catch(e){}
+        return {templates:[],maintenance:{enabled:false,title:'',msg:''},announcement:{enabled:false,content:''}};
+    }
+    function saveConfig(cfg){try{localStorage.setItem(LS_KEY,JSON.stringify(cfg));}catch(e){}}
+    
+    function sanitizeHTML(html){
+        return html.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/javascript:/gi,'').replace(/on\w+\s*=/gi,'data-blocked-attr=');
+    }
+    function renderTpl(tplHtml,to,from,content){
+        return tplHtml.replace(/\{\{to\}\}/g,app.escapeHTML(to)).replace(/\{\{from\}\}/g,app.escapeHTML(from)).replace(/\{\{content\}\}/g,app.escapeHTML(content));
+    }
+    
+    window.app={
+        db:null,auth:null,userId:null,currentView:'home',selectedTemplate:'stars',
+        templates:[],customTemplates:{},config:null,editingTemplateId:null,
         
-        const appId = 'love-universe-custom';
-        
-        window.app = {
-            db: null,
-            auth: null,
-            userId: null,
-            currentView: 'home',
-            selectedTemplate: 'stars',
-            templates: [
-                { id: 'stars', name: 'Bầu Trời Sao', icon: 'fa-star', desc: 'Thông điệp phát sáng giữa bầu trời đêm', active: true },
-                { id: 'galaxy', name: 'Thiên Hà Sâu Thẳm', icon: 'fa-meteor', desc: 'Hiệu ứng hố đen và vũ trụ', active: true },
-                { id: 'letter', name: 'Thư Tay Bí Mật', icon: 'fa-envelope', desc: 'Bức thư có thể mở ra', active: true },
-                { id: 'neon', name: 'Neon Tình Yêu', icon: 'fa-bolt', desc: 'Hiệu ứng đèn Neon rực rỡ', active: true },
-                { id: 'ocean', name: 'Đại Dương Xanh', icon: 'fa-water', desc: 'Chìm đắm dưới đại dương sâu thẳm', active: true },
-                { id: 'sunset', name: 'Hoàng Hôn', icon: 'fa-sun', desc: 'Cảnh hoàng hôn ấm áp lãng mạn', active: true },
-                { id: 'polaroid', name: 'Ảnh Polaroid', icon: 'fa-camera-retro', desc: 'Phong cách thẻ ảnh Vintage', active: true },
-                { id: 'sakura', name: 'Hoa Anh Đào', icon: 'fa-fan', desc: 'Sắc hồng ngọt ngào dịu dàng', active: true },
-                { id: 'aurora', name: 'Cực Quang', icon: 'fa-wave-square', desc: 'Dải màu ma thuật phương Bắc', active: true },
-                { id: 'moonlight', name: 'Dưới Ánh Trăng', icon: 'fa-moon', desc: 'Ánh trăng sáng và lãng mạn', active: true },
-                { id: 'matrix', name: 'Ma Trận Code', icon: 'fa-code', desc: 'Dành cho coder lãng mạn', active: true },
-                { id: 'clouds', name: 'Trên Chín Tầng Mây', icon: 'fa-cloud', desc: 'Bồng bềnh giữa bầu trời xanh', active: true },
-                { id: 'fireworks', name: 'Pháo Hoa', icon: 'fa-fire', desc: 'Bùng nổ cảm xúc rực rỡ', active: true }
-            ],
+        init:async function(){
+            this.config=getConfig();
+            this.templates=[...defaultTemplates,...this.config.templates];
+            this.config.templates.forEach(t=>{this.customTemplates[t.id]=t;});
             
-            init: async function() {
-                try {
-                    const firebaseApp = initializeApp(firebaseConfig);
-                    this.db = getFirestore(firebaseApp);
-                    this.auth = getAuth(firebaseApp);
-
-                    this.showLoading(true);
-                    
-                    const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                    let userCred;
-                    if (initialToken) {
-                        try {
-                            userCred = await signInWithCustomToken(this.auth, initialToken);
-                        } catch (e) {
-                            // Fallback nếu custom token lỗi/mismatch khi chạy ngoài môi trường sandbox
-                            userCred = await signInAnonymously(this.auth);
-                        }
-                    } else {
-                        userCred = await signInAnonymously(this.auth);
-                    }
-                    
-                    this.userId = userCred.user.uid;
-
-                    this.initCanvas();
-                    this.renderTemplateSelector();
-                    this.handleRouting();
-
-                    document.getElementById('app-container').style.opacity = 1;
+            this.applyMaintenance();
+            this.applyAnnouncement();
+            
+            if(this.config.maintenance.enabled){
+                const urlParams=new URLSearchParams(window.location.search);
+                if(urlParams.get('key')!=='admin'){
+                    document.getElementById('app-container').style.opacity=1;
                     this.showLoading(false);
-                } catch (error) {
-                    console.error("Init error:", error);
-                    this.showToast("Lỗi khởi tạo kết nối Firebase.", true);
-                    this.showLoading(false);
-                }
-            },
-
-            handleRouting: function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const msgId = urlParams.get('msg');
-                const key = urlParams.get('key');
-
-                if (msgId) {
-                    this.loadMessage(msgId);
-                } else if (key === 'admin') {
-                    this.navigate('admin');
-                } else {
-                    this.navigate('home');
-                }
-            },
-
-            navigate: function(viewId) {
-                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden-view'));
-                document.getElementById('galaxy-bg').classList.remove('active');
-                
-                const target = document.getElementById(`view-${viewId}`);
-                if (target) {
-                    target.classList.remove('hidden-view');
-                    this.currentView = viewId;
-                    
-                    if (viewId === 'admin') {
-                        this.loadAdminData();
-                    } else if (viewId === 'home') {
-                        if(window.location.search) window.history.pushState({}, document.title, window.location.pathname);
-                    }
-                }
-            },
-
-            renderTemplateSelector: function() {
-                const container = document.getElementById('template-selector');
-                container.innerHTML = '';
-                
-                this.templates.forEach(tpl => {
-                    if(!tpl.active) return;
-                    
-                    const isSelected = this.selectedTemplate === tpl.id;
-                    const div = document.createElement('div');
-                    div.className = `cursor-pointer rounded-xl p-4 border-2 transition-all ${isSelected ? 'border-pink-500 bg-pink-500/10' : 'border-transparent bg-black/40 hover:bg-black/60'}`;
-                    div.onclick = () => {
-                        this.selectedTemplate = tpl.id;
-                        this.renderTemplateSelector();
-                    };
-                    
-                    div.innerHTML = `
-                        <div class="flex flex-col items-center text-center space-y-2">
-                            <i class="fas ${tpl.icon} text-3xl ${isSelected ? 'text-pink-400' : 'text-gray-400'}"></i>
-                            <h4 class="font-semibold">${tpl.name}</h4>
-                            <p class="text-xs text-gray-400">${tpl.desc}</p>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-            },
-
-            submitMessage: async function() {
-                if (!this.userId) return;
-
-                const to = document.getElementById('input-to').value.trim();
-                const from = document.getElementById('input-from').value.trim();
-                const msg = document.getElementById('input-message').value.trim();
-
-                if (!to || !from || !msg) {
-                    this.showToast("Vui lòng điền đầy đủ thông tin!", true);
                     return;
                 }
-
-                this.showLoading(true);
-                const btn = document.getElementById('btn-submit');
-                btn.disabled = true;
-
-                try {
-                    // Tạo mã token ngắn gọn 6 ký tự
-                    const shortToken = Math.random().toString(36).substring(2, 8).toUpperCase();
-                    const collectionRef = collection(this.db, 'artifacts', appId, 'public', 'data', 'love_messages');
-                    const docRef = doc(collectionRef, shortToken);
-                    
-                    await setDoc(docRef, {
-                        template: this.selectedTemplate,
-                        to: to,
-                        from: from,
-                        content: msg,
-                        createdAt: Date.now(),
-                        creatorId: this.userId
-                    });
-
-                    const shareUrl = `${window.location.origin}${window.location.pathname}?msg=${shortToken}`;
-                    document.getElementById('share-link').value = shareUrl;
-                    
-                    document.getElementById('input-to').value = '';
-                    document.getElementById('input-from').value = '';
-                    document.getElementById('input-message').value = '';
-                    
-                    this.navigate('success');
-                } catch (error) {
-                    console.error("Save error:", error);
-                    this.showToast("Lỗi lưu trữ: Kiểm tra quyền Firestore rules.", true);
-                } finally {
-                    this.showLoading(false);
-                    btn.disabled = false;
-                }
-            },
-
-            loadMessage: async function(msgId) {
-                this.showLoading(true);
-                try {
-                    const docRef = doc(this.db, 'artifacts', appId, 'public', 'data', 'love_messages', msgId);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        this.renderMessageView(data);
-                        this.navigate('display');
-                    } else {
-                        this.showToast("Không tìm thấy thông điệp.", true);
-                        this.navigate('home');
-                    }
-                } catch (error) {
-                    console.error("Load error:", error);
-                    this.navigate('home');
-                } finally {
-                    this.showLoading(false);
-                }
-            },
-
-            renderMessageView: function(data) {
-                const container = document.getElementById('display-container');
-                container.innerHTML = '';
-                
-                const hideStarCanvasTemplates = ['ocean', 'sunset', 'polaroid', 'sakura', 'aurora', 'moonlight', 'matrix', 'clouds', 'fireworks', 'neon'];
-                if (hideStarCanvasTemplates.includes(data.template)) {
-                    document.getElementById('star-canvas').style.display = 'none';
-                } else {
-                    document.getElementById('star-canvas').style.display = 'block';
-                }
-
-                if (data.template === 'galaxy') {
-                    document.getElementById('galaxy-bg').classList.add('active');
-                } else {
-                    document.getElementById('galaxy-bg').classList.remove('active');
-                }
-
-                const to = this.escapeHTML(data.to);
-                const from = this.escapeHTML(data.from);
-                const content = this.escapeHTML(data.content);
-
-                let html = '';
-
-                switch(data.template) {
-                    case 'stars':
-                        html = `
-                            <div class="text-center space-y-8 animate-float p-8 glass-panel rounded-3xl max-w-xl mx-auto backdrop-blur-md">
-                                <h3 class="font-romantic text-4xl text-pink-300">Gửi ${to},</h3>
-                                <p class="font-elegant text-xl leading-relaxed text-gray-100 whitespace-pre-wrap">${content}</p>
-                                <div class="pt-6 border-t border-white/20">
-                                    <p class="text-sm text-gray-400">Từ người luôn nghĩ về bạn,</p>
-                                    <p class="font-romantic text-3xl text-purple-300 mt-2">${from}</p>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    case 'galaxy':
-                        html = `
-                            <div class="text-center relative">
-                                <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl -z-10"></div>
-                                <h2 class="font-elegant text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200 mb-8 glow-text tracking-wider">
-                                    ${to}
-                                </h2>
-                                <div class="max-w-lg mx-auto bg-black/40 p-8 rounded-2xl border border-purple-500/30 backdrop-blur-sm shadow-[0_0_50px_rgba(168,85,247,0.2)]">
-                                    <p class="text-lg md:text-xl font-light text-gray-200 mb-6 leading-relaxed whitespace-pre-wrap">${content}</p>
-                                    <div class="text-right">
-                                        <span class="text-xs uppercase tracking-widest text-purple-400">Người gửi</span>
-                                        <p class="font-bold text-white text-xl mt-1">${from}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    case 'letter':
-                        html = `
-                            <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
-                                <div class="envelope">
-                                    <div class="envelope-flap"></div>
-                                    <div class="envelope-body"></div>
-                                    <div class="envelope-letter space-y-4 shadow-inner">
-                                        <h3 class="font-romantic text-2xl text-pink-600 font-bold border-b pb-2">Thân gửi ${to},</h3>
-                                        <p class="font-elegant text-gray-700 text-sm leading-relaxed whitespace-pre-wrap flex-1">${content}</p>
-                                        <p class="font-romantic text-xl text-right text-purple-700 pt-2 border-t">Ký tên: ${from}</p>
-                                    </div>
-                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none text-white font-bold bg-pink-500 px-3 py-1 rounded-full shadow-lg opacity-80" style="transition: opacity 0.3s;" id="tap-hint">Chạm để mở</div>
-                                </div>
-                            </div>
-                            <style>.envelope-wrapper.open #tap-hint { opacity: 0; }</style>
-                        `;
-                        break;
-                    case 'neon':
-                        html = `
-                            <div class="fixed inset-0 bg-gray-900 -z-10"></div>
-                            <div class="text-center p-8 border-4 border-pink-500 rounded-3xl shadow-[0_0_30px_#ff00de] bg-black/80 max-w-xl mx-auto relative overflow-hidden mt-10">
-                                <h2 class="font-sans text-5xl font-bold text-white mb-6 neon-text-pink uppercase tracking-widest">${to}</h2>
-                                <p class="text-xl text-white mb-8 neon-text-cyan leading-relaxed whitespace-pre-wrap">${content}</p>
-                                <div class="border-t-2 border-cyan-500 pt-4 mt-8">
-                                    <span class="text-white text-sm neon-text-cyan">Người gửi: </span>
-                                    <p class="font-bold text-2xl text-white neon-text-pink">${from}</p>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    case 'ocean':
-                        html = `
-                            <div class="fixed inset-0 bg-gradient-to-b from-blue-400 via-blue-700 to-blue-900 -z-10 overflow-hidden">
-                                ${Array.from({length: 12}).map(() => `<div class="bubble" style="left: ${Math.random()*100}%; width: ${Math.random()*30+10}px; height: ${Math.random()*30+10}px; animation-duration: ${Math.random()*5+5}s; animation-delay: ${Math.random()*3}s;"></div>`).join('')}
-                            </div>
-                            <div class="text-center p-10 bg-white/10 backdrop-blur-md rounded-full shadow-[0_0_40px_rgba(255,255,255,0.2)] border border-white/20 max-w-lg mx-auto mt-10">
-                                <h2 class="font-elegant text-5xl text-white font-bold mb-4 drop-shadow-lg">${to}</h2>
-                                <p class="text-lg text-blue-100 whitespace-pre-wrap leading-relaxed drop-shadow-md">${content}</p>
-                                <p class="font-elegant text-2xl text-white mt-8 italic drop-shadow-md">~ ${from} ~</p>
-                            </div>
-                        `;
-                        break;
-                    case 'sunset':
-                        html = `
-                            <div class="fixed inset-0 bg-gradient-to-b from-orange-400 via-red-500 to-purple-900 -z-10"></div>
-                            <div class="absolute bottom-0 left-0 w-full h-1/3 bg-black/50 blur-xl -z-10"></div>
-                            <div class="text-center p-8 max-w-xl mx-auto bg-white/5 backdrop-blur-sm rounded-2xl border-t border-white/30 shadow-2xl mt-16">
-                                <i class="fas fa-sun text-6xl text-yellow-300 mb-6 animate-pulse opacity-80"></i>
-                                <h2 class="font-romantic text-6xl text-yellow-200 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">${to}</h2>
-                                <p class="font-elegant text-xl text-white whitespace-pre-wrap leading-relaxed drop-shadow-md">${content}</p>
-                                <p class="font-romantic text-3xl text-orange-200 mt-8 drop-shadow-md">${from}</p>
-                            </div>
-                        `;
-                        break;
-                    case 'polaroid':
-                        html = `
-                            <div class="fixed inset-0 bg-[#e5e5f7] opacity-80 -z-10" style="background-image: radial-gradient(#444cf7 1px, transparent 1px); background-size: 20px 20px;"></div>
-                            <div class="max-w-sm mx-auto bg-white p-4 pb-16 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500 border border-gray-200 relative mt-10">
-                                <div class="w-full aspect-square bg-gray-200 mb-6 overflow-hidden relative border border-gray-300">
-                                     <img src="https://images.unsplash.com/photo-1518199266791-5375a83164ba?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/600x600/pink/white?text=Love'" class="object-cover w-full h-full opacity-90 grayscale hover:grayscale-0 transition-all duration-1000">
-                                </div>
-                                <h2 class="font-romantic text-4xl text-gray-800 text-center mb-4">${to}</h2>
-                                <p class="font-sans text-gray-600 text-center text-sm whitespace-pre-wrap leading-relaxed">${content}</p>
-                                <div class="absolute bottom-4 right-6 transform -rotate-6">
-                                    <p class="font-romantic text-2xl text-red-500">${from}</p>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    case 'sakura':
-                        html = `
-                            <div class="fixed inset-0 bg-pink-50 -z-10 overflow-hidden">
-                                ${Array.from({length: 20}).map(() => `<div class="absolute bg-pink-300/50 rounded-full blur-[1px]" style="left: ${Math.random()*100}%; width: ${Math.random()*15+5}px; height: ${Math.random()*15+5}px; animation: float-bubble ${Math.random()*5+4}s infinite linear; top: -20px;"></div>`).join('')}
-                            </div>
-                            <div class="text-center p-10 max-w-xl mx-auto bg-white/60 backdrop-blur-md rounded-3xl shadow-xl border border-pink-200 mt-12">
-                                <h2 class="font-elegant text-5xl text-pink-600 mb-6 italic">${to}</h2>
-                                <p class="text-lg text-gray-700 whitespace-pre-wrap leading-relaxed font-light">${content}</p>
-                                <div class="mt-8 pt-6 border-t border-pink-200">
-                                    <p class="font-elegant text-2xl text-pink-500">${from}</p>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    case 'aurora':
-                        html = `
-                            <div class="fixed inset-0 bg-aurora -z-10"></div>
-                            <div class="text-center p-12 max-w-2xl mx-auto bg-black/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-[0_0_40px_rgba(255,255,255,0.1)] mt-16">
-                                <h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-purple-300 mb-8 drop-shadow-lg">${to}</h2>
-                                <p class="font-sans text-xl text-gray-100 whitespace-pre-wrap leading-relaxed">${content}</p>
-                                <p class="font-elegant text-3xl text-teal-100 mt-10 border-t border-white/20 pt-6 inline-block">${from}</p>
-                            </div>
-                        `;
-                        break;
-                    case 'moonlight':
-                        html = `
-                            <div class="fixed inset-0 bg-gradient-to-b from-gray-900 to-blue-900 -z-10"></div>
-                            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-yellow-100 rounded-full shadow-[0_0_80px_#fef08a] opacity-80 -z-10"></div>
-                            <div class="text-center p-8 max-w-xl mx-auto mt-24 bg-black/40 backdrop-blur-md rounded-2xl border border-blue-800/50 relative z-10">
-                                <h2 class="font-romantic text-5xl text-yellow-200 mb-6">${to}</h2>
-                                <p class="font-elegant text-lg text-blue-100 whitespace-pre-wrap leading-relaxed">${content}</p>
-                                <p class="font-romantic text-3xl text-white mt-8">${from}</p>
-                            </div>
-                        `;
-                        break;
-                    case 'matrix':
-                        html = `
-                            <div class="fixed inset-0 bg-black -z-10 overflow-hidden flex flex-wrap opacity-30">
-                                 <div class="matrix-text w-full text-center tracking-widest break-all overflow-hidden text-xs md:text-sm">01010100 01101001 01101110 01101000 00100000 01111001 01100101 01110100</div>
-                            </div>
-                            <div class="text-left p-8 max-w-2xl mx-auto border border-green-500 bg-black/80 shadow-[0_0_20px_#00ff00] mt-16">
-                                <p class="matrix-text text-xl mb-6">> root@heart:~# echo "Gửi ${to}"</p>
-                                <p class="matrix-text text-lg whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-green-700">  ${content}</p>
-                                <p class="matrix-text text-xl mt-8">> root@heart:~# sign --author "${from}"</p>
-                                <p class="matrix-text text-sm mt-2 animate-pulse">_</p>
-                            </div>
-                        `;
-                        break;
-                    case 'clouds':
-                        html = `
-                            <div class="fixed inset-0 bg-blue-200 -z-10 overflow-hidden">
-                                <div class="absolute top-10 left-10 w-32 h-16 bg-white rounded-full opacity-80 blur-[2px] animate-pulse"></div>
-                                <div class="absolute top-20 right-20 w-48 h-24 bg-white rounded-full opacity-90 blur-[2px] animate-pulse" style="animation-delay: 1s"></div>
-                                <div class="absolute bottom-20 left-1/4 w-40 h-20 bg-white rounded-full opacity-70 blur-[2px] animate-pulse" style="animation-delay: 2s"></div>
-                            </div>
-                            <div class="text-center p-10 max-w-xl mx-auto bg-white/80 backdrop-blur-sm rounded-[3rem] shadow-2xl border-4 border-white mt-20">
-                                <h2 class="font-romantic text-6xl text-blue-500 mb-6">${to}</h2>
-                                <p class="font-sans text-gray-700 text-lg whitespace-pre-wrap leading-relaxed">${content}</p>
-                                <p class="font-romantic text-3xl text-blue-400 mt-8 pt-4 border-t-2 border-blue-100 border-dashed">${from}</p>
-                            </div>
-                        `;
-                        break;
-                    case 'fireworks':
-                        html = `
-                            <div class="fixed inset-0 bg-gray-900 -z-10"></div>
-                            <div class="text-center p-8 max-w-2xl mx-auto relative mt-16">
-                                <i class="fas fa-certificate text-pink-500 absolute top-0 left-0 text-4xl animate-spin-slow blur-[2px]"></i>
-                                <i class="fas fa-certificate text-yellow-400 absolute bottom-0 right-0 text-6xl animate-spin-slow blur-[2px]" style="animation-direction: reverse;"></i>
-                                <div class="bg-black/60 p-10 rounded-3xl border border-gray-700 backdrop-blur-md shadow-[0_0_30px_rgba(255,100,100,0.2)]">
-                                    <h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-400 mb-6 font-bold drop-shadow-md">${to}</h2>
-                                    <p class="text-xl text-gray-200 whitespace-pre-wrap leading-relaxed">${content}</p>
-                                    <p class="font-elegant text-3xl text-red-300 mt-10">✨ ${from} ✨</p>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    default:
-                        html = `<div class="text-white p-8 bg-black/50 rounded-xl">${content}</div>`;
-                }
-
-                container.innerHTML = html;
-            },
-
-            loadAdminData: async function() {
-                if (!this.userId) return;
-                
-                try {
-                    const collectionRef = collection(this.db, 'artifacts', appId, 'public', 'data', 'love_messages');
-                    const q = query(collectionRef);
-                    const querySnapshot = await getDocs(q);
-                    
-                    let messages = [];
-                    querySnapshot.forEach((doc) => {
-                        messages.push({ id: doc.id, ...doc.data() });
-                    });
-
-                    messages.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-                    document.getElementById('admin-stat-total').innerText = messages.length;
-
-                    const tbody = document.getElementById('admin-table-body');
-                    tbody.innerHTML = '';
-                    
-                    if (messages.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Chưa có thông điệp nào.</td></tr>`;
-                    } else {
-                        messages.slice(0, 20).forEach(msg => {
-                            const tr = document.createElement('tr');
-                            tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
-                            
-                            const tplName = this.templates.find(t => t.id === msg.template)?.name || msg.template;
-                            
-                            tr.innerHTML = `
-                                <td class="p-4 font-mono text-xs text-gray-400">${msg.id}</td>
-                                <td class="p-4">${this.escapeHTML(msg.from)}</td>
-                                <td class="p-4">${this.escapeHTML(msg.to)}</td>
-                                <td class="p-4"><span class="bg-black/40 px-2 py-1 rounded text-xs">${tplName}</span></td>
-                                <td class="p-4">
-                                    <button onclick="window.open('?msg=${msg.id}', '_blank')" class="text-blue-400 hover:text-blue-300 mr-2" title="Xem"><i class="fas fa-eye"></i></button>
-                                    <button onclick="app.deleteMessage('${msg.id}')" class="text-red-400 hover:text-red-300" title="Xóa"><i class="fas fa-trash"></i></button>
-                                </td>
-                            `;
-                            tbody.appendChild(tr);
-                        });
-                    }
-
-                    const togglesContainer = document.getElementById('admin-template-toggles');
-                    togglesContainer.innerHTML = '';
-                    this.templates.forEach(tpl => {
-                        togglesContainer.innerHTML += `
-                            <div class="flex items-center justify-between bg-black/20 p-3 rounded-lg">
-                                <div>
-                                    <i class="fas ${tpl.icon} text-gray-400 mr-2"></i> ${tpl.name}
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                  <input type="checkbox" ${tpl.active ? 'checked' : ''} class="sr-only peer" onchange="app.toggleTemplate('${tpl.id}', this.checked)">
-                                  <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
-                                </label>
-                            </div>
-                        `;
-                    });
-
-                } catch (error) {
-                    console.error("Admin fetch error:", error);
-                    this.showToast("Không thể tải dữ liệu admin.", true);
-                }
-            },
-
-            toggleTemplate: function(id, isActive) {
-                const tpl = this.templates.find(t => t.id === id);
-                if (tpl) {
-                    tpl.active = isActive;
-                    this.renderTemplateSelector();
-                    this.showToast(`Đã ${isActive ? 'bật' : 'tắt'} mẫu ${tpl.name}`);
-                }
-            },
-
-            deleteMessage: async function(id) {
-                if(!confirm("Bạn có chắc chắn muốn xóa thông điệp này vĩnh viễn?")) return;
-                
-                try {
-                    const docRef = doc(this.db, 'artifacts', appId, 'public', 'data', 'love_messages', id);
-                    await deleteDoc(docRef);
-                    this.showToast("Đã xóa thành công.");
-                    this.loadAdminData();
-                } catch(error) {
-                    console.error("Delete error", error);
-                    this.showToast("Lỗi khi xóa.", true);
-                }
-            },
-
-            copyLink: function() {
-                const input = document.getElementById('share-link');
-                input.select();
-                input.setSelectionRange(0, 99999);
-                try {
-                    document.execCommand('copy');
-                    this.showToast("Đã sao chép link!");
-                } catch (err) {
-                    this.showToast("Không thể sao chép.", true);
-                }
-            },
-
-            showToast: function(msg, isError = false) {
-                const toast = document.getElementById('toast');
-                toast.innerText = msg;
-                toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 z-50 ${isError ? 'bg-red-600' : 'bg-pink-600'} text-white`;
-                toast.style.opacity = 1;
-                setTimeout(() => { toast.style.opacity = 0; }, 3000);
-            },
-
-            showLoading: function(show) {
-                document.getElementById('loading').style.display = show ? 'flex' : 'none';
-            },
-
-            escapeHTML: function(str) {
-                return str.replace(/[&<>'"]/g, 
-                    tag => ({
-                        '&': '&amp;',
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        "'": '&#39;',
-                        '"': '&quot;'
-                    }[tag])
-                );
-            },
-
-            initCanvas: function() {
-                const canvas = document.getElementById('star-canvas');
-                const ctx = canvas.getContext('2d');
-                let width, height;
-                let stars = [];
-
-                function resize() {
-                    width = window.innerWidth;
-                    height = window.innerHeight;
-                    canvas.width = width;
-                    canvas.height = height;
-                    initStars();
-                }
-
-                function initStars() {
-                    stars = [];
-                    const numStars = Math.floor((width * height) / 2000);
-                    for (let i = 0; i < numStars; i++) {
-                        stars.push({
-                            x: Math.random() * width,
-                            y: Math.random() * height,
-                            radius: Math.random() * 1.5,
-                            alpha: Math.random(),
-                            speed: Math.random() * 0.05,
-                            blinkSpeed: Math.random() * 0.02 + 0.005
-                        });
-                    }
-                }
-
-                function draw() {
-                    ctx.clearRect(0, 0, width, height);
-                    
-                    let gradient = ctx.createLinearGradient(0, 0, 0, height);
-                    gradient.addColorStop(0, "#050510");
-                    gradient.addColorStop(1, "#1a0b2e");
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, width, height);
-
-                    for (let i = 0; i < stars.length; i++) {
-                        let s = stars[i];
-                        
-                        s.alpha += s.blinkSpeed;
-                        if (s.alpha >= 1 || s.alpha <= 0) s.blinkSpeed *= -1;
-                        
-                        s.y -= s.speed;
-                        if (s.y < 0) s.y = height;
-
-                        ctx.beginPath();
-                        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
-                        ctx.fill();
-                    }
-
-                    requestAnimationFrame(draw);
-                }
-
-                window.addEventListener('resize', resize);
-                resize();
-                draw();
             }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            app.init();
+            
+            try{
+                const fb=initializeApp(firebaseConfig);
+                this.db=getFirestore(fb);
+                this.auth=getAuth(fb);
+                this.showLoading(true);
+                const it=typeof __initial_auth_token!=='undefined'?__initial_auth_token:null;
+                let uc;
+                if(it){try{uc=await signInWithCustomToken(this.auth,it);}catch(e){uc=await signInAnonymously(this.auth);}}
+                else{uc=await signInAnonymously(this.auth);}
+                this.userId=uc.user.uid;
+                this.initCanvas();
+                this.renderTemplateSelector();
+                this.handleRouting();
+                document.getElementById('app-container').style.opacity=1;
+                this.showLoading(false);
+            }catch(error){
+                console.error(error);
+                this.showToast("Lỗi khởi tạo.",true);
+                this.showLoading(false);
+            }
+        },
+        
+        applyMaintenance:function(){
+            const el=document.getElementById('maintenance-overlay');
+            if(this.config.maintenance.enabled){
+                document.getElementById('maintenance-title').textContent=this.config.maintenance.title||'Chúng tôi đang nâng cấp hệ thống';
+                document.getElementById('maintenance-msg').textContent=this.config.maintenance.msg||'Vui lòng quay lại sau ít phút.';
+                el.classList.remove('hidden-view');
+            }else{
+                el.classList.add('hidden-view');
+            }
+        },
+        
+        applyAnnouncement:function(){
+            const bar=document.getElementById('announcement-bar');
+            const txt=document.getElementById('announcement-text');
+            if(this.config.announcement.enabled&&this.config.announcement.content){
+                txt.textContent=this.config.announcement.content;
+                bar.classList.remove('hidden-view');
+                document.body.classList.add('has-announcement');
+            }else{
+                bar.classList.add('hidden-view');
+                document.body.classList.remove('has-announcement');
+            }
+        },
+        
+        handleRouting:function(){
+            const u=new URLSearchParams(window.location.search);
+            const m=u.get('msg'),k=u.get('key');
+            if(m){this.loadMessage(m);}
+            else if(k&&k.toLowerCase()==='admin'){this.navigate('admin');}
+            else{this.navigate('home');}
+        },
+        
+        navigate:function(viewId){
+            document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden-view'));
+            document.getElementById('galaxy-bg').classList.remove('active');
+            const t=document.getElementById('view-'+viewId);
+            if(t){
+                t.classList.remove('hidden-view');
+                this.currentView=viewId;
+                if(viewId==='admin'){this.loadAdminData();}
+                else if(viewId==='home'){if(window.location.search)window.history.pushState({},document.title,window.location.pathname);}
+                t.classList.remove('fade-in-up');void t.offsetWidth;t.classList.add('fade-in-up');
+            }
+        },
+        
+        renderTemplateSelector:function(){
+            const c=document.getElementById('template-selector');c.innerHTML='';
+            this.templates.forEach(t=>{
+                if(!t.active)return;
+                const sel=this.selectedTemplate===t.id;
+                const d=document.createElement('div');
+                d.className=`template-card cursor-pointer rounded-xl p-3 border-2 transition-all ${sel?'selected border-pink-500 bg-pink-500/10':'border-white/10 bg-black/40 hover:bg-black/60 hover:border-white/30'}`;
+                d.onclick=()=>{this.selectedTemplate=t.id;this.renderTemplateSelector();};
+                d.innerHTML=`<div class="w-full aspect-video rounded-lg bg-gradient-to-br ${t.color} mb-2 flex items-center justify-center shadow-inner"><i class="fas ${t.icon} text-2xl text-white/90 drop-shadow-lg"></i></div><h4 class="font-semibold text-sm text-center truncate">${t.name}</h4><p class="text-[10px] text-gray-400 text-center mt-0.5 line-clamp-2 h-8">${t.desc}</p>`;
+                c.appendChild(d);
+            });
+        },
+        
+        submitMessage:async function(){
+            if(!this.userId)return;
+            const to=document.getElementById('input-to').value.trim(),from=document.getElementById('input-from').value.trim(),msg=document.getElementById('input-message').value.trim();
+            if(!to||!from||!msg){this.showToast("Vui lòng điền đầy đủ!",true);return;}
+            this.showLoading(true);
+            const b=document.getElementById('btn-submit');b.disabled=true;
+            try{
+                const tk=Math.random().toString(36).substring(2,8).toUpperCase();
+                const cr=collection(this.db,'artifacts',appId,'public','data','love_messages');
+                await setDoc(doc(cr,tk),{template:this.selectedTemplate,to,from,content:msg,createdAt:Date.now(),creatorId:this.userId});
+                document.getElementById('share-link').value=`${window.location.origin}${window.location.pathname}?msg=${tk}`;
+                document.getElementById('input-to').value='';document.getElementById('input-from').value='';document.getElementById('input-message').value='';
+                this.navigate('success');
+            }catch(e){console.error(e);this.showToast("Lỗi lưu trữ.",true);}
+            finally{this.showLoading(false);b.disabled=false;}
+        },
+        
+        loadMessage:async function(msgId){
+            this.showLoading(true);
+            try{
+                const ds=await getDoc(doc(this.db,'artifacts',appId,'public','data','love_messages',msgId));
+                if(ds.exists()){this.renderMessageView(ds.data());this.navigate('display');}
+                else{this.showToast("Không tìm thấy thông điệp.",true);this.navigate('home');}
+            }catch(e){this.navigate('home');}
+            finally{this.showLoading(false);}
+        },
+        
+        renderMessageView:function(data){
+            const c=document.getElementById('display-container');c.innerHTML='';
+            const hide=['ocean','sunset','polaroid','sakura','aurora','moonlight','matrix','clouds','fireworks','neon','valentine','vintage','rose','minimalist','gold','rainbow'];
+            document.getElementById('star-canvas').style.display=hide.includes(data.template)?'none':'block';
+            document.getElementById('galaxy-bg').classList.toggle('active',data.template==='galaxy'||data.template==='space');
+            const to=this.escapeHTML(data.to),from=this.escapeHTML(data.from),content=this.escapeHTML(data.content);
+            const custom=this.customTemplates[data.template];
+            if(custom){c.innerHTML=renderTpl(custom.html,data.to,data.from,data.content);return;}
+            let h='';
+            switch(data.template){
+                case 'stars':h=`<div class="text-center space-y-8 animate-float p-10 glass-panel-strong rounded-3xl max-w-xl mx-auto backdrop-blur-md shadow-2xl"><div class="flex justify-center mb-2"><i class="fas fa-star text-yellow-400 text-3xl animate-pulse"></i></div><h3 class="font-romantic text-5xl text-pink-300">Gửi ${to},</h3><p class="font-elegant text-xl leading-relaxed text-gray-100 whitespace-pre-wrap">${content}</p><div class="pt-6 border-t border-white/20"><p class="text-sm text-gray-400">Từ người luôn nghĩ về bạn,</p><p class="font-romantic text-4xl text-purple-300 mt-2">${from}</p></div></div>`;break;
+                case 'galaxy':h=`<div class="text-center relative"><div class="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl -z-10 animate-pulse"></div><h2 class="font-elegant text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200 mb-8 glow-text tracking-wider">${to}</h2><div class="max-w-lg mx-auto bg-black/40 p-10 rounded-2xl border border-purple-500/30 backdrop-blur-sm shadow-[0_0_60px_rgba(168,85,247,0.3)]"><p class="text-lg md:text-xl font-light text-gray-200 mb-6 leading-relaxed whitespace-pre-wrap">${content}</p><div class="text-right pt-4 border-t border-purple-500/20"><span class="text-xs uppercase tracking-widest text-purple-400">Người gửi</span><p class="font-bold text-white text-2xl mt-1 font-romantic">${from}</p></div></div></div>`;break;
+                case 'letter':h=`<div class="envelope-wrapper" onclick="this.classList.toggle('open')"><div class="envelope"><div class="envelope-flap"></div><div class="envelope-body"></div><div class="envelope-letter space-y-4 shadow-inner"><h3 class="font-romantic text-2xl text-pink-600 font-bold border-b pb-2">Thân gửi ${to},</h3><p class="font-elegant text-gray-700 text-sm leading-relaxed whitespace-pre-wrap flex-1">${content}</p><p class="font-romantic text-xl text-right text-purple-700 pt-2 border-t">Ký tên: ${from}</p></div><div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none text-white font-bold bg-pink-500 px-3 py-1 rounded-full shadow-lg opacity-80" id="tap-hint">Chạm để mở</div></div></div><style>.envelope-wrapper.open #tap-hint{opacity:0}</style>`;break;
+                case 'neon':h=`<div class="fixed inset-0 bg-gray-900 -z-10"></div><div class="text-center p-10 border-4 border-pink-500 rounded-3xl shadow-[0_0_40px_#ff00de] bg-black/85 max-w-xl mx-auto relative overflow-hidden mt-10"><h2 class="font-sans text-5xl font-bold text-white mb-6 neon-text-pink uppercase tracking-widest">${to}</h2><p class="text-xl text-white mb-8 neon-text-cyan leading-relaxed whitespace-pre-wrap">${content}</p><div class="border-t-2 border-cyan-500 pt-4 mt-8"><span class="text-white text-sm neon-text-cyan">Người gửi: </span><p class="font-bold text-2xl text-white neon-text-pink mt-1">${from}</p></div></div>`;break;
+                case 'ocean':h=`<div class="fixed inset-0 bg-gradient-to-b from-blue-400 via-blue-700 to-blue-900 -z-10 overflow-hidden">${Array.from({length:15}).map(()=>`<div class="bubble" style="left:${Math.random()*100}%;width:${Math.random()*35+10}px;height:${Math.random()*35+10}px;animation-duration:${Math.random()*5+5}s;animation-delay:${Math.random()*3}s;"></div>`).join('')}</div><div class="text-center p-12 bg-white/10 backdrop-blur-md rounded-full shadow-[0_0_50px_rgba(255,255,255,0.25)] border-2 border-white/30 max-w-lg mx-auto mt-10"><i class="fas fa-water text-4xl text-blue-200 mb-4 animate-float"></i><h2 class="font-elegant text-5xl text-white font-bold mb-4 drop-shadow-lg">${to}</h2><p class="text-lg text-blue-100 whitespace-pre-wrap leading-relaxed drop-shadow-md">${content}</p><p class="font-elegant text-2xl text-white mt-8 italic drop-shadow-md">~ ${from} ~</p></div>`;break;
+                case 'sunset':h=`<div class="fixed inset-0 bg-gradient-to-b from-orange-400 via-red-500 to-purple-900 -z-10"></div><div class="absolute bottom-0 left-0 w-full h-1/3 bg-black/50 blur-xl -z-10"></div><div class="text-center p-10 max-w-xl mx-auto bg-white/10 backdrop-blur-sm rounded-2xl border-t border-white/30 shadow-2xl mt-16"><i class="fas fa-sun text-7xl text-yellow-300 mb-6 animate-pulse opacity-90 drop-shadow-lg"></i><h2 class="font-romantic text-6xl text-yellow-200 mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">${to}</h2><p class="font-elegant text-xl text-white whitespace-pre-wrap leading-relaxed drop-shadow-md">${content}</p><p class="font-romantic text-3xl text-orange-200 mt-8 drop-shadow-md">${from}</p></div>`;break;
+                case 'polaroid':h=`<div class="fixed inset-0 bg-[#e5e5f7] opacity-80 -z-10" style="background-image:radial-gradient(#444cf7 1px,transparent 1px);background-size:20px 20px;"></div><div class="max-w-sm mx-auto bg-white p-5 pb-20 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-700 border border-gray-200 relative mt-10"><div class="absolute top-2 left-2 w-8 h-8 bg-red-500 rounded-sm shadow-md flex items-center justify-center"><span class="text-white text-xs font-bold">LOVE</span></div><div class="w-full aspect-square bg-gray-200 mb-6 overflow-hidden relative border border-gray-300"><img src="https://images.unsplash.com/photo-1518199266791-5375a83164ba?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/600x600/pink/white?text=Love'" class="object-cover w-full h-full opacity-90 grayscale hover:grayscale-0 transition-all duration-1000"></div><h2 class="font-romantic text-4xl text-gray-800 text-center mb-4">${to}</h2><p class="font-sans text-gray-600 text-center text-sm whitespace-pre-wrap leading-relaxed">${content}</p><div class="absolute bottom-6 right-8 transform -rotate-6"><p class="font-romantic text-2xl text-red-500">${from}</p></div></div>`;break;
+                case 'sakura':h=`<div class="fixed inset-0 bg-pink-50 -z-10 overflow-hidden">${Array.from({length:25}).map(()=>`<div class="petal" style="left:${Math.random()*100}%;width:${Math.random()*12+6}px;height:${Math.random()*12+6}px;background:radial-gradient(circle,#f9a8d4 0%,#f472b6 100%);border-radius:50% 0 50% 0;animation-duration:${Math.random()*5+6}s;animation-delay:${Math.random()*5}s;top:-20px;"></div>`).join('')}</div><div class="text-center p-12 max-w-xl mx-auto bg-white/70 backdrop-blur-md rounded-3xl shadow-xl border-2 border-pink-200 mt-12"><h2 class="font-elegant text-5xl text-pink-600 mb-6 italic">${to}</h2><p class="text-lg text-gray-700 whitespace-pre-wrap leading-relaxed font-light">${content}</p><div class="mt-8 pt-6 border-t border-pink-200"><p class="font-elegant text-2xl text-pink-500">${from}</p></div></div>`;break;
+                case 'aurora':h=`<div class="fixed inset-0 bg-aurora -z-10"></div><div class="text-center p-12 max-w-2xl mx-auto bg-black/35 backdrop-blur-lg rounded-2xl border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.15)] mt-16"><h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-cyan-200 to-purple-300 mb-8 drop-shadow-lg">${to}</h2><p class="font-sans text-xl text-gray-100 whitespace-pre-wrap leading-relaxed">${content}</p><p class="font-elegant text-3xl text-teal-100 mt-10 border-t border-white/20 pt-6 inline-block">${from}</p></div>`;break;
+                case 'moonlight':h=`<div class="fixed inset-0 bg-gradient-to-b from-gray-900 to-blue-900 -z-10"></div><div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-yellow-100 rounded-full shadow-[0_0_100px_#fef08a] opacity-90 -z-10"></div><div class="text-center p-10 max-w-xl mx-auto mt-28 bg-black/45 backdrop-blur-md rounded-2xl border border-blue-800/50 relative z-10 shadow-2xl"><i class="fas fa-moon text-4xl text-yellow-200 mb-4"></i><h2 class="font-romantic text-5xl text-yellow-200 mb-6">${to}</h2><p class="font-elegant text-lg text-blue-100 whitespace-pre-wrap leading-relaxed">${content}</p><p class="font-romantic text-3xl text-white mt-8">${from}</p></div>`;break;
+                case 'matrix':h=`<div class="fixed inset-0 bg-black -z-10 overflow-hidden opacity-30"><div class="matrix-text w-full text-center tracking-widest break-all overflow-hidden text-xs">${'01010100 01101001 01101110 01101000 '.repeat(30)}</div></div><div class="text-left p-8 max-w-2xl mx-auto border-2 border-green-500 bg-black/85 shadow-[0_0_30px_#00ff00] mt-16 rounded-lg"><div class="flex items-center gap-2 mb-4 pb-3 border-b border-green-700"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="matrix-text text-xs ml-2">terminal@love-matrix</span></div><p class="matrix-text text-xl mb-4">> root@heart:~# echo "Gửi ${to}"</p><p class="matrix-text text-lg whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-green-700 my-4">  ${content}</p><p class="matrix-text text-xl mt-6">> root@heart:~# sign --author "${from}"</p><p class="matrix-text text-sm mt-3 animate-pulse">_</p></div>`;break;
+                case 'clouds':h=`<div class="fixed inset-0 bg-gradient-to-b from-blue-200 via-blue-100 to-blue-300 -z-10 overflow-hidden"><div class="absolute top-10 left-10 w-40 h-20 bg-white rounded-full opacity-90 animate-float-slow"></div><div class="absolute top-24 right-16 w-56 h-28 bg-white rounded-full opacity-95 animate-float-slow" style="animation-delay:1s"></div><div class="absolute bottom-24 left-1/4 w-48 h-24 bg-white rounded-full opacity-85 animate-float-slow" style="animation-delay:2s"></div></div><div class="text-center p-12 max-w-xl mx-auto bg-white/90 backdrop-blur-sm rounded-[3rem] shadow-2xl border-4 border-white mt-20"><i class="fas fa-cloud text-5xl text-blue-400 mb-4 animate-float"></i><h2 class="font-romantic text-6xl text-blue-500 mb-6">${to}</h2><p class="font-sans text-gray-700 text-lg whitespace-pre-wrap leading-relaxed">${content}</p><p class="font-romantic text-3xl text-blue-400 mt-8 pt-4 border-t-2 border-blue-100 border-dashed">${from}</p></div>`;break;
+                case 'fireworks':h=`<div class="fixed inset-0 bg-gray-900 -z-10"></div><div class="text-center p-8 max-w-2xl mx-auto relative mt-16"><div class="bg-black/65 p-12 rounded-3xl border border-gray-700 backdrop-blur-md shadow-[0_0_40px_rgba(255,100,100,0.25)]"><h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-orange-400 mb-6 font-bold drop-shadow-md">${to}</h2><p class="text-xl text-gray-200 whitespace-pre-wrap leading-relaxed">${content}</p><p class="font-elegant text-3xl text-red-300 mt-10">✨ ${from} ✨</p></div></div>`;break;
+                case 'valentine':h=`<div class="fixed inset-0 bg-gradient-to-br from-red-900 via-pink-800 to-rose-900 -z-10 overflow-hidden">${Array.from({length:20}).map(()=>`<i class="fas fa-heart absolute text-red-400/30 animate-float" style="left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${Math.random()*20+10}px;animation-duration:${Math.random()*3+3}s;animation-delay:${Math.random()*2}s;"></i>`).join('')}</div><div class="text-center p-12 max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl border-2 border-red-400/40 shadow-2xl mt-10 relative"><div class="absolute -top-6 left-1/2 transform -translate-x-1/2"><i class="fas fa-heart text-5xl text-red-500 animate-heartbeat drop-shadow-lg"></i></div><h2 class="font-romantic text-6xl text-white mb-6 mt-4 drop-shadow-lg">${to}</h2><div class="bg-white/5 rounded-2xl p-6 mb-6 border border-white/10"><p class="text-xl text-pink-100 whitespace-pre-wrap leading-relaxed font-elegant">${content}</p></div><p class="font-vibes text-4xl text-red-200">${from}</p></div>`;break;
+                case 'vintage':h=`<div class="fixed inset-0 bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 -z-10"></div><div class="max-w-xl mx-auto p-12 bg-[#fdf6e3] vintage-border rounded-lg shadow-2xl mt-12" style="font-family:'Playfair Display',serif;"><div class="text-center mb-6"><div class="text-amber-800 text-xs tracking-[0.3em] uppercase mb-2">✦ Một Lời Tỏ Tình ✦</div><div class="h-px bg-gradient-to-r from-transparent via-amber-700 to-transparent"></div></div><h2 class="font-vibes text-5xl text-amber-900 text-center mb-8">${to}</h2><div class="text-amber-900 text-lg leading-loose whitespace-pre-wrap text-center italic">${content}</div><div class="text-center mt-10 pt-6 border-t border-amber-300"><div class="text-amber-700 text-xs tracking-widest uppercase mb-2">Ký tên</div><p class="font-vibes text-4xl text-amber-800">${from}</p></div></div>`;break;
+                case 'space':h=`<div class="fixed inset-0 bg-gradient-to-b from-indigo-950 via-purple-950 to-black -z-10 overflow-hidden"><div class="absolute top-20 right-20 w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-red-600 shadow-[0_0_60px_rgba(251,146,60,0.5)] animate-float-slow"></div><div class="absolute bottom-32 left-16 w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 shadow-[0_0_40px_rgba(96,165,250,0.5)] animate-float-slow" style="animation-delay:2s"></div>${Array.from({length:50}).map(()=>`<div class="absolute w-1 h-1 bg-white rounded-full animate-pulse" style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*2}s;"></div>`).join('')}</div><div class="text-center p-12 max-w-2xl mx-auto bg-black/50 backdrop-blur-xl rounded-3xl border border-purple-500/30 shadow-[0_0_60px_rgba(139,92,246,0.3)] mt-10"><h2 class="font-cinzel text-5xl text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-blue-300 mb-8 tracking-wider">${to}</h2><p class="text-xl text-gray-200 whitespace-pre-wrap leading-relaxed font-light">${content}</p><div class="mt-10 pt-6 border-t border-purple-500/20"><p class="font-romantic text-3xl text-white">${from}</p></div></div>`;break;
+                case 'rose':h=`<div class="fixed inset-0 bg-gradient-to-br from-rose-900 via-pink-900 to-red-950 -z-10 overflow-hidden">${Array.from({length:12}).map(()=>`<div class="absolute text-rose-300/20 animate-float-slow" style="left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${Math.random()*30+20}px;animation-duration:${Math.random()*4+4}s;">❀</div>`).join('')}</div><div class="text-center p-12 max-w-xl mx-auto bg-gradient-to-br from-rose-500/20 to-pink-500/10 backdrop-blur-md rounded-3xl border-2 border-rose-400/40 shadow-2xl mt-10"><div class="text-6xl mb-4">🌹</div><h2 class="font-romantic text-6xl text-rose-200 mb-6 drop-shadow-lg">${to}</h2><div class="bg-black/20 rounded-2xl p-6 mb-6 border border-rose-300/20"><p class="text-xl text-rose-50 whitespace-pre-wrap leading-relaxed font-elegant">${content}</p></div><div class="flex items-center justify-center gap-2"><span>🌹</span><p class="font-vibes text-4xl text-rose-100">${from}</p><span>🌹</span></div></div>`;break;
+                case 'minimalist':h=`<div class="fixed inset-0 bg-gradient-to-br from-gray-50 to-gray-100 -z-10"></div><div class="max-w-xl mx-auto p-16 bg-white rounded-2xl shadow-xl mt-12 relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300"></div><div class="text-center mb-12"><div class="inline-block w-16 h-px bg-gray-300 mb-6"></div><div class="text-gray-400 text-xs tracking-[0.4em] uppercase mb-2">For You</div><div class="inline-block w-16 h-px bg-gray-300 mt-2"></div></div><h2 class="text-4xl font-light text-gray-800 text-center mb-10 tracking-wide">${to}</h2><p class="text-gray-600 text-lg leading-relaxed whitespace-pre-wrap text-center font-light">${content}</p><div class="text-center mt-16 pt-8 border-t border-gray-100"><p class="text-gray-400 text-xs tracking-widest uppercase mb-3">With love</p><p class="text-2xl font-light text-gray-700">${from}</p></div></div>`;break;
+                case 'gold':h=`<div class="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black -z-10"></div><div class="max-w-xl mx-auto p-12 bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-md rounded-2xl shadow-2xl mt-12 relative border-2" style="border-image:linear-gradient(135deg,#fbbf24,#f59e0b,#d97706,#fbbf24) 1;"><div class="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-yellow-500"></div><div class="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-yellow-500"></div><div class="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-yellow-500"></div><div class="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-yellow-500"></div><div class="text-center"><i class="fas fa-crown text-5xl neon-text-gold mb-6"></i><h2 class="font-cinzel text-5xl mb-8 neon-text-gold tracking-wider">${to}</h2><div class="h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-8"></div><p class="text-xl text-yellow-50/90 whitespace-pre-wrap leading-relaxed font-elegant">${content}</p><div class="h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mt-8 mb-6"></div><p class="font-cinzel text-2xl neon-text-gold tracking-wider">${from}</p></div></div>`;break;
+                case 'rainbow':h=`<div class="fixed inset-0 bg-gradient-to-br from-pink-200 via-yellow-100 to-blue-200 -z-10 overflow-hidden"><div class="absolute inset-0 opacity-40 animate-rainbow" style="background:linear-gradient(45deg,#ff000033,#ff7f0033,#ffff0033,#00ff0033,#0000ff33,#4b008233,#9400d333);"></div></div><div class="text-center p-12 max-w-xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl mt-10 relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500,green-500,blue-500 to-purple-500"></div><div class="text-5xl mb-4">🌈</div><h2 class="font-romantic text-6xl mb-6 shimmer-text">${to}</h2><p class="text-xl text-gray-700 whitespace-pre-wrap leading-relaxed font-light">${content}</p><div class="mt-10 pt-6 border-t-2 border-dashed" style="border-image:linear-gradient(90deg,#f87171,#fbbf24,#34d399,#60a5fa,#a78bfa) 1;"><p class="font-vibes text-4xl shimmer-text">${from}</p></div><div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-blue-500,green-500,yellow-500 to-red-500"></div></div>`;break;
+                default:h=`<div class="text-white p-8 bg-black/50 rounded-xl">${content}</div>`;
+            }
+            c.innerHTML=h;
+        },
+        
+        switchAdminTab:function(tab){
+            document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+            document.querySelectorAll('.admin-tab-content').forEach(c=>c.classList.add('hidden-view'));
+            document.getElementById('admin-tab-'+tab).classList.remove('hidden-view');
+        },
+        
+        loadAdminData:async function(){
+            document.getElementById('admin-stat-active').innerText=this.templates.filter(t=>t.active).length;
+            document.getElementById('admin-stat-all').innerText=this.templates.length;
+            document.getElementById('admin-stat-status').innerHTML=this.config.maintenance.enabled?'<span class="text-orange-400">● Bảo trì</span>':'<span class="text-green-400">● Hoạt động</span>';
+            this.renderAdminTemplateList();
+            
+            document.getElementById('maint-switch').checked=this.config.maintenance.enabled;
+            document.getElementById('maint-title').value=this.config.maintenance.title||'';
+            document.getElementById('maint-msg').value=this.config.maintenance.msg||'';
+            document.getElementById('ann-switch').checked=this.config.announcement.enabled;
+            document.getElementById('ann-content').value=this.config.announcement.content||'';
+            
+            if(!this.userId)return;
+            try{
+                const qs=await getDocs(query(collection(this.db,'artifacts',appId,'public','data','love_messages')));
+                const msgs=[];qs.forEach(d=>msgs.push({id:d.id,...d.data()}));
+                msgs.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+                document.getElementById('admin-stat-total').innerText=msgs.length;
+                const tb=document.getElementById('admin-table-body');tb.innerHTML='';
+                if(msgs.length===0)tb.innerHTML=`<tr><td colspan="6" class="p-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block opacity-50"></i>Chưa có thông điệp nào.</td></tr>`;
+                else msgs.slice(0,50).forEach(m=>{
+                    const tr=document.createElement('tr');tr.className='border-b border-white/5 hover:bg-white/5 transition-colors';
+                    const tn=this.templates.find(t=>t.id===m.template)?.name||m.template;
+                    const ts=m.createdAt?new Date(m.createdAt).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+                    tr.innerHTML=`<td class="p-4 font-mono text-xs text-gray-400">${m.id}</td><td class="p-4">${this.escapeHTML(m.from)}</td><td class="p-4">${this.escapeHTML(m.to)}</td><td class="p-4"><span class="bg-gradient-to-r from-pink-500/20 to-purple-500/20 px-2 py-1 rounded text-xs border border-white/10">${tn}</span></td><td class="p-4 text-xs text-gray-400">${ts}</td><td class="p-4 text-center"><button onclick="window.open('?msg=${m.id}','_blank')" class="text-blue-400 hover:text-blue-300 mx-1 p-1"><i class="fas fa-eye"></i></button><button onclick="app.copyMsgLink('${m.id}')" class="text-green-400 hover:text-green-300 mx-1 p-1"><i class="fas fa-link"></i></button><button onclick="app.deleteMessage('${m.id}')" class="text-red-400 hover:text-red-300 mx-1 p-1"><i class="fas fa-trash"></i></button></td>`;
+                    tb.appendChild(tr);
+                });
+            }catch(e){console.error(e);this.showToast("Lỗi tải dữ liệu.",true);}
+        },
+        
+        renderAdminTemplateList:function(){
+            const c=document.getElementById('admin-template-list');c.innerHTML='';
+            this.templates.forEach((t,i)=>{
+                const isCustom=!!this.customTemplates[t.id];
+                const d=document.createElement('div');
+                d.className='bg-black/20 p-3 rounded-xl hover:bg-black/30 transition-colors';
+                d.innerHTML=`<div class="flex items-center justify-between"><div class="flex items-center gap-3 flex-1 min-w-0"><div class="w-10 h-10 rounded-lg bg-gradient-to-br ${t.color} flex items-center justify-center flex-shrink-0"><i class="fas ${t.icon} text-white"></i></div><div class="min-w-0 flex-1"><div class="font-medium text-sm truncate">${t.name}${isCustom?' <span class="text-[10px] bg-purple-500/30 text-purple-300 px-1.5 py-0.5 rounded">TÙY CHỈNH</span>':' <span class="text-[10px] bg-blue-500/30 text-blue-300 px-1.5 py-0.5 rounded">MẶC ĐỊNH</span>'}</div><div class="text-[10px] text-gray-400 truncate">${t.desc}</div></div></div><div class="flex items-center gap-1"><label class="switch"><input type="checkbox" ${t.active?'checked':''} onchange="app.toggleTemplate('${t.id}',this.checked)"><span class="slider"></span></label>${isCustom?`<button onclick="app.editTemplate('${t.id}')" class="p-2 text-blue-400 hover:text-blue-300 rounded-lg hover:bg-blue-500/10" title="Sửa"><i class="fas fa-edit text-sm"></i></button><button onclick="app.deleteTemplate('${t.id}')" class="p-2 text-red-400 hover:text-red-300 rounded-lg hover:bg-red-500/10" title="Xóa"><i class="fas fa-trash text-sm"></i></button>`:''}</div></div>`;
+                c.appendChild(d);
+            });
+        },
+        
+        toggleTemplate:function(id,act){
+            const t=this.templates.find(x=>x.id===id);
+            if(t){t.active=act;this.renderTemplateSelector();this.renderAdminTemplateList();document.getElementById('admin-stat-active').innerText=this.templates.filter(x=>x.active).length;this.config.templates=this.templates.filter(x=>this.customTemplates[x.id]);saveConfig(this.config);this.showToast(`Đã ${act?'bật':'tắt'} mẫu ${t.name}`);}
+        },
+        
+        openAddTemplateModal:function(){
+            this.editingTemplateId=null;
+            document.getElementById('modal-title').innerHTML='<i class="fas fa-plus text-pink-400 mr-2"></i>Thêm Mẫu Mới';
+            document.getElementById('tpl-name').value='';
+            document.getElementById('tpl-icon').value='fa-heart';
+            document.getElementById('tpl-desc').value='';
+            document.getElementById('tpl-color').value='from-pink-500 to-purple-500';
+            document.getElementById('tpl-html').value=`<div class="text-center p-10 glass-panel-strong rounded-3xl max-w-xl mx-auto">\n  <h2 class="font-romantic text-5xl text-pink-300 mb-6">Gửi {{to}},</h2>\n  <p class="font-elegant text-xl text-gray-100 whitespace-pre-wrap leading-relaxed mb-6">{{content}}</p>\n  <p class="font-romantic text-3xl text-purple-300 border-t border-white/20 pt-4">Từ {{from}}</p>\n</div>`;
+            document.getElementById('template-modal').classList.remove('hidden-view');
+        },
+        
+        editTemplate:function(id){
+            const t=this.customTemplates[id];if(!t)return;
+            this.editingTemplateId=id;
+            document.getElementById('modal-title').innerHTML='<i class="fas fa-edit text-blue-400 mr-2"></i>Sửa Mẫu';
+            document.getElementById('tpl-name').value=t.name;
+            document.getElementById('tpl-icon').value=t.icon;
+            document.getElementById('tpl-desc').value=t.desc||'';
+            document.getElementById('tpl-color').value=t.color;
+            document.getElementById('tpl-html').value=t.html;
+            document.getElementById('template-modal').classList.remove('hidden-view');
+        },
+        
+        closeTemplateModal:function(){document.getElementById('template-modal').classList.add('hidden-view');this.editingTemplateId=null;},
+        
+        saveTemplate:function(){
+            const name=document.getElementById('tpl-name').value.trim();
+            const icon=document.getElementById('tpl-icon').value.trim()||'fa-heart';
+            const desc=document.getElementById('tpl-desc').value.trim();
+            const color=document.getElementById('tpl-color').value.trim()||'from-pink-500 to-purple-500';
+            const html=sanitizeHTML(document.getElementById('tpl-html').value.trim());
+            if(!name||!html){this.showToast("Vui lòng điền tên và nội dung HTML!",true);return;}
+            
+            if(this.editingTemplateId){
+                const t=this.customTemplates[this.editingTemplateId];
+                if(t){t.name=name;t.icon=icon;t.desc=desc;t.color=color;t.html=html;
+                    const idx=this.templates.findIndex(x=>x.id===this.editingTemplateId);
+                    if(idx>-1)this.templates[idx]={...this.templates[idx],name,icon,desc,color,html};
+                }
+                this.showToast("Đã cập nhật mẫu!");
+            }else{
+                const id='custom_'+Date.now().toString(36);
+                const newTpl={id,name,icon,desc,color,html,active:true,builtin:false};
+                this.customTemplates[id]=newTpl;
+                this.templates.push(newTpl);
+                this.showToast("Đã thêm mẫu mới!");
+            }
+            this.config.templates=Object.values(this.customTemplates);
+            saveConfig(this.config);
+            this.renderTemplateSelector();
+            this.renderAdminTemplateList();
+            this.loadAdminData();
+            this.closeTemplateModal();
+        },
+        
+        deleteTemplate:function(id){
+            if(!confirm("Bạn có chắc muốn xóa mẫu này?"))return;
+            delete this.customTemplates[id];
+            this.templates=this.templates.filter(t=>t.id!==id);
+            this.config.templates=Object.values(this.customTemplates);
+            saveConfig(this.config);
+            if(this.selectedTemplate===id)this.selectedTemplate=this.templates[0]?.id||'stars';
+            this.renderTemplateSelector();
+            this.renderAdminTemplateList();
+            this.loadAdminData();
+            this.showToast("Đã xóa mẫu.");
+        },
+        
+        toggleMaintenance:function(on){
+            this.config.maintenance.enabled=on;
+            saveConfig(this.config);
+            document.getElementById('admin-stat-status').innerHTML=on?'<span class="text-orange-400">● Bảo trì</span>':'<span class="text-green-400">● Hoạt động</span>';
+        },
+        
+        saveMaintenance:function(){
+            this.config.maintenance.title=document.getElementById('maint-title').value.trim();
+            this.config.maintenance.msg=document.getElementById('maint-msg').value.trim();
+            saveConfig(this.config);
+            this.applyMaintenance();
+            this.showToast("Đã lưu cài đặt bảo trì!");
+        },
+        
+        toggleAnnouncement:function(on){
+            this.config.announcement.enabled=on;
+            saveConfig(this.config);
+            this.applyAnnouncement();
+        },
+        
+        saveAnnouncement:function(){
+            this.config.announcement.content=document.getElementById('ann-content').value.trim();
+            saveConfig(this.config);
+            this.applyAnnouncement();
+            this.showToast("Đã lưu & phát hành thông báo!");
+        },
+        
+        exportConfig:function(){
+            const dataStr=JSON.stringify(this.config,null,2);
+            const blob=new Blob([dataStr],{type:'application/json'});
+            const url=URL.createObjectURL(blob);
+            const a=document.createElement('a');
+            a.href=url;a.download=`loveuniverse-backup-${Date.now()}.json`;
+            a.click();URL.revokeObjectURL(url);
+            this.showToast("Đã xuất file backup!");
+        },
+        
+        clearAllCustom:function(){
+            if(!confirm("Xóa tất cả mẫu tùy chỉnh và khôi phục mặc định?"))return;
+            this.customTemplates={};
+            this.config.templates=[];
+            this.templates=[...defaultTemplates];
+            saveConfig(this.config);
+            this.renderTemplateSelector();
+            this.loadAdminData();
+            this.showToast("Đã khôi phục mẫu mặc định!");
+        },
+        
+        refreshAll:function(){
+            this.config=getConfig();
+            this.templates=[...defaultTemplates,...this.config.templates];
+            this.customTemplates={};
+            this.config.templates.forEach(t=>{this.customTemplates[t.id]=t;});
+            this.applyAnnouncement();
+            this.renderTemplateSelector();
+            this.loadAdminData();
+            this.showToast("Đã làm mới hệ thống!");
+        },
+        
+        deleteMessage:async function(id){
+            if(!confirm("Xóa thông điệp này vĩnh viễn?"))return;
+            try{await deleteDoc(doc(this.db,'artifacts',appId,'public','data','love_messages',id));this.showToast("Đã xóa.");this.loadAdminData();}
+            catch(e){this.showToast("Lỗi xóa.",true);}
+        },
+        
+        copyMsgLink:function(id){
+            navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?msg=${id}`).then(()=>this.showToast("Đã sao chép link!")).catch(()=>this.showToast("Lỗi.",true));
+        },
+        
+        copyLink:function(){
+            const i=document.getElementById('share-link');i.select();i.setSelectionRange(0,99999);
+            try{document.execCommand('copy');this.showToast("Đã sao chép link!");}catch(e){this.showToast("Lỗi.",true);}
+        },
+        
+        showToast:function(msg,err){
+            const t=document.getElementById('toast');t.innerText=msg;
+            t.className=`fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg transition-all duration-300 z-50 font-medium text-white ${err?'bg-gradient-to-r from-red-600 to-rose-600':'bg-gradient-to-r from-pink-600 to-purple-600'}`;
+            t.style.opacity=1;setTimeout(()=>{t.style.opacity=0;},3500);
+        },
+        
+        showLoading:function(s){document.getElementById('loading').style.display=s?'flex':'none';},
+        
+        escapeHTML:function(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));},
+        
+        initCanvas:function(){
+            const cv=document.getElementById('star-canvas'),ctx=cv.getContext('2d');
+            let w,h,stars=[];
+            function rsz(){w=window.innerWidth;h=window.innerHeight;cv.width=w;cv.height=h;init();}
+            function init(){stars=[];const n=Math.floor((w*h)/1800);for(let i=0;i<n;i++)stars.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.8,a:Math.random(),s:Math.random()*0.05,bs:Math.random()*0.02+0.005,c:Math.random()>.85?[255,182,193]:[255,255,255]});}
+            function draw(){ctx.clearRect(0,0,w,h);const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,"#050510");g.addColorStop(.5,"#0a0a1f");g.addColorStop(1,"#1a0b2e");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);for(let i=0;i<stars.length;i++){const s=stars[i];s.a+=s.bs;if(s.a>=1||s.a<=0)s.bs*=-1;s.y-=s.s;if(s.y<0)s.y=h;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(${s.c[0]},${s.c[1]},${s.c[2]},${Math.abs(s.a)})`;ctx.fill();}requestAnimationFrame(draw);}
+            window.addEventListener('resize',rsz);rsz();draw();
+        }
+    };
+    
+    // Security: prevent common dev tools access
+    (function(){
+        document.addEventListener('contextmenu',e=>{e.preventDefault();return false;});
+        document.addEventListener('keydown',e=>{
+            if(e.key==='F12'){e.preventDefault();return false;}
+            if(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key.toUpperCase())){e.preventDefault();return false;}
+            if(e.ctrlKey&&e.key.toUpperCase()==='U'){e.preventDefault();return false;}
+            if(e.ctrlKey&&e.key.toUpperCase()==='S'){e.preventDefault();return false;}
         });
+        let el= new Image();Object.defineProperty(el,'id',{get:function(){document.body.innerHTML='<div class="detected-warning"><i class="fas fa-exclamation-triangle text-6xl text-yellow-400 mb-6"></i><h1 class="text-3xl font-bold mb-4">Truy cập bị từ chối</h1><p class="text-gray-400">Vui lòng tắt công cụ phát triển để tiếp tục sử dụng.</p></div>';}});
+        setInterval(()=>{console.clear();},2000);
+    })();
+    
+    window.addEventListener('DOMContentLoaded',()=>{app.init();});
     </script>
 </body>
 </html>
