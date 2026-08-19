@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vũ Trụ Tình Yêu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #050510;
+            --accent-pink: #ff6b9e;
+            --accent-blue: #4db8ff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .font-romantic { font-family: 'Dancing Script', cursive; }
+        .font-elegant { font-family: 'Playfair Display', serif; }
+
+        /* Canvas Background */
+        #star-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Galaxy Effect */
+        .galaxy-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(76, 29, 149, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(190, 24, 93, 0.2) 0%, transparent 40%);
+            filter: blur(30px);
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+        .galaxy-bg.active { opacity: 1; }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 10px var(--accent-pink), 0 0 20px var(--accent-pink); }
+            50% { text-shadow: 0 0 20px var(--accent-pink), 0 0 40px var(--accent-pink), 0 0 60px var(--accent-pink); }
+        }
+        .glow-text { animation: pulse-glow 3s infinite alternate; }
+
+        /* Envelope CSS */
+        .envelope-wrapper {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #d1d5db;
+            border-radius: 4px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #9ca3af;
+            transform-origin: top;
+            transition: transform 0.5s ease 0.5s;
+            z-index: 10;
+        }
+        .envelope-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid #f3f4f6;
+            border-right: 150px solid #f3f4f6;
+            border-bottom: 100px solid #e5e7eb;
+            z-index: 5;
+        }
+        .envelope-letter {
+            position: absolute;
+            bottom: 5px;
+            left: 10px;
+            right: 10px;
+            height: 180px;
+            background: white;
+            color: #1f2937;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: transform 1s ease, height 1s ease;
+            z-index: 2;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
+        .envelope-wrapper.open .envelope-letter { transform: translateY(-100px); height: 400px; z-index: 20; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow-y: auto;}
+
+        /* New Template Animations */
+        @keyframes aurora-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .bg-aurora {
+            background: linear-gradient(-45deg, #1e3a8a, #4c1d95, #0f766e, #064e3b);
+            background-size: 400% 400%;
+            animation: aurora-bg 15s ease infinite;
+        }
+
+        @keyframes float-bubble {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+        .bubble {
+            position: absolute;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            animation: float-bubble 10s infinite linear;
+        }
+
+        .matrix-text {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .neon-text-pink { text-shadow: 0 0 5px #ff00de, 0 0 10px #ff00de, 0 0 20px #ff00de; }
+        .neon-text-cyan { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff; }
+        
+        .animate-spin-slow { animation: spin 8s linear infinite; }
+
+        /* Utilities */
+        .hidden-view { display: none !important; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center p-4">
+
+    <canvas id="star-canvas"></canvas>
+    <div id="galaxy-bg" class="galaxy-bg"></div>
+
+    <!-- UI Overlay (Loading, Toast) -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-pink-600 text-white px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50"></div>
+    <div id="loading" class="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 hidden">
+        <i class="fas fa-heart fa-beat text-4xl text-pink-500 mb-4"></i>
+        <p class="text-white font-elegant tracking-widest text-lg">Đang kết nối đến các vì sao...</p>
+    </div>
+    
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container" class="w-full max-w-4xl mx-auto relative z-10 transition-opacity duration-500 opacity-0">
+
+        <!-- VIEW: HOME -->
+        <div id="view-home" class="view-section flex flex-col items-center justify-center text-center space-y-8 py-20">
+            <h1 class="font-romantic text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500 animate-float">
+                Vũ Trụ Tình Yêu
+            </h1>
+            <p class="font-elegant text-xl md:text-2xl text-gray-300 max-w-2xl">
+                Gửi gắm những lời yêu thương chân thành nhất qua những vì sao và dải ngân hà.
+            </p>
+            <button onclick="app.navigate('create')" class="mt-8 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full font-bold text-lg hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] transition-all transform hover:scale-105">
+                Tạo Thông Điệp Mới <i class="fas fa-magic ml-2"></i>
+            </button>
+        </div>
+
+        <!-- VIEW: CREATE -->
+        <div id="view-create" class="view-section hidden-view flex flex-col space-y-6 w-full">
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white"><i class="fas fa-arrow-left mr-2"></i> Quay lại</button>
+                <h2 class="font-elegant text-3xl text-pink-400">Thiết Kế Thông Điệp</h2>
+                <div class="w-20"></div>
+            </div>
+
+            <!-- Step 1: Templates -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="text-xl mb-4 font-semibold">1. Chọn Mẫu Giao Diện (13 Mẫu)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2" id="template-selector"></div>
+            </div>
+
+            <!-- Step 2: Content Form -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="text-xl mb-4 font-semibold">2. Viết Lời Yêu Thương</h3>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Gửi đến (Tên người nhận)</label>
+                            <input type="text" id="input-to" class="w-full bg-black/30 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-pink-500" placeholder="VD: Cô gái của anh...">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Từ (Tên của bạn)</label>
+                            <input type="text" id="input-from" class="w-full bg-black/30 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-pink-500" placeholder="VD: Chàng trai giấu tên">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Nội dung</label>
+                        <textarea id="input-message" rows="5" class="w-full bg-black/30 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-pink-500" placeholder="Viết những lời chân thật nhất từ trái tim..."></textarea>
+                    </div>
+                    
+                    <button id="btn-submit" onclick="app.submitMessage()" class="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl font-bold text-lg hover:from-pink-500 hover:to-purple-500 transition-colors mt-4">
+                        Tạo Và Nhận Link Chia Sẻ <i class="fas fa-paper-plane ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: SUCCESS / SHARE -->
+        <div id="view-success" class="view-section hidden-view flex flex-col items-center justify-center text-center space-y-6 py-20">
+            <div class="w-24 h-24 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-check text-5xl"></i>
+            </div>
+            <h2 class="font-elegant text-4xl text-white">Thành Công!</h2>
+            <p class="text-gray-300 mb-4">Thông điệp của bạn đã được gửi vào vũ trụ.</p>
+            
+            <div class="glass-panel p-4 rounded-xl flex items-center space-x-4 w-full max-w-md">
+                <input type="text" id="share-link" readonly class="bg-transparent border-none flex-1 text-sm text-gray-300 focus:outline-none truncate">
+                <button onclick="app.copyLink()" class="bg-pink-600 hover:bg-pink-500 p-2 rounded-lg transition-colors">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            
+            <div class="flex space-x-4 mt-8">
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white">Về trang chủ</button>
+                <button onclick="window.open(document.getElementById('share-link').value, '_blank')" class="text-pink-400 hover:text-pink-300 font-semibold">Xem thử</button>
+            </div>
+        </div>
+
+        <!-- VIEW: DISPLAY MESSAGE (Shared Link View) -->
+        <div id="view-display" class="view-section hidden-view w-full min-h-[80vh] flex items-center justify-center relative">
+            <div id="display-container" class="w-full max-w-2xl mx-auto z-10"></div>
+            
+            <div class="absolute bottom-4 left-0 w-full text-center opacity-50 hover:opacity-100 transition-opacity">
+                <a href="./" class="text-xs text-white bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">Tạo thông điệp của riêng bạn <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+        </div>
+
+        <!-- VIEW: ADMIN -->
+        <div id="view-admin" class="view-section hidden-view flex flex-col w-full">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="font-elegant text-3xl text-purple-400"><i class="fas fa-shield-alt mr-2"></i> Trạm Kiểm Soát (Admin)</h2>
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-white">Thoát</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center">
+                    <h3 class="text-gray-400 text-sm uppercase tracking-wider mb-2">Tổng Thông Điệp</h3>
+                    <div class="text-5xl font-bold text-white" id="admin-stat-total">-</div>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-gray-400 text-sm uppercase tracking-wider mb-4">Quản Lý Mẫu</h3>
+                    <div class="space-y-3 max-h-[200px] overflow-y-auto pr-2" id="admin-template-toggles"></div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl overflow-hidden">
+                <div class="p-4 bg-white/5 border-b border-white/10 flex justify-between items-center">
+                    <h3 class="font-semibold text-lg">Danh sách thông điệp gần đây</h3>
+                    <button onclick="app.loadAdminData()" class="text-sm text-blue-400 hover:text-blue-300"><i class="fas fa-sync-alt"></i> Làm mới</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-black/20 text-gray-400 text-sm">
+                                <th class="p-4 border-b border-white/5">Mã ID</th>
+                                <th class="p-4 border-b border-white/5">Người Gửi</th>
+                                <th class="p-4 border-b border-white/5">Người Nhận</th>
+                                <th class="p-4 border-b border-white/5">Mẫu</th>
+                                <th class="p-4 border-b border-white/5">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="text-sm text-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Cấu hình Firebase của bạn
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmQkodF3NruRl1QIGWmu4UNsvQ3yIb0RY",
+            authDomain: "loveuniverse-5f41b.firebaseapp.com",
+            projectId: "loveuniverse-5f41b",
+            storageBucket: "loveuniverse-5f41b.firebasestorage.app",
+            messagingSenderId: "365851228357",
+            appId: "1:365851228357:web:0d41ea4841c0d088a558ac",
+            measurementId: "G-CFGLSL7Q1Y"
+        };
+        
+        const appId = 'love-universe-custom';
+        
+        window.app = {
+            db: null,
+            auth: null,
+            userId: null,
+            currentView: 'home',
+            selectedTemplate: 'stars',
+            templates: [
+                { id: 'stars', name: 'Bầu Trời Sao', icon: 'fa-star', desc: 'Thông điệp phát sáng giữa bầu trời đêm', active: true },
+                { id: 'galaxy', name: 'Thiên Hà Sâu Thẳm', icon: 'fa-meteor', desc: 'Hiệu ứng hố đen và vũ trụ', active: true },
+                { id: 'letter', name: 'Thư Tay Bí Mật', icon: 'fa-envelope', desc: 'Bức thư có thể mở ra', active: true },
+                { id: 'neon', name: 'Neon Tình Yêu', icon: 'fa-bolt', desc: 'Hiệu ứng đèn Neon rực rỡ', active: true },
+                { id: 'ocean', name: 'Đại Dương Xanh', icon: 'fa-water', desc: 'Chìm đắm dưới đại dương sâu thẳm', active: true },
+                { id: 'sunset', name: 'Hoàng Hôn', icon: 'fa-sun', desc: 'Cảnh hoàng hôn ấm áp lãng mạn', active: true },
+                { id: 'polaroid', name: 'Ảnh Polaroid', icon: 'fa-camera-retro', desc: 'Phong cách thẻ ảnh Vintage', active: true },
+                { id: 'sakura', name: 'Hoa Anh Đào', icon: 'fa-fan', desc: 'Sắc hồng ngọt ngào dịu dàng', active: true },
+                { id: 'aurora', name: 'Cực Quang', icon: 'fa-wave-square', desc: 'Dải màu ma thuật phương Bắc', active: true },
+                { id: 'moonlight', name: 'Dưới Ánh Trăng', icon: 'fa-moon', desc: 'Ánh trăng sáng và lãng mạn', active: true },
+                { id: 'matrix', name: 'Ma Trận Code', icon: 'fa-code', desc: 'Dành cho coder lãng mạn', active: true },
+                { id: 'clouds', name: 'Trên Chín Tầng Mây', icon: 'fa-cloud', desc: 'Bồng bềnh giữa bầu trời xanh', active: true },
+                { id: 'fireworks', name: 'Pháo Hoa', icon: 'fa-fire', desc: 'Bùng nổ cảm xúc rực rỡ', active: true }
+            ],
+            
+            init: async function() {
+                try {
+                    const firebaseApp = initializeApp(firebaseConfig);
+                    this.db = getFirestore(firebaseApp);
+                    this.auth = getAuth(firebaseApp);
+
+                    this.showLoading(true);
+                    
+                    const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                    let userCred;
+                    if (initialToken) {
+                        try {
+                            userCred = await signInWithCustomToken(this.auth, initialToken);
+                        } catch (e) {
+                            // Fallback nếu custom token lỗi/mismatch khi chạy ngoài môi trường sandbox
+                            userCred = await signInAnonymously(this.auth);
+                        }
+                    } else {
+                        userCred = await signInAnonymously(this.auth);
+                    }
+                    
+                    this.userId = userCred.user.uid;
+
+                    this.initCanvas();
+                    this.renderTemplateSelector();
+                    this.handleRouting();
+
+                    document.getElementById('app-container').style.opacity = 1;
+                    this.showLoading(false);
+                } catch (error) {
+                    console.error("Init error:", error);
+                    this.showToast("Lỗi khởi tạo kết nối Firebase.", true);
+                    this.showLoading(false);
+                }
+            },
+
+            handleRouting: function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const msgId = urlParams.get('msg');
+                const key = urlParams.get('key');
+
+                if (msgId) {
+                    this.loadMessage(msgId);
+                } else if (key === 'admin') {
+                    this.navigate('admin');
+                } else {
+                    this.navigate('home');
+                }
+            },
+
+            navigate: function(viewId) {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden-view'));
+                document.getElementById('galaxy-bg').classList.remove('active');
+                
+                const target = document.getElementById(`view-${viewId}`);
+                if (target) {
+                    target.classList.remove('hidden-view');
+                    this.currentView = viewId;
+                    
+                    if (viewId === 'admin') {
+                        this.loadAdminData();
+                    } else if (viewId === 'home') {
+                        if(window.location.search) window.history.pushState({}, document.title, window.location.pathname);
+                    }
+                }
+            },
+
+            renderTemplateSelector: function() {
+                const container = document.getElementById('template-selector');
+                container.innerHTML = '';
+                
+                this.templates.forEach(tpl => {
+                    if(!tpl.active) return;
+                    
+                    const isSelected = this.selectedTemplate === tpl.id;
+                    const div = document.createElement('div');
+                    div.className = `cursor-pointer rounded-xl p-4 border-2 transition-all ${isSelected ? 'border-pink-500 bg-pink-500/10' : 'border-transparent bg-black/40 hover:bg-black/60'}`;
+                    div.onclick = () => {
+                        this.selectedTemplate = tpl.id;
+                        this.renderTemplateSelector();
+                    };
+                    
+                    div.innerHTML = `
+                        <div class="flex flex-col items-center text-center space-y-2">
+                            <i class="fas ${tpl.icon} text-3xl ${isSelected ? 'text-pink-400' : 'text-gray-400'}"></i>
+                            <h4 class="font-semibold">${tpl.name}</h4>
+                            <p class="text-xs text-gray-400">${tpl.desc}</p>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            submitMessage: async function() {
+                if (!this.userId) return;
+
+                const to = document.getElementById('input-to').value.trim();
+                const from = document.getElementById('input-from').value.trim();
+                const msg = document.getElementById('input-message').value.trim();
+
+                if (!to || !from || !msg) {
+                    this.showToast("Vui lòng điền đầy đủ thông tin!", true);
+                    return;
+                }
+
+                this.showLoading(true);
+                const btn = document.getElementById('btn-submit');
+                btn.disabled = true;
+
+                try {
+                    // Tạo mã token ngắn gọn 6 ký tự
+                    const shortToken = Math.random().toString(36).substring(2, 8).toUpperCase();
+                    const collectionRef = collection(this.db, 'artifacts', appId, 'public', 'data', 'love_messages');
+                    const docRef = doc(collectionRef, shortToken);
+                    
+                    await setDoc(docRef, {
+                        template: this.selectedTemplate,
+                        to: to,
+                        from: from,
+                        content: msg,
+                        createdAt: Date.now(),
+                        creatorId: this.userId
+                    });
+
+                    const shareUrl = `${window.location.origin}${window.location.pathname}?msg=${shortToken}`;
+                    document.getElementById('share-link').value = shareUrl;
+                    
+                    document.getElementById('input-to').value = '';
+                    document.getElementById('input-from').value = '';
+                    document.getElementById('input-message').value = '';
+                    
+                    this.navigate('success');
+                } catch (error) {
+                    console.error("Save error:", error);
+                    this.showToast("Lỗi lưu trữ: Kiểm tra quyền Firestore rules.", true);
+                } finally {
+                    this.showLoading(false);
+                    btn.disabled = false;
+                }
+            },
+
+            loadMessage: async function(msgId) {
+                this.showLoading(true);
+                try {
+                    const docRef = doc(this.db, 'artifacts', appId, 'public', 'data', 'love_messages', msgId);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        this.renderMessageView(data);
+                        this.navigate('display');
+                    } else {
+                        this.showToast("Không tìm thấy thông điệp.", true);
+                        this.navigate('home');
+                    }
+                } catch (error) {
+                    console.error("Load error:", error);
+                    this.navigate('home');
+                } finally {
+                    this.showLoading(false);
+                }
+            },
+
+            renderMessageView: function(data) {
+                const container = document.getElementById('display-container');
+                container.innerHTML = '';
+                
+                const hideStarCanvasTemplates = ['ocean', 'sunset', 'polaroid', 'sakura', 'aurora', 'moonlight', 'matrix', 'clouds', 'fireworks', 'neon'];
+                if (hideStarCanvasTemplates.includes(data.template)) {
+                    document.getElementById('star-canvas').style.display = 'none';
+                } else {
+                    document.getElementById('star-canvas').style.display = 'block';
+                }
+
+                if (data.template === 'galaxy') {
+                    document.getElementById('galaxy-bg').classList.add('active');
+                } else {
+                    document.getElementById('galaxy-bg').classList.remove('active');
+                }
+
+                const to = this.escapeHTML(data.to);
+                const from = this.escapeHTML(data.from);
+                const content = this.escapeHTML(data.content);
+
+                let html = '';
+
+                switch(data.template) {
+                    case 'stars':
+                        html = `
+                            <div class="text-center space-y-8 animate-float p-8 glass-panel rounded-3xl max-w-xl mx-auto backdrop-blur-md">
+                                <h3 class="font-romantic text-4xl text-pink-300">Gửi ${to},</h3>
+                                <p class="font-elegant text-xl leading-relaxed text-gray-100 whitespace-pre-wrap">${content}</p>
+                                <div class="pt-6 border-t border-white/20">
+                                    <p class="text-sm text-gray-400">Từ người luôn nghĩ về bạn,</p>
+                                    <p class="font-romantic text-3xl text-purple-300 mt-2">${from}</p>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'galaxy':
+                        html = `
+                            <div class="text-center relative">
+                                <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl -z-10"></div>
+                                <h2 class="font-elegant text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200 mb-8 glow-text tracking-wider">
+                                    ${to}
+                                </h2>
+                                <div class="max-w-lg mx-auto bg-black/40 p-8 rounded-2xl border border-purple-500/30 backdrop-blur-sm shadow-[0_0_50px_rgba(168,85,247,0.2)]">
+                                    <p class="text-lg md:text-xl font-light text-gray-200 mb-6 leading-relaxed whitespace-pre-wrap">${content}</p>
+                                    <div class="text-right">
+                                        <span class="text-xs uppercase tracking-widest text-purple-400">Người gửi</span>
+                                        <p class="font-bold text-white text-xl mt-1">${from}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'letter':
+                        html = `
+                            <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+                                <div class="envelope">
+                                    <div class="envelope-flap"></div>
+                                    <div class="envelope-body"></div>
+                                    <div class="envelope-letter space-y-4 shadow-inner">
+                                        <h3 class="font-romantic text-2xl text-pink-600 font-bold border-b pb-2">Thân gửi ${to},</h3>
+                                        <p class="font-elegant text-gray-700 text-sm leading-relaxed whitespace-pre-wrap flex-1">${content}</p>
+                                        <p class="font-romantic text-xl text-right text-purple-700 pt-2 border-t">Ký tên: ${from}</p>
+                                    </div>
+                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none text-white font-bold bg-pink-500 px-3 py-1 rounded-full shadow-lg opacity-80" style="transition: opacity 0.3s;" id="tap-hint">Chạm để mở</div>
+                                </div>
+                            </div>
+                            <style>.envelope-wrapper.open #tap-hint { opacity: 0; }</style>
+                        `;
+                        break;
+                    case 'neon':
+                        html = `
+                            <div class="fixed inset-0 bg-gray-900 -z-10"></div>
+                            <div class="text-center p-8 border-4 border-pink-500 rounded-3xl shadow-[0_0_30px_#ff00de] bg-black/80 max-w-xl mx-auto relative overflow-hidden mt-10">
+                                <h2 class="font-sans text-5xl font-bold text-white mb-6 neon-text-pink uppercase tracking-widest">${to}</h2>
+                                <p class="text-xl text-white mb-8 neon-text-cyan leading-relaxed whitespace-pre-wrap">${content}</p>
+                                <div class="border-t-2 border-cyan-500 pt-4 mt-8">
+                                    <span class="text-white text-sm neon-text-cyan">Người gửi: </span>
+                                    <p class="font-bold text-2xl text-white neon-text-pink">${from}</p>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'ocean':
+                        html = `
+                            <div class="fixed inset-0 bg-gradient-to-b from-blue-400 via-blue-700 to-blue-900 -z-10 overflow-hidden">
+                                ${Array.from({length: 12}).map(() => `<div class="bubble" style="left: ${Math.random()*100}%; width: ${Math.random()*30+10}px; height: ${Math.random()*30+10}px; animation-duration: ${Math.random()*5+5}s; animation-delay: ${Math.random()*3}s;"></div>`).join('')}
+                            </div>
+                            <div class="text-center p-10 bg-white/10 backdrop-blur-md rounded-full shadow-[0_0_40px_rgba(255,255,255,0.2)] border border-white/20 max-w-lg mx-auto mt-10">
+                                <h2 class="font-elegant text-5xl text-white font-bold mb-4 drop-shadow-lg">${to}</h2>
+                                <p class="text-lg text-blue-100 whitespace-pre-wrap leading-relaxed drop-shadow-md">${content}</p>
+                                <p class="font-elegant text-2xl text-white mt-8 italic drop-shadow-md">~ ${from} ~</p>
+                            </div>
+                        `;
+                        break;
+                    case 'sunset':
+                        html = `
+                            <div class="fixed inset-0 bg-gradient-to-b from-orange-400 via-red-500 to-purple-900 -z-10"></div>
+                            <div class="absolute bottom-0 left-0 w-full h-1/3 bg-black/50 blur-xl -z-10"></div>
+                            <div class="text-center p-8 max-w-xl mx-auto bg-white/5 backdrop-blur-sm rounded-2xl border-t border-white/30 shadow-2xl mt-16">
+                                <i class="fas fa-sun text-6xl text-yellow-300 mb-6 animate-pulse opacity-80"></i>
+                                <h2 class="font-romantic text-6xl text-yellow-200 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">${to}</h2>
+                                <p class="font-elegant text-xl text-white whitespace-pre-wrap leading-relaxed drop-shadow-md">${content}</p>
+                                <p class="font-romantic text-3xl text-orange-200 mt-8 drop-shadow-md">${from}</p>
+                            </div>
+                        `;
+                        break;
+                    case 'polaroid':
+                        html = `
+                            <div class="fixed inset-0 bg-[#e5e5f7] opacity-80 -z-10" style="background-image: radial-gradient(#444cf7 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <div class="max-w-sm mx-auto bg-white p-4 pb-16 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500 border border-gray-200 relative mt-10">
+                                <div class="w-full aspect-square bg-gray-200 mb-6 overflow-hidden relative border border-gray-300">
+                                     <img src="https://images.unsplash.com/photo-1518199266791-5375a83164ba?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/600x600/pink/white?text=Love'" class="object-cover w-full h-full opacity-90 grayscale hover:grayscale-0 transition-all duration-1000">
+                                </div>
+                                <h2 class="font-romantic text-4xl text-gray-800 text-center mb-4">${to}</h2>
+                                <p class="font-sans text-gray-600 text-center text-sm whitespace-pre-wrap leading-relaxed">${content}</p>
+                                <div class="absolute bottom-4 right-6 transform -rotate-6">
+                                    <p class="font-romantic text-2xl text-red-500">${from}</p>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'sakura':
+                        html = `
+                            <div class="fixed inset-0 bg-pink-50 -z-10 overflow-hidden">
+                                ${Array.from({length: 20}).map(() => `<div class="absolute bg-pink-300/50 rounded-full blur-[1px]" style="left: ${Math.random()*100}%; width: ${Math.random()*15+5}px; height: ${Math.random()*15+5}px; animation: float-bubble ${Math.random()*5+4}s infinite linear; top: -20px;"></div>`).join('')}
+                            </div>
+                            <div class="text-center p-10 max-w-xl mx-auto bg-white/60 backdrop-blur-md rounded-3xl shadow-xl border border-pink-200 mt-12">
+                                <h2 class="font-elegant text-5xl text-pink-600 mb-6 italic">${to}</h2>
+                                <p class="text-lg text-gray-700 whitespace-pre-wrap leading-relaxed font-light">${content}</p>
+                                <div class="mt-8 pt-6 border-t border-pink-200">
+                                    <p class="font-elegant text-2xl text-pink-500">${from}</p>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'aurora':
+                        html = `
+                            <div class="fixed inset-0 bg-aurora -z-10"></div>
+                            <div class="text-center p-12 max-w-2xl mx-auto bg-black/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-[0_0_40px_rgba(255,255,255,0.1)] mt-16">
+                                <h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-purple-300 mb-8 drop-shadow-lg">${to}</h2>
+                                <p class="font-sans text-xl text-gray-100 whitespace-pre-wrap leading-relaxed">${content}</p>
+                                <p class="font-elegant text-3xl text-teal-100 mt-10 border-t border-white/20 pt-6 inline-block">${from}</p>
+                            </div>
+                        `;
+                        break;
+                    case 'moonlight':
+                        html = `
+                            <div class="fixed inset-0 bg-gradient-to-b from-gray-900 to-blue-900 -z-10"></div>
+                            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-yellow-100 rounded-full shadow-[0_0_80px_#fef08a] opacity-80 -z-10"></div>
+                            <div class="text-center p-8 max-w-xl mx-auto mt-24 bg-black/40 backdrop-blur-md rounded-2xl border border-blue-800/50 relative z-10">
+                                <h2 class="font-romantic text-5xl text-yellow-200 mb-6">${to}</h2>
+                                <p class="font-elegant text-lg text-blue-100 whitespace-pre-wrap leading-relaxed">${content}</p>
+                                <p class="font-romantic text-3xl text-white mt-8">${from}</p>
+                            </div>
+                        `;
+                        break;
+                    case 'matrix':
+                        html = `
+                            <div class="fixed inset-0 bg-black -z-10 overflow-hidden flex flex-wrap opacity-30">
+                                 <div class="matrix-text w-full text-center tracking-widest break-all overflow-hidden text-xs md:text-sm">01010100 01101001 01101110 01101000 00100000 01111001 01100101 01110100</div>
+                            </div>
+                            <div class="text-left p-8 max-w-2xl mx-auto border border-green-500 bg-black/80 shadow-[0_0_20px_#00ff00] mt-16">
+                                <p class="matrix-text text-xl mb-6">> root@heart:~# echo "Gửi ${to}"</p>
+                                <p class="matrix-text text-lg whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-green-700">  ${content}</p>
+                                <p class="matrix-text text-xl mt-8">> root@heart:~# sign --author "${from}"</p>
+                                <p class="matrix-text text-sm mt-2 animate-pulse">_</p>
+                            </div>
+                        `;
+                        break;
+                    case 'clouds':
+                        html = `
+                            <div class="fixed inset-0 bg-blue-200 -z-10 overflow-hidden">
+                                <div class="absolute top-10 left-10 w-32 h-16 bg-white rounded-full opacity-80 blur-[2px] animate-pulse"></div>
+                                <div class="absolute top-20 right-20 w-48 h-24 bg-white rounded-full opacity-90 blur-[2px] animate-pulse" style="animation-delay: 1s"></div>
+                                <div class="absolute bottom-20 left-1/4 w-40 h-20 bg-white rounded-full opacity-70 blur-[2px] animate-pulse" style="animation-delay: 2s"></div>
+                            </div>
+                            <div class="text-center p-10 max-w-xl mx-auto bg-white/80 backdrop-blur-sm rounded-[3rem] shadow-2xl border-4 border-white mt-20">
+                                <h2 class="font-romantic text-6xl text-blue-500 mb-6">${to}</h2>
+                                <p class="font-sans text-gray-700 text-lg whitespace-pre-wrap leading-relaxed">${content}</p>
+                                <p class="font-romantic text-3xl text-blue-400 mt-8 pt-4 border-t-2 border-blue-100 border-dashed">${from}</p>
+                            </div>
+                        `;
+                        break;
+                    case 'fireworks':
+                        html = `
+                            <div class="fixed inset-0 bg-gray-900 -z-10"></div>
+                            <div class="text-center p-8 max-w-2xl mx-auto relative mt-16">
+                                <i class="fas fa-certificate text-pink-500 absolute top-0 left-0 text-4xl animate-spin-slow blur-[2px]"></i>
+                                <i class="fas fa-certificate text-yellow-400 absolute bottom-0 right-0 text-6xl animate-spin-slow blur-[2px]" style="animation-direction: reverse;"></i>
+                                <div class="bg-black/60 p-10 rounded-3xl border border-gray-700 backdrop-blur-md shadow-[0_0_30px_rgba(255,100,100,0.2)]">
+                                    <h2 class="font-elegant text-6xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-400 mb-6 font-bold drop-shadow-md">${to}</h2>
+                                    <p class="text-xl text-gray-200 whitespace-pre-wrap leading-relaxed">${content}</p>
+                                    <p class="font-elegant text-3xl text-red-300 mt-10">✨ ${from} ✨</p>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    default:
+                        html = `<div class="text-white p-8 bg-black/50 rounded-xl">${content}</div>`;
+                }
+
+                container.innerHTML = html;
+            },
+
+            loadAdminData: async function() {
+                if (!this.userId) return;
+                
+                try {
+                    const collectionRef = collection(this.db, 'artifacts', appId, 'public', 'data', 'love_messages');
+                    const q = query(collectionRef);
+                    const querySnapshot = await getDocs(q);
+                    
+                    let messages = [];
+                    querySnapshot.forEach((doc) => {
+                        messages.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    messages.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                    document.getElementById('admin-stat-total').innerText = messages.length;
+
+                    const tbody = document.getElementById('admin-table-body');
+                    tbody.innerHTML = '';
+                    
+                    if (messages.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Chưa có thông điệp nào.</td></tr>`;
+                    } else {
+                        messages.slice(0, 20).forEach(msg => {
+                            const tr = document.createElement('tr');
+                            tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
+                            
+                            const tplName = this.templates.find(t => t.id === msg.template)?.name || msg.template;
+                            
+                            tr.innerHTML = `
+                                <td class="p-4 font-mono text-xs text-gray-400">${msg.id}</td>
+                                <td class="p-4">${this.escapeHTML(msg.from)}</td>
+                                <td class="p-4">${this.escapeHTML(msg.to)}</td>
+                                <td class="p-4"><span class="bg-black/40 px-2 py-1 rounded text-xs">${tplName}</span></td>
+                                <td class="p-4">
+                                    <button onclick="window.open('?msg=${msg.id}', '_blank')" class="text-blue-400 hover:text-blue-300 mr-2" title="Xem"><i class="fas fa-eye"></i></button>
+                                    <button onclick="app.deleteMessage('${msg.id}')" class="text-red-400 hover:text-red-300" title="Xóa"><i class="fas fa-trash"></i></button>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+
+                    const togglesContainer = document.getElementById('admin-template-toggles');
+                    togglesContainer.innerHTML = '';
+                    this.templates.forEach(tpl => {
+                        togglesContainer.innerHTML += `
+                            <div class="flex items-center justify-between bg-black/20 p-3 rounded-lg">
+                                <div>
+                                    <i class="fas ${tpl.icon} text-gray-400 mr-2"></i> ${tpl.name}
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                  <input type="checkbox" ${tpl.active ? 'checked' : ''} class="sr-only peer" onchange="app.toggleTemplate('${tpl.id}', this.checked)">
+                                  <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                                </label>
+                            </div>
+                        `;
+                    });
+
+                } catch (error) {
+                    console.error("Admin fetch error:", error);
+                    this.showToast("Không thể tải dữ liệu admin.", true);
+                }
+            },
+
+            toggleTemplate: function(id, isActive) {
+                const tpl = this.templates.find(t => t.id === id);
+                if (tpl) {
+                    tpl.active = isActive;
+                    this.renderTemplateSelector();
+                    this.showToast(`Đã ${isActive ? 'bật' : 'tắt'} mẫu ${tpl.name}`);
+                }
+            },
+
+            deleteMessage: async function(id) {
+                if(!confirm("Bạn có chắc chắn muốn xóa thông điệp này vĩnh viễn?")) return;
+                
+                try {
+                    const docRef = doc(this.db, 'artifacts', appId, 'public', 'data', 'love_messages', id);
+                    await deleteDoc(docRef);
+                    this.showToast("Đã xóa thành công.");
+                    this.loadAdminData();
+                } catch(error) {
+                    console.error("Delete error", error);
+                    this.showToast("Lỗi khi xóa.", true);
+                }
+            },
+
+            copyLink: function() {
+                const input = document.getElementById('share-link');
+                input.select();
+                input.setSelectionRange(0, 99999);
+                try {
+                    document.execCommand('copy');
+                    this.showToast("Đã sao chép link!");
+                } catch (err) {
+                    this.showToast("Không thể sao chép.", true);
+                }
+            },
+
+            showToast: function(msg, isError = false) {
+                const toast = document.getElementById('toast');
+                toast.innerText = msg;
+                toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 z-50 ${isError ? 'bg-red-600' : 'bg-pink-600'} text-white`;
+                toast.style.opacity = 1;
+                setTimeout(() => { toast.style.opacity = 0; }, 3000);
+            },
+
+            showLoading: function(show) {
+                document.getElementById('loading').style.display = show ? 'flex' : 'none';
+            },
+
+            escapeHTML: function(str) {
+                return str.replace(/[&<>'"]/g, 
+                    tag => ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        "'": '&#39;',
+                        '"': '&quot;'
+                    }[tag])
+                );
+            },
+
+            initCanvas: function() {
+                const canvas = document.getElementById('star-canvas');
+                const ctx = canvas.getContext('2d');
+                let width, height;
+                let stars = [];
+
+                function resize() {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height;
+                    initStars();
+                }
+
+                function initStars() {
+                    stars = [];
+                    const numStars = Math.floor((width * height) / 2000);
+                    for (let i = 0; i < numStars; i++) {
+                        stars.push({
+                            x: Math.random() * width,
+                            y: Math.random() * height,
+                            radius: Math.random() * 1.5,
+                            alpha: Math.random(),
+                            speed: Math.random() * 0.05,
+                            blinkSpeed: Math.random() * 0.02 + 0.005
+                        });
+                    }
+                }
+
+                function draw() {
+                    ctx.clearRect(0, 0, width, height);
+                    
+                    let gradient = ctx.createLinearGradient(0, 0, 0, height);
+                    gradient.addColorStop(0, "#050510");
+                    gradient.addColorStop(1, "#1a0b2e");
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, width, height);
+
+                    for (let i = 0; i < stars.length; i++) {
+                        let s = stars[i];
+                        
+                        s.alpha += s.blinkSpeed;
+                        if (s.alpha >= 1 || s.alpha <= 0) s.blinkSpeed *= -1;
+                        
+                        s.y -= s.speed;
+                        if (s.y < 0) s.y = height;
+
+                        ctx.beginPath();
+                        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
+                        ctx.fill();
+                    }
+
+                    requestAnimationFrame(draw);
+                }
+
+                window.addEventListener('resize', resize);
+                resize();
+                draw();
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
